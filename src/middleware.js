@@ -20,6 +20,9 @@ export default async function middleware(req) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  if (path.includes("/finova")) {
+    return NextResponse.next();
+  }
   // console.log(session)
   if (!session && (path.includes("/home") || path.includes("/api/tags"))) {
     if (path.includes("/api/tags"))
