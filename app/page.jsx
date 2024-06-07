@@ -1,5 +1,5 @@
-"use client"
-import React from 'react'
+// "use client"
+// import React from 'react'
 import TableView from "@/components/table/tableview";
 import { Configuration_Header } from "@/components/table/tableheader";
 
