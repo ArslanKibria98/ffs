@@ -19,17 +19,49 @@ const ProgressBar = () => {
   ]
   return (
     <>
-      <div className="bg-[#FFF0F0] border-t p-4 flex justify-center">
-        <Box sx={{ width: '50%' }}>
-          <Stepper activeStep={1} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                 <img src="/fieldmappingicon.svg" alt="" />
-                <StepLabel >{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
+      <div className="bg-[#FFF0F0] border-t p-4 flex items-center justify-center pt-6 pb-16">
+        <button className='p-1 bg-[#e2252e] rounded-full relative'>
+          <Image src="/fieldmappingicon.svg" alt="" width={20} height={20}/>
+          <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px] text-black'>
+          Adding Form Fields
+          </p>
+        </button>
+
+        <hr className='w-[144px] border-[#E2242E]' />
+        
+        <button className='p-1 bg-[#838383] rounded-full relative'>
+          <Image src="/fieldmappingicon.svg" alt="" width={20} height={20}/>
+          <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px] text-[#838383]'>
+          Form Settings
+          </p>
+        </button>
+
+        <hr className='w-[144px]' />
+
+        <button className='p-1 bg-[#838383] rounded-full relative'>
+          <Image src="/fieldmappingicon.svg" alt="" width={20} height={20}/>
+          <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px] text-[#838383]'>
+            Preview
+          </p>
+        </button>
+
+        <hr className='w-[144px]' />
+
+        <button className='p-1 bg-[#838383] rounded-full relative'>
+          <Image src="/fieldmappingicon.svg" alt="" width={20} height={20}/>
+          <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px] text-[#838383]'>
+            Save
+          </p>
+        </button>
+
+        <hr className='w-[144px]' />
+
+        <button className='p-1 bg-[#838383] rounded-full relative'>
+          <Image src="/fieldmappingicon.svg" alt="" width={20} height={20}/>
+          <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px] text-[#838383]'>
+            Publish Info
+          </p>
+        </button>
       </div>
     </>
   )
