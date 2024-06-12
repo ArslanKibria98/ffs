@@ -1,7 +1,8 @@
 "use client"
 import React, { useState } from 'react'
-import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 
+import { Button } from '@/components/ui/button'
 import {
   Accordion,
   AccordionContent,
@@ -17,9 +18,14 @@ import {
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
 
 import ControlListButton from '@/components/ControlListButton'
 import LeadingListButton from '@/components/LeadingListButton'
+
+import { isCloseToWhite } from '@/lib/utils'
 
 function Page() {
   const [region, setRegion] = useState();
@@ -176,6 +182,74 @@ function Page() {
     },
   ]
 
+  const styleColours1 = [
+    "bg-[#1978DB]",
+    "bg-[#01ADFB]",
+    "bg-[#00C1D9]",
+    "bg-[#009A8C]",
+    "bg-[#39923C]",
+    "bg-[#F11F65]",
+    "bg-[#637E8D]",
+    "bg-[#FF9C00]",
+    "bg-[#EB4B18]",
+    "bg-[#D83030]",
+    "bg-[#4155B9]",
+    "bg-[#242424]",
+    "bg-[#FFFFFF]",
+  ]
+
+  const densities = [
+    {
+      name: "Default",
+      image: "/styling-icons/densityDefault.png"
+    },
+    {
+      name: "Smaller",
+      image: "/styling-icons/densityDefault.png"
+    },
+    {
+      name: "Bigger",
+      image: "/styling-icons/densityDefault.png"
+    },
+    {
+      name: "Classic",
+      image: "/styling-icons/densityDefault.png"
+    },
+  ];
+
+  const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32];
+  const fontStyles = ["Super-Light", "Light", "Medium", "Semi-Bold", "Bold", "Extra-Bold"]
+
+  let formData = {
+    formName: "KYC Form",
+    tabs: [
+      {
+        id: 13278738,
+        name: "Personal Information",
+        fields: [
+          {
+            name: "Full Name",
+            mandatory: false
+          },
+          {
+            name: "Phone Number",
+            mandatory: true
+          }
+        ]
+      },
+      {
+        id: 13278737,
+        name: "Address Information",
+        fields: [
+          {
+            name: "Field 2",
+            mandatory: true
+          }
+        ]
+      }
+    ]
+  }
+
   return (
     <div className="grid grid-cols-4">
       <div className='col-span-1 border border-[#d3d3d3] bg-[#fff]'>
@@ -261,14 +335,211 @@ function Page() {
                 </AccordionItem>
               </Accordion>
             </TabsContent>
-            <TabsContent value="style">Change your password here.</TabsContent>
+            <TabsContent value="style" className="px-6 py-2">
+              <div>
+                <h3>Background Colour </h3>
+
+                <div className='grid grid-cols-7 gap-4 mt-3 mb-5'>
+                    {styleColours1?.map((colour, index) => (
+                      <div key={index} className={colour + (isCloseToWhite(colour) ? " border border-black" : "") + ' h-8 w-8 rounded-full shadow-inner'}></div>
+                    ))}
+                    <div className={'h-8 w-8 rounded-full flex items-center justify-center'}>
+                      <Image src="/styling-icons/colourPicker.svg" alt="icon" width={24} height={24} />
+                    </div>
+                </div>
+              </div>
+              <Separator className="my-3" />
+              <div>
+                <h3>Heading Colour </h3>
+
+                <div className='grid grid-cols-7 gap-4 my-3 mb-5'>
+                    {styleColours1?.map((colour, index) => (
+                      <div key={index} className={colour + (isCloseToWhite(colour) ? " border border-black" : "") + ' h-8 w-8 rounded-full shadow-inner'}></div>
+                    ))}
+                    <div className={'h-8 w-8 rounded-full flex items-center justify-center'}>
+                      <Image src="/styling-icons/colourPicker.svg" alt="icon" width={24} height={24} />
+                    </div>
+                </div>
+              </div>
+              <Separator className="my-3" />
+              <div>
+                <h3>Field Colour </h3>
+
+                <div className='grid grid-cols-7 gap-4 my-3 mb-5'>
+                    {styleColours1?.map((colour, index) => (
+                      <div key={index} className={colour + (isCloseToWhite(colour) ? " border border-black" : "") + ' h-8 w-8 rounded-full shadow-inner'}></div>
+                    ))}
+                    <div className={'h-8 w-8 rounded-full flex items-center justify-center'}>
+                      <Image src="/styling-icons/colourPicker.svg" alt="icon" width={24} height={24} />
+                    </div>
+                </div>
+              </div>
+              <Separator className="my-3" />
+              <div>
+                <h3>Density </h3>
+
+                <div className='grid grid-cols-4 gap-2 my-3 mb-5'>
+                    {densities?.map((density, index) => (
+                      <div key={index} className='flex flex-col items-center'>
+                        <Image src={density.image} alt="Density img" width={70} height={80} />
+                        <p className='text-[#8e8fa3] text-[10px]'>{density.name}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+              <Separator className="my-3" />
+              <div>
+                <h3>Heading Font </h3>
+
+                <div className='space-y-3 my-3 mb-5'>
+                  <div>
+                    <Select className="w-full" onValueChange={(e) => { alert(e) }} defaultValue={16}>
+                      <span className='text-sm'>Font Size</span>
+                      <SelectTrigger className="w-full">
+                        <SelectValue/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontSizes.map((size, index) => (
+                          <SelectItem key={index} value={size}>{size}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Select className="w-full" onValueChange={(e) => { alert(e) }} defaultValue="Bold" >
+                      <span className='text-sm'>Font Style</span>
+                      <SelectTrigger className="w-full">
+                      <SelectValue/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontStyles.map((style, index) => (
+                          <SelectItem key={index} value={style}>{style}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <Separator className="my-3" />
+              <div>
+                <h3>Field Font </h3>
+
+                <div className='space-y-3 my-3 mb-5'>
+                  <div>
+                    <Select className="w-full" onValueChange={(e) => { alert(e) }} defaultValue={16}>
+                      <span className='text-sm'>Font Size</span>
+                      <SelectTrigger className="w-full">
+                        <SelectValue/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontSizes.map((size, index) => (
+                          <SelectItem key={index} value={size}>{size}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Select className="w-full" onValueChange={(e) => { alert(e) }} defaultValue="Bold" >
+                      <span className='text-sm'>Font Style</span>
+                      <SelectTrigger className="w-full">
+                        <SelectValue/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {fontStyles.map((style, index) => (
+                          <SelectItem key={index} value={style}>{style}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
           </div>
         </Tabs>
       </div>
 
       <div className='col-span-3 mx-4'>
-        <div className='bg-[#fff] h-full overflow-auto'>
-          <h4 className='font-semibold p-7 pb-4'>Layout Bar</h4>
+        <div className='bg-[#fff] h-full overflow-auto pb-4'>
+          <h3 className='font-semibold p-7 pb-0'>Layout Bar &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}</h3>
+
+          <div className='p-7 pt-4 flex flex-col'>
+            {/* Tab Section Box */}
+            {formData?.tabs?.map((tab, index) => (
+              <div className='' key={index}>
+                {/* Tab Name Box */}
+                <div className=''>
+                  <div className='flex gap-1 items-center mb-2'>
+                    <Image src="/form-layout-icons/draggableIcon.svg" alt="Drag Icon" height={16} width={16}/>
+                    <h4>Tab {index+1}</h4>
+                  </div>
+
+                  {/* Tab Name Field Box */}
+                  <div className='flex gap-1 items-center w-full'>
+                    <div className='w-[16px]'></div>
+                    <div className='w-full'>
+                      <span className='text-[12px]'>Tab Name</span>
+                      <div className='flex justify-between w-full gap-3'>
+                        <Input className='w-[90%]' type="text" value={tab?.name} name="" id="" />
+                        <div className='flex justify-evenly gap-1 w-[10%]'>
+                          <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff9d00]">
+                            <span className='text-[10px]'>Edit</span>
+                          <Image src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16}/>
+                          </Button>
+                          <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff0200]">
+                            <span className='text-[10px]'>Delete</span>
+                          <Image src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16}/>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br />
+
+                {/* Tab Fields Box */}
+                <div className=' mb-10'>
+                  <div className='flex gap-1 items-center mb-2'>
+                    <div className='w-[16px]'></div>
+                    <h4>Fields</h4>
+                  </div>
+
+                  {/* Tab Name Field Box */}
+                  {tab?.fields?.map((field, index) => (
+                    <div key={index} className='flex flex-col gap-2'>
+                      <div className='flex gap-1 items-center w-full'>
+                        <div className='h-2/3 flex items-baseline border'>
+                          <Image src="/form-layout-icons/draggableIcon.svg" alt="Drag Icon" height={16} width={16}/>
+                        </div>
+                        <div className='w-full'>
+                          <span className='text-[12px]'>{field?.name}</span>
+                          <div className='flex justify-between w-full gap-3'>
+                            <Input className='w-[82%]' type="text" placeholder='Enter Tab Name' name="" id="" />
+                            <div className='flex justify-evenly gap-1 w-[18%]'>
+                              <div className='h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]'>
+                                <span className='text-[10px]'>Mandatory</span>
+                                <Switch />
+                              </div>
+                              <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff9d00]">
+                                <span className='text-[10px]'>Edit</span>
+                                <Image src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16}/>
+                              </Button>
+                              <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]">
+                                <span className='text-[10px]'>Delete</span>
+                                <Image src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16}/>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Separator className="mb-7" />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className='flex flex-row-reverse gap-4 py-1 my-4'>
