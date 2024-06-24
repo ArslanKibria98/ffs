@@ -6,8 +6,7 @@ import callIcon from '@/assets/images/call.svg'
 
 const Footer = () => {
   return (
-    <>
-      <div className="fixed z-20 shadow-xl bottom-0 left-0 w-[100vw] bg-[#f5f5f5] grid border-t grid-cols-2 px-6 p-3">
+      <div className="shadow-xl w-[100vw] bg-[#f5f5f5] grid border-t grid-cols-2 px-6 p-3">
         <div className="col-start-1 flex items-center">
           <Image src={finovalogo} width={153} height={48} alt="" />
         </div>
@@ -19,10 +18,9 @@ const Footer = () => {
             height={18}
             alt=""
           />
-          <span className="ml-1">1234567890</span>
+          <span className="ml-1">123456780</span>
         </div>
       </div>
-    </>
   )
 }
 

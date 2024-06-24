@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google'
 import Providers from "@/components/Providers"
 import { Toaster } from 'react-hot-toast'
 import Footer from "@/components/footer/footer"
-import Dashboard from '@/components/dashboard/dashboard'
+import Header from '@/components/header/header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,8 +17,8 @@ export default function RootLayout({
       <body className={inter.className + " bg-[#f5f5f5]"}>
         <Providers session={session}>
           <Toaster />
-          <Dashboard />
-          <div className="bg-[#f5f5f5]">
+          <Header />
+          <div className="bg-[#f5f5f5] mt-[80px]">
             {children}
           </div>
           <Footer />
