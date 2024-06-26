@@ -6,22 +6,23 @@ export const SET_USER_INFO = (user) => {
       role: user.role,
       nickname: user.nickname,
       id: user.id,
+      tenant_id: user.tenant_id
     },
   };
 };
 
-export const SET_ACCESS_TOKEN = (accessToken) => {
+export const SET_TENANT_ID = (tenant_id) => {
   return {
-    type: 'SET_ACCESS_TOKEN',
+    type: 'SET_TENANT_ID',
     payload: {
-      accessToken: accessToken,
+      tenant_id: tenant_id,
     },
   };
 };
 
 const authAction = {
   SET_USER_INFO,
-  SET_ACCESS_TOKEN,
+  SET_TENANT_ID,
 };
 
 export default authAction;

@@ -1,13 +1,17 @@
 import { combineReducers } from 'redux';
 import { authReducer } from './auth';
 import loadingReducer from './loading';
-import { themeSlice } from './theme';
 import { toastifyReducer } from './toastify/reducers';
+import languageReducer from './language/reducers';
+import { formReducer } from './form';
+
 
 const rootReducer = combineReducers({
   authStore: authReducer,
+  formStore: formReducer,
+  language: languageReducer,
+
   toastifyStore: toastifyReducer,
   loadingStore: loadingReducer,
-  themeStore: themeSlice.reducer,
 });
 export default rootReducer;

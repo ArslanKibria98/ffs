@@ -1,0 +1,22 @@
+{
+    "home": {
+        "en": {
+            "folder": "Folder",
+            "search": "Search",
+            "filter": "Filter by",
+            "sort": "Sort by",
+            "createNewForm": "Create New Form",
+            "columns": [
+                "Form ID",
+                "Form Name",
+                "Repository",
+                "Languages",
+                "Countries",
+                "Created By",
+                "Created Date",
+                "Last Modified By",
+                "Last Modified Date"
+            ]
+        }
+    }
+}

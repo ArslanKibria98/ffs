@@ -2,8 +2,8 @@ const initialState = {
   email: '',
   role: '',
   nickname: '',
-  id: '',
-  accessToken: '',
+  id: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
+  tenant_id: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
   suid: '',
 };
 
@@ -18,12 +18,13 @@ export const authReducer = (state = initialState, action) => {
         role: action.payload.role,
         nickname: action.payload.nickname,
         id: action.payload.id,
+        tenant_id: action.payload.tenant_id,
         suid: action.payload.suid,
       };
-    case 'SET_ACCESS_TOKEN':
+    case 'SET_TENANT_ID':
       return {
         ...state,
-        accessToken: action.payload.accessToken,
+        tenant_id: action.payload.tenant_id,
       };
     default:
       return state;
