@@ -15,7 +15,7 @@ import {
 export default function ControlListButton({ icon, title, controlData }) {
   return (
     <>
-      <Dialog>
+      <Dialog >
         <DialogTrigger>
           <div className={"inline-flex items-center rounded-md text-sm w-full h-10 px-4 py-2"
               +" bg-[#ffffff] hover:bg-[#efefef] border border-[#d9d9d9] justify-start gap-2 font-light text-[12px] text-black overflow-hidden"}

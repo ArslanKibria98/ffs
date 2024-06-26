@@ -1,6 +1,5 @@
 'use client'
 import React, { useState } from 'react'
-
 import {
   Select,
   SelectTrigger,
@@ -25,10 +24,50 @@ export default function AddNewTab() {
   const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
   const fontColours = ['Black', 'White', 'Red', 'Blue', 'Yellow', 'Green']
 
+  const [tabName, setTabName] = useState('')
+  const [minLen, setMinLen] = useState('')
+  const [maxLen, setMaxLen] = useState('')
   const [fontSize, setFontSize] = useState(16)
   const [fontStyle, setFontStyle] = useState('Bold')
   const [fontFamily, setFontFamily] = useState('Normal')
   const [fontColour, setFontColour] = useState('Black')
+
+  const handleSubmit = async () => {
+    const data = {
+      "containerType": 0,
+  "parentContainerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "formVersionId": "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
+      tabName,
+      minLen,
+      maxLen,
+      fontSize,
+      fontStyle,
+      fontFamily,
+      fontColour
+    }
+
+    try {
+      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateContainer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+
+      if (response.ok) {
+        // Handle success (e.g., show a success message, close the dialog, etc.)
+        console.log('Tab saved successfully')
+        let responseData=await response.json()
+        toast.success(responseData.notificationMessage)
+      } else {
+        // Handle error (e.g., show an error message)
+        console.error('Failed to save tab')
+      }
+    } catch (error) {
+      console.error('An error occurred while saving the tab:', error)
+    }
+  }
 
   return (
     <div>
@@ -43,6 +82,8 @@ export default function AddNewTab() {
             name="tabName"
             placeholder="Type Here"
             className="p-4 h-[48px]"
+            value={tabName}
+            onChange={(e) => setTabName(e.target.value)}
           />
         </div>
 
@@ -50,26 +91,36 @@ export default function AddNewTab() {
           <label htmlFor="minLen" className="text-xs font-semibold">
             Minimum Length
           </label>
-          <Input name="minLen" placeholder="0" className="p-4 h-[48px]" />
+          <Input
+            name="minLen"
+            placeholder="0"
+            className="p-4 h-[48px]"
+            value={minLen}
+            onChange={(e) => setMinLen(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor="maxLen" className="text-xs font-semibold">
             Maximum Length
           </label>
-          <Input name="maxLen" placeholder="0" className="p-4 h-[48px]" />
+          <Input
+            name="maxLen"
+            placeholder="0"
+            className="p-4 h-[48px]"
+            value={maxLen}
+            onChange={(e) => setMaxLen(e.target.value)}
+          />
         </div>
 
         <div>
+          <label htmlFor="fontFamily" className="text-xs font-semibold">
+            Font Family
+          </label>
           <Select
             className="w-full"
-            onValueChange={(e) => {
-              setFontFamily(e)
-            }}
+            onValueChange={(e) => setFontFamily(e)}
             defaultValue={fontFamily}
           >
-            <label htmlFor="minLen" className="text-xs font-semibold">
-              Font Family
-            </label>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -83,16 +134,14 @@ export default function AddNewTab() {
           </Select>
         </div>
         <div>
+          <label htmlFor="fontSize" className="text-xs font-semibold">
+            Font Size
+          </label>
           <Select
             className="w-full"
-            onValueChange={(e) => {
-              setFontSize(e)
-            }}
+            onValueChange={(e) => setFontSize(Number(e))}
             defaultValue={fontSize}
           >
-            <label htmlFor="minLen" className="text-xs font-semibold">
-              Font Size
-            </label>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -107,16 +156,14 @@ export default function AddNewTab() {
         </div>
 
         <div>
+          <label htmlFor="fontStyle" className="text-xs font-semibold">
+            Font Style
+          </label>
           <Select
             className="w-full"
-            onValueChange={(e) => {
-              setFontStyle(e)
-            }}
+            onValueChange={(e) => setFontStyle(e)}
             defaultValue={fontStyle}
           >
-            <label htmlFor="maxLen" className="text-xs font-semibold">
-              Font Style
-            </label>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -130,16 +177,14 @@ export default function AddNewTab() {
           </Select>
         </div>
         <div>
+          <label htmlFor="fontColour" className="text-xs font-semibold">
+            Font Colour
+          </label>
           <Select
             className="w-full"
-            onValueChange={(e) => {
-              setFontColour(e)
-            }}
+            onValueChange={(e) => setFontColour(e)}
             defaultValue={fontColour}
           >
-            <label htmlFor="maxLen" className="text-xs font-semibold">
-              Font Colour
-            </label>
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -156,6 +201,7 @@ export default function AddNewTab() {
       <div className="flex flex-row-reverse gap-4 py-1 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+          onClick={handleSubmit}
         >
           Save
         </Button>
