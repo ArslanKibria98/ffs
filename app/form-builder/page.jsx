@@ -35,7 +35,6 @@ import Slider from '@/components/form-builder/controls/Slider'
 
 function Page() {
   const [region, setRegion] = useState()
-
   const controlList = [
     {
       icon: '/control-icons/addNewTab.svg',
@@ -238,6 +237,7 @@ function Page() {
   ]
 
   const [fontSizeH, setFontSizeH] = useState(16)
+  const [formDataApi, setFormDataApi] = useState()
   const [fontStyleH, setFontStyleH] = useState('Bold')
   const [fontSizeF, setFontSizeF] = useState(16)
   const [fontStyleF, setFontStyleF] = useState('Bold')
@@ -284,7 +284,31 @@ function Page() {
   }, [])
   const authStore = useSelector((state) => state.authStore)
   console.log(authStore)
+  useEffect(() => {
+    // Fetch forms from API
+   
+    const fetchForms = async () => {
+      try {
+        const response = await fetch('http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id':'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          },
+         
+        }) 
+        const data = await response.json()
+        console.log(data,"data")
+        setFormDataApi(data?.data?.containers)
+        // setForms(data)
+      } catch (error) {
+        console.error('Error fetching forms:', error)
+      }
+    }
 
+    fetchForms()
+  }, [])
+  console.log(formDataApi,"formDataApi")
   return (
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
@@ -339,12 +363,16 @@ function Page() {
           </h3>
 
           <div className="p-7 pt-4 flex flex-col">
-            {formData?.tabs?.map((tab, index) => (
+         
+            {formDataApi?.map((tab, index) => (
+              <>
+          
               <TabSection key={index} tab={tab} index={index}>
                 {tab?.fields?.map((field, index) => (
                   <FieldInfo field={field} key={index} />
                 ))}
               </TabSection>
+              </>
             ))}
           </div>
         </div>

@@ -10,7 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
-
+import toast from 'react-hot-toast'
 export default function AddNewTab() {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
@@ -34,23 +34,20 @@ export default function AddNewTab() {
 
   const handleSubmit = async () => {
     const data = {
-      "containerType": 0,
-  "parentContainerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  "formVersionId": "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
-      tabName,
-      minLen,
-      maxLen,
-      fontSize,
-      fontStyle,
-      fontFamily,
-      fontColour
+      containerType: 0,
+  parentContainerId: "00000000-0000-0000-0000-000000000000",
+  formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
+      fontSize:fontSize.toString(),
+      fontFamily:fontFamily,
+      fontColor:fontColour
     }
 
     try {
       const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateContainer', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Request-Id': 'b561073e-d25b-4057-a1d3-7299129ff0f2'
         },
         body: JSON.stringify(data)
       })
@@ -87,30 +84,7 @@ export default function AddNewTab() {
           />
         </div>
 
-        <div>
-          <label htmlFor="minLen" className="text-xs font-semibold">
-            Minimum Length
-          </label>
-          <Input
-            name="minLen"
-            placeholder="0"
-            className="p-4 h-[48px]"
-            value={minLen}
-            onChange={(e) => setMinLen(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="maxLen" className="text-xs font-semibold">
-            Maximum Length
-          </label>
-          <Input
-            name="maxLen"
-            placeholder="0"
-            className="p-4 h-[48px]"
-            value={maxLen}
-            onChange={(e) => setMaxLen(e.target.value)}
-          />
-        </div>
+    
 
         <div>
           <label htmlFor="fontFamily" className="text-xs font-semibold">
@@ -155,27 +129,7 @@ export default function AddNewTab() {
           </Select>
         </div>
 
-        <div>
-          <label htmlFor="fontStyle" className="text-xs font-semibold">
-            Font Style
-          </label>
-          <Select
-            className="w-full"
-            onValueChange={(e) => setFontStyle(e)}
-            defaultValue={fontStyle}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {fontStyles.map((style, index) => (
-                <SelectItem key={index} value={style}>
-                  {style}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+       
         <div>
           <label htmlFor="fontColour" className="text-xs font-semibold">
             Font Colour

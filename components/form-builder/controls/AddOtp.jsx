@@ -13,24 +13,53 @@ import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
+import toast from 'react-hot-toast'
 
 export default function AddOtp() {
-  const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-  const fontStyles = [
-    'Super-Light',
-    'Light',
-    'Medium',
-    'Semi-Bold',
-    'Bold',
-    'Extra-Bold'
-  ]
-  const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
   const fontColours = ['4-digits', '5-digits', '6-digits']
+  const otpFormatMapping = {
+    '4-digits': 4,
+    '5-digits': 5,
+    '6-digits': 6
+  }
 
-  const [fontSize, setFontSize] = useState(16)
-  const [fontStyle, setFontStyle] = useState('Bold')
-  const [fontFamily, setFontFamily] = useState('Normal')
-  const [fontColour, setFontColour] = useState('Black')
+  const [question, setQuestion] = useState('')
+  const [isRequired, setIsRequired] = useState(false)
+  const [otpFormat, setOtpFormat] = useState('4-digits')
+
+  const handleSubmit = async () => {
+    const postData = {
+      formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
+      containerId: "df295140-2d88-4a74-6120-08dc95b8df2b",
+      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
+      controlType: 0,
+  
+      question: question,
+      is_Required: isRequired,
+      otp_Format: otpFormatMapping[otpFormat]
+    }
+
+    try {
+      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateOtp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Request-Id': 'aeb6cea3-3d50-4e58-8c87-e2cb535fefc9'
+        },
+        body: JSON.stringify(postData)
+      })
+
+      if (response.ok) {
+        let responseData=await response.json()
+        toast.success(responseData?.notificationMessage)
+        console.log('OTP added successfully')
+      } else {
+        console.error('Failed to add OTP')
+      }
+    } catch (error) {
+      console.error('Error:', error)
+    }
+  }
 
   return (
     <div>
@@ -45,10 +74,15 @@ export default function AddOtp() {
             name="tabName"
             placeholder="Type Here"
             className="p-4 h-[48px]"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
           />
         </div>
         <div className='my-4 col-span-2 flex items-center space-x-2'>
-        <Checkbox2 />
+        <Checkbox2
+          checked={isRequired}
+          onCheckedChange={(e) => setIsRequired(e.target.checked)}
+        />
         <label
           htmlFor="terms"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -65,8 +99,8 @@ export default function AddOtp() {
           </label>
           <Select
             className="w-full"
-            onValueChange={(e) => setFontColour(e)}
-            defaultValue={fontColour}
+            onValueChange={(e) => setOtpFormat(e)}
+            defaultValue={otpFormat}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -86,6 +120,7 @@ export default function AddOtp() {
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+          onClick={handleSubmit}
         >
           Save
         </Button>

@@ -14,11 +14,12 @@ const Footer = () => {
           <Image
             className="pl-2"
             src={callIcon}
-            width={18}
-            height={18}
+            width={24}
+            height={24}
             alt=""
           />
-          <span className="ml-1">123456780</span>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <span className="ml-1 font-semibold text-xl">800{" "}1111{" "}810</span>
         </div>
       </div>
   )
