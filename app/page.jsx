@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import toast from "react-hot-toast"
 
 import {
   Table,
@@ -23,50 +24,54 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-
-import toast from "react-hot-toast"
-
-import localisationData from "@/localisation.json"
-import { useSelector } from 'react-redux';
 import BoxLoader from "@/components/BoxLoader";
 
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsLoading } from "@/redux/store/loading";
+
+import localisationData from "@/localisation.json"
+
 const formFlow = () => {
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state?.loadingStore?.value);
+  // console.log(loading);
   const language = useSelector((state) => state.language.language);
   const userId = useSelector((state) => state.authStore.id);
   const tenantId = useSelector((state) => state.authStore.tenant_id);
   // console.log(userId)
 
   const [forms, setForms] = useState([
-    {
-      formId: "FFS-1",
-      formName: "Dummy Name",
-      repositoryName: "Repository",
-      languages: ["English", "Arabic"],
-      countries: ["Pakistan", "KSA"],
-      createdBy: "Dummy",
-      createdDate: "12/2/24",
-      lastModifiedBy: "Dummy",
-      lastModifiedDate: "12/2/24",
-      versionNumber: "1.0",
-      status: "Unpublished"
-    },
-    {
-      formId: "FFS-2",
-      formName: "Dummy Name 2",
-      repositoryName: "Repository 2",
-      languages: ["Arabic", "Turkish"],
-      countries: ["KSA", "Turky"],
-      createdBy: "Dummy 2",
-      createdDate: "2/2/20",
-      lastModifiedBy: "Dummy 2",
-      lastModifiedDate: "10/2/14",
-      versionNumber: "1.4",
-      status: "Published"
-    },
+    // {
+    //   formId: "FFS-1",
+    //   formName: "Dummy Name",
+    //   repositoryName: "Repository",
+    //   languages: ["English", "Arabic"],
+    //   countries: ["Pakistan", "KSA"],
+    //   createdBy: "Dummy",
+    //   createdDate: "12/2/24",
+    //   lastModifiedBy: "Dummy",
+    //   lastModifiedDate: "12/2/24",
+    //   versionNumber: "1.0",
+    //   status: "Unpublished"
+    // },
+    // {
+    //   formId: "FFS-2",
+    //   formName: "Dummy Name 2",
+    //   repositoryName: "Repository 2",
+    //   languages: ["Arabic", "Turkish"],
+    //   countries: ["KSA", "Turky"],
+    //   createdBy: "Dummy 2",
+    //   createdDate: "2/2/20",
+    //   lastModifiedBy: "Dummy 2",
+    //   lastModifiedDate: "10/2/14",
+    //   versionNumber: "1.4",
+    //   status: "Published"
+    // },
   ])
   const router=useRouter()
 
   useEffect(() => {
+    dispatch(setIsLoading(true));
     return async () => {
       try {
         const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}`,{
@@ -81,13 +86,16 @@ const formFlow = () => {
         // console.log(data.data);
         if (data?.data?.length > 0) {
           // console.log(data.data)
+          dispatch(setIsLoading(false));
           setForms(data.data)
         } else {
+          dispatch(setIsLoading(false));
           toast.error("No forms found for this user!");
         }
       } catch (error) {
         console.error('Error fetching forms:', error)
       }
+      dispatch(setIsLoading(false));
     }
   }, [])
 
@@ -99,12 +107,12 @@ const formFlow = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': '081eff6f-0897-467f-9925-e202db311ac4'
+            'Request-Id': 'b2c8cc2f-16e3-4447-abdf-e76ee3e5db2a'
           },
           body: JSON.stringify({
-            tenantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-            formName: '',
-            userId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            tenantId: tenantId,
+            formName: 'string',
+            userId: userId,
             repositoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
           })
         }
@@ -217,6 +225,13 @@ const formFlow = () => {
               </TableRow>
             ))}
             <TableRow><TableCell></TableCell></TableRow>
+
+            {loading && (
+              <TableRow><TableCell></TableCell><TableCell></TableCell>
+                <TableCell></TableCell><TableCell></TableCell>
+                <TableCell><BoxLoader /></TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
