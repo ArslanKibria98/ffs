@@ -32,6 +32,7 @@ import Rating from '@/components/form-builder/controls/Rating'
 import EmailAddress from '@/components/form-builder/controls/EmailAddress'
 import List from '@/components/form-builder/controls/List'
 import Slider from '@/components/form-builder/controls/Slider'
+import BoxLoader from '@/components/BoxLoader';
 
 function Page() {
   const [region, setRegion] = useState()
@@ -313,7 +314,6 @@ function Page() {
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
         <h4 className="font-semibold p-7 pb-4">Items Bar</h4>
-
         <Tabs defaultValue="build">
           <TabsList className="grid grid-cols-2 gap-1 py-1">
             <TabsTrigger value="build" className="rounded-none">
@@ -368,7 +368,7 @@ function Page() {
               <>
           
               <TabSection key={index} tab={tab} index={index}>
-                {tab?.fields?.map((field, index) => (
+                {tab?.controlItems?.map((field, index) => (
                   <FieldInfo field={field} key={index} />
                 ))}
               </TabSection>

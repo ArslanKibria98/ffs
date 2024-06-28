@@ -39,7 +39,8 @@ export default function AddNewTab() {
   formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
       fontSize:fontSize.toString(),
       fontFamily:fontFamily,
-      fontColor:fontColour
+      fontColor:fontColour,
+      containerName:tabName,
     }
 
     try {
