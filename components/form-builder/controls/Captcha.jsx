@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function Captcha() {
+export default function Captcha({ getter, setter }) {
   return (
     <div>
       <DialogTitle>Add Captcha</DialogTitle>

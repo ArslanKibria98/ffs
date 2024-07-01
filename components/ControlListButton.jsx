@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import Image from 'next/image'
 
@@ -12,11 +12,16 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog'
 
-export default function ControlListButton({ icon, title, controlData }) {
+export default function ControlListButton({ icon, title, controlData, index, controlModalManager, setControlModalManager }) {
+  useEffect(()=>{
+    if (controlModalManager[index]) {
+      console.log(controlModalManager, index)
+    }
+  }, [controlModalManager])
   return (
     <>
-      <Dialog >
-        <DialogTrigger>
+      <Dialog open={controlModalManager[index]} onOpenChange={()=>{setControlModalManager(index)}}>
+        <DialogTrigger onClick={()=>{setControlModalManager(index)}}>
           <div className={"inline-flex items-center rounded-md text-sm w-full h-10 px-4 py-2"
               +" bg-[#ffffff] hover:bg-[#efefef] border border-[#d9d9d9] justify-start gap-2 font-light text-[12px] text-black overflow-hidden"}
           >
@@ -28,6 +33,7 @@ export default function ControlListButton({ icon, title, controlData }) {
           <DialogHeader>
             {controlData}
           </DialogHeader>
+          <DialogDescription></DialogDescription>
         </DialogContent>
       </Dialog>
     </>

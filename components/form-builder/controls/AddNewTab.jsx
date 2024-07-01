@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
-export default function AddNewTab() {
+export default function AddNewTab({ getter, setter }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
     'Super-Light',
@@ -35,8 +35,8 @@ export default function AddNewTab() {
   const handleSubmit = async () => {
     const data = {
       containerType: 0,
-  parentContainerId: "00000000-0000-0000-0000-000000000000",
-  formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
+      parentContainerId: "00000000-0000-0000-0000-000000000000",
+      formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
       fontSize:fontSize.toString(),
       fontFamily:fontFamily,
       fontColor:fontColour,
@@ -57,13 +57,16 @@ export default function AddNewTab() {
         // Handle success (e.g., show a success message, close the dialog, etc.)
         console.log('Tab saved successfully')
         let responseData=await response.json()
+        setter(!getter);
         toast.success(responseData.notificationMessage)
       } else {
         // Handle error (e.g., show an error message)
         console.error('Failed to save tab')
+        toast.error("Failed to save tab!");
       }
     } catch (error) {
       console.error('An error occurred while saving the tab:', error)
+      toast.error("Something went wrong!");
     }
   }
 

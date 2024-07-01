@@ -58,6 +58,7 @@
     font-size: 12px;
     text-align: center;
 }
+
 .boxes {
     --size: 32px;
     --duration: 800ms;

@@ -10,6 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableCaption
 } from "@/components/ui/table"
 import {
   Command,
@@ -27,42 +28,44 @@ import { Button } from "@/components/ui/button"
 import toast from "react-hot-toast"
 
 import localisationData from "@/localisation.json"
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsLoading } from "@/redux/store/loading";
 import BoxLoader from "@/components/BoxLoader";
 
 const formFlow = () => {
+  const dispatch = useDispatch();
   const language = useSelector((state) => state.language.language);
   const userId = useSelector((state) => state.authStore.id);
   const tenantId = useSelector((state) => state.authStore.tenant_id);
-  // console.log(userId)
+  const loading = useSelector((state) => state.loadingStore.value);
 
   const [forms, setForms] = useState([
-    {
-      formId: "FFS-1",
-      formName: "Dummy Name",
-      repositoryName: "Repository",
-      languages: ["English", "Arabic"],
-      countries: ["Pakistan", "KSA"],
-      createdBy: "Dummy",
-      createdDate: "12/2/24",
-      lastModifiedBy: "Dummy",
-      lastModifiedDate: "12/2/24",
-      versionNumber: "1.0",
-      status: "Unpublished"
-    },
-    {
-      formId: "FFS-2",
-      formName: "Dummy Name 2",
-      repositoryName: "Repository 2",
-      languages: ["Arabic", "Turkish"],
-      countries: ["KSA", "Turky"],
-      createdBy: "Dummy 2",
-      createdDate: "2/2/20",
-      lastModifiedBy: "Dummy 2",
-      lastModifiedDate: "10/2/14",
-      versionNumber: "1.4",
-      status: "Published"
-    },
+    // {
+    //   formId: "FFS-1",
+    //   formName: "Dummy Name",
+    //   repositoryName: "Repository",
+    //   languages: ["English", "Arabic"],
+    //   countries: ["Pakistan", "KSA"],
+    //   createdBy: "Dummy",
+    //   createdDate: "12/2/24",
+    //   lastModifiedBy: "Dummy",
+    //   lastModifiedDate: "12/2/24",
+    //   versionNumber: "1.0",
+    //   status: "Unpublished"
+    // },
+    // {
+    //   formId: "FFS-2",
+    //   formName: "Dummy Name 2",
+    //   repositoryName: "Repository 2",
+    //   languages: ["Arabic", "Turkish"],
+    //   countries: ["KSA", "Turky"],
+    //   createdBy: "Dummy 2",
+    //   createdDate: "2/2/20",
+    //   lastModifiedBy: "Dummy 2",
+    //   lastModifiedDate: "10/2/14",
+    //   versionNumber: "1.4",
+    //   status: "Published"
+    // },
   ])
   const router=useRouter()
 
@@ -82,11 +85,14 @@ const formFlow = () => {
         if (data?.data?.length > 0) {
           // console.log(data.data)
           setForms(data.data)
+          dispatch(setIsLoading(false));
         } else {
+          dispatch(setIsLoading(false));
           toast.error("No forms found for this user!");
         }
       } catch (error) {
-        console.error('Error fetching forms:', error)
+        dispatch(setIsLoading(false));
+        toast.error("Server Unavailable!");
       }
     }
   }, [])
@@ -102,9 +108,9 @@ const formFlow = () => {
             'Request-Id': '081eff6f-0897-467f-9925-e202db311ac4'
           },
           body: JSON.stringify({
-            tenantId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            tenantId: userId,
             formName: '',
-            userId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+            userId: userId,
             repositoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
           })
         }
@@ -115,6 +121,7 @@ const formFlow = () => {
         // const updatedForms = await response.json()
         toast.success(responseData.notificationMessage)
         router.push('/form-builder')
+        dispatch(setIsLoading(true));
       } else {
         console.error('Failed to create form')
       }
@@ -218,6 +225,16 @@ const formFlow = () => {
             ))}
             <TableRow><TableCell></TableCell></TableRow>
           </TableBody>
+          {loading && forms.length < 1 ? (
+            <TableCaption>
+              <BoxLoader />
+            </TableCaption>
+          ) : ""}
+          {!loading && forms.length < 1 ? (
+            <TableCaption className="pb-4">
+              No Forms Found for this user!
+            </TableCaption>
+          ) : ""}
         </Table>
       </div>
     </div>

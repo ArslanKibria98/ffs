@@ -30,7 +30,7 @@ export default function AddTextField() {
   const [errorMessagePosition, setErrorMessagePosition] = useState('option-one');
   const [isMandatory, setIsMandatory] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = ({ getter, setter }) => {
     const formData = {
       formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
       containerId: "5b092436-804a-4c99-6b82-08dc99b4c99f",
@@ -60,9 +60,11 @@ export default function AddTextField() {
       .then(data => {
         console.log('Success:', data);
         toast.success(data.notificationMessage)
+        setter(!getter);
       })
       .catch((error) => {
         console.error('Error:', error);
+        toast.error("Something went wrong!")
       });
   };
 

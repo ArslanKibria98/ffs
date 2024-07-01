@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function LosControl() {
+export default function LosControl({getter, setter}) {
   return (
     <div>
       <DialogTitle>Add LOS Control</DialogTitle>

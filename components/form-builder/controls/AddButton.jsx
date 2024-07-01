@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function AddButton() {
+export default function AddButton({ getter, setter }) {
   return (
     <div className=''>
       <DialogTitle>Add Button</DialogTitle>

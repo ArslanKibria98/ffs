@@ -15,7 +15,7 @@ import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
 
-export default function PhoneNumber() {
+export default function PhoneNumber({ getter, setter }) {
   const fontFamilies = ['any']
 
   const [question, setQuestion] = useState('')
@@ -47,15 +47,19 @@ export default function PhoneNumber() {
 
       if (response.ok) {
         const data = await response.json()
-      toast.success(data.notificationMessage)
-        
+        toast.success(data.notificationMessage)
+        setter(!getter);
         // Handle success (e.g., show a success message, close dialog, etc.)
       } else {
+        // setter(!getter);
         console.error('Error:', response.statusText)
+        toast.error("Unable to Save!")
         // Handle error (e.g., show an error message)
       }
     } catch (error) {
+      // setter(!getter);
       console.error('Error:', error)
+      toast.error("Something went wrong!")
       // Handle network error
     }
   }

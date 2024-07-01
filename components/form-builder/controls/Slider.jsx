@@ -15,7 +15,7 @@ import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
 
-export default function Slider() {
+export default function Slider({ getter, setter }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
     'Super-Light',
@@ -62,14 +62,19 @@ export default function Slider() {
       if (response.ok) {
         // Handle success
         let responseData= await response.json()
+        setter(!getter);
         toast.success(responseData.notificationMessage)
         console.log('Successfully saved')
       } else {
         // Handle error
+        // setter(!getter);
         console.log('Failed to save')
+        toast.error("Failed to save")
       }
     } catch (error) {
+      // setter(!getter);
       console.error('Error:', error)
+      toast.error("Something went wrong!")
     }
   }
 

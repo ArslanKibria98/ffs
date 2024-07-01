@@ -15,7 +15,7 @@ import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
 
-export default function AddOtp() {
+export default function AddOtp({ getter, setter }) {
   const fontColours = ['4-digits', '5-digits', '6-digits']
   const otpFormatMapping = {
     '4-digits': 4,
@@ -51,13 +51,16 @@ export default function AddOtp() {
 
       if (response.ok) {
         let responseData=await response.json()
+        setter(!getter);
         toast.success(responseData?.notificationMessage)
         console.log('OTP added successfully')
       } else {
         console.error('Failed to add OTP')
+        toast.error("Unable to save!")
       }
     } catch (error) {
       console.error('Error:', error)
+      toast.error("Something went wrong!")
     }
   }
 

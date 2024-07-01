@@ -1,14 +1,13 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 
-import { store } from '@/redux/store';
-import { useSelector } from 'react-redux'
-import { SET_USER_INFO } from '@/redux/store/auth';
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsLoading } from "@/redux/store/loading";
 
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import FieldInfo from '@/components/form-builder/FieldInfo'
-import Link from 'next/link';
+import Link from 'next/link'
 
 import TabSection from '@/components/form-builder/TabSection'
 import BuildTab from '@/components/form-builder/tabs/BuildTab'
@@ -32,120 +31,195 @@ import Rating from '@/components/form-builder/controls/Rating'
 import EmailAddress from '@/components/form-builder/controls/EmailAddress'
 import List from '@/components/form-builder/controls/List'
 import Slider from '@/components/form-builder/controls/Slider'
-import BoxLoader from '@/components/BoxLoader';
+
+import toast from 'react-hot-toast'
+import BoxLoader from '@/components/BoxLoader'
 
 function Page() {
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.loadingStore.value);
+  const userId = useSelector((state) => state.authStore.id);
+  const tenantId = useSelector((state) => state.authStore.tenant_id);
+
   const [region, setRegion] = useState()
+  
+  const [usAddNewTab, setAddNewTab] = useState(false)
+  const [usAddTextField, setAddTextField] = useState(false)
+  const [usRadioButton, setRadioButton] = useState(false)
+  const [usDropDown, setDropDown] = useState(false)
+  const [usLosControl, setLosControl] = useState(false)
+  const [usCalendar, setCalendar] = useState(false)
+  const [usFileUpload, setFileUpload] = useState(false)
+  const [usAddOtp, setAddOtp] = useState(false)
+  const [usCheckbox, setCheckbox] = useState(false)
+  const [usTime, setTime] = useState(false)
+  const [usPhoneNumber, setPhoneNumber] = useState(false)
+  const [usTable, setTable] = useState(false)
+  const [usSignature, setSignature] = useState(false)
+  const [usCaptcha, setCaptcha] = useState(false)
+  const [usAddButton, setAddButton] = useState(false)
+  const [usRating, setRating] = useState(false)
+  const [usEmailAddress, setEmailAddress] = useState(false)
+  const [usList, setList] = useState(false)
+  const [usSlider, setSlider] = useState(false)
+
+  const controlModalManager = [
+    usAddNewTab,
+    usAddTextField,
+    usRadioButton,
+    usDropDown,
+    usLosControl,
+    usCalendar,
+    usFileUpload,
+    usAddOtp,
+    usCheckbox,
+    usTime,
+    usPhoneNumber,
+    usTable,
+    usSignature,
+    usCaptcha,
+    usAddButton,
+    usRating,
+    usEmailAddress,
+    usList,
+    usSlider,
+  ];
+  const controlModalSetterManager = [
+    setAddNewTab,
+    setAddTextField,
+    setRadioButton,
+    setDropDown,
+    setLosControl,
+    setCalendar,
+    setFileUpload,
+    setAddOtp,
+    setCheckbox,
+    setTime,
+    setPhoneNumber,
+    setTable,
+    setSignature,
+    setCaptcha,
+    setAddButton,
+    setRating,
+    setEmailAddress,
+    setList,
+    setSlider,
+  ];
+  function controlModalModifier(index) {
+    controlModalSetterManager[index](!controlModalManager[index]);
+  }
+
   const controlList = [
     {
       icon: '/control-icons/addNewTab.svg',
       title: 'Add New Tab',
-      data: <AddNewTab />
+      data: <AddNewTab getter={usAddNewTab} setter={setAddNewTab} />
     },
     {
       icon: '/control-icons/addTextField.svg',
       title: 'Add Text Field',
-      data: <AddTextField />
+      data: <AddTextField getter={usAddTextField} setter={setAddTextField} />
     },
     {
       icon: '/control-icons/addRadioButton.svg',
       title: 'Radio Button',
-      data: <RadioButton />
+      data: <RadioButton getter={usRadioButton} setter={setRadioButton} />
     },
     {
       icon: '/control-icons/addDropDown.svg',
       title: 'Drop Down',
-      data: <DropDown />
+      data: <DropDown getter={usDropDown} setter={setDropDown} />
     },
     {
       icon: '/control-icons/addLOSControl.svg',
       title: 'LOS Control',
-      data: <LosControl />
+      data: <LosControl getter={usLosControl} setter={setLosControl} />
     },
     {
       icon: '/control-icons/addCalander.svg',
       title: 'Calendar',
-      data: <Calendar />
+      data: <Calendar getter={usCalendar} setter={setCalendar} />
     },
     {
       icon: '/control-icons/addFileUpload.svg',
       title: 'File Upload',
-      data: <FileUpload />
+      data: <FileUpload getter={usFileUpload} setter={setFileUpload} />
     },
     {
       icon: '/control-icons/addOtp.svg',
       title: 'Add OTP',
-      data: <AddOtp />
+      data: <AddOtp getter={usAddOtp} setter={setAddOtp} />
     },
     {
       icon: '/control-icons/addCheckbox.svg',
       title: 'Checkbox',
-      data: <Checkbox />
+      data: <Checkbox getter={usCheckbox} setter={setCheckbox} />
     },
     {
       icon: '/control-icons/addTime.svg',
       title: 'Time',
-      data: <Time />
+      data: <Time getter={usTime} setter={setTime} />
     },
     {
       icon: '/control-icons/addPhone.svg',
       title: 'Phone Number',
-      data: <PhoneNumber />
+      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} />
     },
     {
       icon: '/control-icons/addTable.svg',
       title: 'Table',
-      data: <Table />
+      data: <Table getter={usTable} setter={setTable} />
     },
     {
       icon: '/control-icons/addSignature.svg',
       title: 'Signature',
-      data: <Signature />
+      data: <Signature getter={usSignature} setter={setSignature} />
     },
     {
       icon: '/control-icons/addCaptcha.svg',
       title: 'Captcha',
-      data: <Captcha />
+      data: <Captcha getter={usCaptcha} setter={setCaptcha} />
     },
     {
       icon: '/control-icons/addButton.svg',
       title: 'Button',
-      data: <AddButton />
+      data: <AddButton getter={usAddButton} setter={setAddButton} />
     },
     {
       icon: '/control-icons/addRating.svg',
       title: 'Rating',
-      data: <Rating />
+      data: <Rating getter={usRating} setter={setRating} />
     },
     {
       icon: '/control-icons/addEmailAddress.svg',
       title: 'Email Address',
-      data: <EmailAddress />
+      data: <EmailAddress getter={usEmailAddress} setter={setEmailAddress} />
     },
     {
       icon: '/control-icons/addList.svg',
       title: 'List',
-      data: <List />
+      data: <List getter={usList} setter={setList} />
     },
     {
       icon: '/control-icons/addSlider.svg',
       title: 'Slider',
-      data: <Slider />
+      data: <Slider getter={usSlider} setter={setSlider} />
     }
   ]
+
   const LeadingList = [
     {
       icon: '/leading-icons/addLoanCalculator.svg',
       title: 'Loan Calculator',
       func: () => {
-        alert('Button')
+        alert('Loan Calculator Button')
       }
     },
     {
       icon: '/leading-icons/addVehicleEvaluator.svg',
       title: 'Vehicle Evaluator',
       func: () => {
-        alert('Button')
+        alert('Vehicle Evaluator Button')
       }
     }
   ]
@@ -238,7 +312,7 @@ function Page() {
   ]
 
   const [fontSizeH, setFontSizeH] = useState(16)
-  const [formDataApi, setFormDataApi] = useState()
+  const [formDataApi, setFormDataApi] = useState([])
   const [fontStyleH, setFontStyleH] = useState('Bold')
   const [fontSizeF, setFontSizeF] = useState(16)
   const [fontStyleF, setFontStyleF] = useState('Bold')
@@ -273,43 +347,32 @@ function Page() {
     ]
   }
 
-  useEffect(() => {
-    return () => {
-      store.dispatch(SET_USER_INFO({
-        email: "saif",
-        role: "admin",
-        nickname: "saik",
-        id: 892988923
-      }));
-    }
-  }, [])
-  const authStore = useSelector((state) => state.authStore)
-  console.log(authStore)
-  useEffect(() => {
-    // Fetch forms from API
-   
-    const fetchForms = async () => {
-      try {
-        const response = await fetch('http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',{
+  const fetchForms = async () => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id':'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          },
-         
-        }) 
-        const data = await response.json()
-        console.log(data,"data")
-        setFormDataApi(data?.data?.containers)
-        // setForms(data)
-      } catch (error) {
-        console.error('Error fetching forms:', error)
-      }
+            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          }
+        }
+      )
+      const data = await response.json()
+      
+      setFormDataApi(data?.data?.containers)
+      dispatch(setIsLoading(false));
+    } catch (error) {
+      console.error('Error fetching forms:', error)
+      toast.error("Unable to get Form");
+      dispatch(setIsLoading(false));
     }
-
-    fetchForms()
+  }
+  useEffect(() => {
+    return () => fetchForms();
   }, [])
-  console.log(formDataApi,"formDataApi")
+
   return (
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
@@ -331,6 +394,8 @@ function Page() {
                 setRegion={setRegion}
                 countryList={countryList}
                 LeadingList={LeadingList}
+                controlModalManager={controlModalManager}
+                setControlModalManager={controlModalModifier}
               />
             </TabsContent>
             <TabsContent value="style" className="px-6 py-2">
@@ -363,34 +428,35 @@ function Page() {
           </h3>
 
           <div className="p-7 pt-4 flex flex-col">
-         
             {formDataApi?.map((tab, index) => (
               <>
-          
-              <TabSection key={index} tab={tab} index={index}>
-                {tab?.controls?.map((field, index) => (
-                  <FieldInfo field={field} key={index} />
-                ))}
-              </TabSection>
+                <TabSection key={index} tab={tab} index={index}>
+                  {tab?.controls?.map((field, index) => (
+                    <FieldInfo field={field} key={index} />
+                  ))}
+                </TabSection>
               </>
             ))}
+            {loading && formDataApi.length < 1 ? (<><BoxLoader /></>) : ""}
+            {!loading && formDataApi.length < 1 ? (<p className='text-sm text-center text-gray-600'>
+              Form Empty!
+            </p>) : ""}
           </div>
         </div>
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
           <Link href="/form-builder/settings">
-          <Button
-            className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
-          >
-            Next
-          </Button>
+            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">
+              Next
+            </Button>
           </Link>
+          <Link href="/">
           <Button
-            onClick={() => dispatch(setAuthState(false))}
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
           >
             Previous
           </Button>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import ControlListButton from '@/components/ControlListButton'
 import LeadingListButton from '@/components/LeadingListButton'
@@ -7,7 +7,7 @@ import LeadingListButton from '@/components/LeadingListButton'
 import { Accordion, AccordionTrigger, AccordionItem, AccordionContent } from '@/components/ui/accordion';
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from '@/components/ui/select';
 
-function BuildTab({ controlList, region, setRegion, countryList, LeadingList }) {
+function BuildTab({ controlList, region, setRegion, countryList, LeadingList, controlModalManager, setControlModalManager }) {
     return (
         <Accordion className='overflow-auto' type="single" defaultValue="item-1" collapsible>
             <AccordionItem value="item-1" className="mb-1">
@@ -15,9 +15,17 @@ function BuildTab({ controlList, region, setRegion, countryList, LeadingList }) 
                     Basic Controls
                 </AccordionTrigger>
                 <AccordionContent className="p-7 py-5 bg-[#fafafa] border-b border-[#e2e2e2] overflow-auto max-h-[307px]">
-                    <div className='grid grid-cols-2 gap-x-2 gap-y-2'>
+                    <div className='grid grid-cols-1 xl:grid-cols-2 gap-x-2 gap-y-2'>
                         {controlList && controlList?.map((control, index) => (
-                            <ControlListButton key={index} icon={control?.icon} title={control?.title} controlData={control?.data} />
+                            <ControlListButton 
+                                key={index} 
+                                index={index} 
+                                icon={control?.icon} 
+                                title={control?.title} 
+                                controlData={control?.data} 
+                                controlModalManager={controlModalManager}
+                                setControlModalManager={setControlModalManager}
+                            />
                         ))}
                     </div>
                 </AccordionContent>
