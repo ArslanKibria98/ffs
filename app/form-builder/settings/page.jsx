@@ -15,8 +15,10 @@ import { Checkbox2 } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const router=useRouter()
   const availableLanguages = ['English', 'Urdu', 'Spanish'];
   const availableCountries = ['Pakistan', 'India'];
 
@@ -54,7 +56,7 @@ export default function Page() {
       successMessage:fieldPlaceholder,
       failMessage:fieldPlaceholderFail,
       // isMandatory,
-      defaultLanguage:defaultLanguage,
+      DefualtLanguage:defaultLanguage,
       defaultCountry:defaultCountry,
       languages: selectedLanguages,
       countries: selectedCountries
@@ -71,10 +73,12 @@ export default function Page() {
       });
 
       if (response.ok) {
-        let responseData=response.json()
+        let responseData=await response.json()
+        console.log(responseData,"1---1")
         toast.success(responseData?.notificationMessage)
+        router.push("/form-builder/preview")
       } else {
-        // toast.success(responseData?.errors[0])
+        toast.success(responseData?.errors[0])
         toast.error('Failed to submit the form.');
       }
     } catch (error) {
@@ -127,7 +131,7 @@ export default function Page() {
               onChange={(e) => setFieldPlaceholderFail(e.target.value)}
             />
           </div>
-<div className='border-t-4 border-red-500 text-xl font-semibold mt-4 col-span-2'>tryctuvibo</div>
+<div className='border-t-4 border-rgb(131 131 131)-500 text-xl font-semibold mt-4 col-span-2'></div>
           <h5 className="text-xl font-semibold mt-4 col-span-2">Language Settings</h5>
 
           <div className="col-span-1">
@@ -156,6 +160,7 @@ export default function Page() {
               </div>
             ))}
           </div>
+          <div className='border-t-4 border-rgb(131 131 131)-500 text-xl font-semibold mt-4 col-span-2'></div>
           <div className="col-span-2">
             <label htmlFor="tabName" className="text-xl font-semibold mt-4 col-span-2">Country Settings</label>
           </div>
