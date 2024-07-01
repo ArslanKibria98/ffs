@@ -8,11 +8,11 @@ import { SET_USER_INFO } from '@/redux/store/auth';
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import FieldInfo from '@/components/form-builder/FieldInfo'
+import Link from 'next/link';
 
 import TabSection from '@/components/form-builder/TabSection'
 import BuildTab from '@/components/form-builder/tabs/BuildTab'
 import StyleTab from '@/components/form-builder/tabs/StyleTab'
-
 import AddNewTab from '@/components/form-builder/controls/AddNewTab'
 import AddTextField from '@/components/form-builder/controls/AddTextField'
 import RadioButton from '@/components/form-builder/controls/RadioButton'
@@ -368,7 +368,7 @@ function Page() {
               <>
           
               <TabSection key={index} tab={tab} index={index}>
-                {tab?.controlItems?.map((field, index) => (
+                {tab?.controls?.map((field, index) => (
                   <FieldInfo field={field} key={index} />
                 ))}
               </TabSection>
@@ -378,12 +378,13 @@ function Page() {
         </div>
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
+          <Link href="/form-builder/settings">
           <Button
-            onClick={() => dispatch(setAuthState(true))}
             className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
           >
             Next
           </Button>
+          </Link>
           <Button
             onClick={() => dispatch(setAuthState(false))}
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
