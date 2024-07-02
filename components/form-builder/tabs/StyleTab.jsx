@@ -27,12 +27,13 @@ function StyleTab({
   fontStyle,
   setFontStyle,
   fontStyleF,
-  setFontStyleF
+  setFontStyleF,
+  locData
 }) {
   return (
     <>
       <div>
-        <h3>Background Colour </h3>
+        <h3> {locData?.colors.basic||"Background Colour"}</h3>
 
         <div className="grid grid-cols-7 gap-4 mt-3 mb-5">
           {styleColours1?.map((colour, index) => (
@@ -59,7 +60,7 @@ function StyleTab({
       </div>
       <Separator className="my-3" />
       <div>
-        <h3>Heading Colour </h3>
+        <h3>{locData?.colors.regional||"Heading Colour"} </h3>
 
         <div className="grid grid-cols-7 gap-4 my-3 mb-5">
           {styleColours2?.map((colour, index) => (
@@ -86,7 +87,7 @@ function StyleTab({
       </div>
       <Separator className="my-3" />
       <div>
-        <h3>Field Colour </h3>
+        <h3> {locData?.colors.lending||"Field Colour"}</h3>
 
         <div className="grid grid-cols-7 gap-4 my-3 mb-5">
           {styleColours3?.map((colour, index) => (
@@ -113,7 +114,7 @@ function StyleTab({
       </div>
       <Separator className="my-3" />
       <div>
-        <h3>Density </h3>
+        <h3> {locData?.densities.name||"Density"}</h3>
 
         <div className="grid grid-cols-4 gap-2 my-3 mb-5">
           {densities?.map((density, index) => (
@@ -131,7 +132,7 @@ function StyleTab({
       </div>
       <Separator className="my-3" />
       <div>
-        <h3>Heading Font </h3>
+        <h3> {locData?.font.heading.name||"Heading Font"}</h3>
 
         <div className="space-y-3 my-3 mb-5">
           <div>
@@ -142,7 +143,7 @@ function StyleTab({
               }}
               defaultValue={fontSize}
             >
-              <span className="text-sm">Font Size</span>
+              <span className="text-sm">{locData?.font.heading.size||"Font Size"}</span>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -164,7 +165,7 @@ function StyleTab({
               }}
               defaultValue={fontStyle}
             >
-              <span className="text-sm">Font Style</span>
+              <span className="text-sm">{locData?.font.heading.style||"Font Style"}</span>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -181,7 +182,7 @@ function StyleTab({
       </div>
       <Separator className="my-3" />
       <div>
-        <h3>Field Font </h3>
+        <h3>{locData?.font.field.name||"Field Fonte"} </h3>
 
         <div className="space-y-3 my-3 mb-5">
           <div>
@@ -192,7 +193,7 @@ function StyleTab({
               }}
               defaultValue={fontSizeF}
             >
-              <span className="text-sm">Font Size</span>
+              <span className="text-sm">{locData?.font.field.size||"Font Size"}</span>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -214,7 +215,7 @@ function StyleTab({
               }}
               defaultValue={fontStyleF}
             >
-              <span className="text-sm">Font Style</span>
+              <span className="text-sm">{locData?.font.field.style||"Font Style"}</span>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>

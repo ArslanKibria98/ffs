@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function Table({ getter, setter }) {
+export default function Table({ getter, setter, resetForm }) {
   return (
     <div>
       <DialogTitle>Add Table</DialogTitle>

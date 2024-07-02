@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button'
 
 const Header = () => {
   const dispatch = useDispatch();
-  const language = useSelector((state) => state.language.language);
+  const language = useSelector((state) => state?.language?.language);
 
   const handleLanguageChange = (language) => {
     dispatch(setLanguage(language));

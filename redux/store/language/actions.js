@@ -3,7 +3,6 @@ export const SET_LANGUAGE = 'SET_LANGUAGE';
 
 export function setLanguage(language) {
   return (dispatch) => {
-    // localStorage?.setItem('language', language);
     dispatch({
       type: SET_LANGUAGE,
       language,

@@ -14,7 +14,7 @@ import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 
-export default function Checkbox({ getter, setter }) {
+export default function Checkbox({ getter, setter, resetForm }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
     'Super-Light',
@@ -86,12 +86,13 @@ export default function Checkbox({ getter, setter }) {
         >
           Save
         </Button>
-        <DialogClose>
-          <Button
+        
+        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          >
+          > */}
             Cancel
-          </Button>
+          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

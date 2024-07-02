@@ -10,12 +10,13 @@ export const formReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_FORM_INFO':
       return {
-        ...state,
+        // ...state,
         form_id: action.payload.form_id,
         form_version: action.payload.form_version,
         form_controls: action.payload.form_controls,
       }
     case 'SET_FORM_ID':
+      console.warn(action.payload.form_id)
       return {
         ...state,
         form_id: action.payload.form_id

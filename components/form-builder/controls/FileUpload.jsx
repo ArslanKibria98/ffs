@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function FileUpload({ getter, setter }) {
+export default function FileUpload({ getter, setter, resetForm }) {
   return (
     <div>
       <DialogTitle>Add File</DialogTitle>

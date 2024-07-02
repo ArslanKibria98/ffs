@@ -61,6 +61,38 @@
       "PublishInfo": "معلومات النشر"
     }
   },
+  "formSetting": {
+    "en": {
+      "name":"Form Details",
+      "field1": "Required Field Indicator",
+      "field2": "Target URL",
+      "field3": "Success Message",
+      "field4": "Fail Message",
+      "lSetting": "Language Settings",
+      "dLanguage": "Default LanguageL",
+      "allLanguage": "Select all languages?",
+      "sLanguage": "Select Languages",
+      "sCountry": "Country Settings",
+      "cSetting": "Select Countries",
+      "dCountry": "Default Country",
+      "allCountry": "Select all Countries?"
+    },
+    "ar": {
+      "name":"تفاصيل النموذج",
+      "field1": "مؤشر الحقل المطلوب",
+      "field2": "الرابط",
+      "field3": "نجاح رسالة",
+      "field4": "رسالة فاشلة",
+      "lSetting": "اعدادات اللغة",
+      "dLanguage": "اللغة الافتراضية",
+      "allLanguage": "تحديد كافة اللغات؟",
+      "sLanguage": "حدد اللغات",
+      "sCountry": "إعدادات البلد",
+      "cSetting": "اختر البلدان",
+      "dCountry": "البلد الافتراضي",
+      "allCountry": "تحديد كافة البلدان؟"
+    }
+  },
   "formBuilder": {
     "en": {
       "itemsBar": "Items Bar",

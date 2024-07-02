@@ -20,10 +20,13 @@ import {
 
 import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 
 import Link from 'next/link'
 
 export default function page() {
+  const formId = useSelector((state) => state?.formStore.form_id);
+
   const [formDataApi, setFormDataApi] = useState([
     {
       containerName: "Tab Name",
@@ -108,7 +111,7 @@ export default function page() {
         </div>
       ))}
       <div className="flex flex-row-reverse gap-4 py-4 my-4">
-        <Link href="/form-builder/save">
+        <Link href={`/form-builder/${formId}/save`}>
           <Button
             onClick={() => dispatch(setAuthState(true))}
             className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
@@ -116,12 +119,13 @@ export default function page() {
             Next
           </Button>
         </Link>
+        <Link href={`/form-builder/${formId}/settings`}>
         <Button
-          onClick={() => dispatch(setAuthState(false))}
           className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
         >
           Previous
         </Button>
+        </Link>
       </div>
     </div>
   )

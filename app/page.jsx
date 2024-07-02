@@ -34,7 +34,7 @@ function page() {
       router.push('/form-builder')
     }
   }, [])
-  const authStore = useSelector((state) => state.authStore)
+  const authStore = useSelector((state) => state?.authStore)
   //   console.log(authStore)
 
   return (

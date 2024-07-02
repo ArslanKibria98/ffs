@@ -7,7 +7,7 @@ import { Switch } from '../ui/switch'
 import { Button } from '../ui/button'
 
 function FieldInfo({ field }) {
-    console.log(field,"field")
+    // console.log(field,"field")
     return (
         <div className='flex flex-col gap-2'>
             {field.controlType==0&&
@@ -19,7 +19,7 @@ function FieldInfo({ field }) {
                 <div className='w-full'>
                     <span className='text-[12px]'>{field?.name}</span>
                     <div className='flex justify-between w-full gap-3'>
-                        <Input className='w-[82%]' type={field.inputType} value='' name="" id="" readOnly placeHolder={field?.placePlaceholder} />
+                        <Input className='w-[82%]' type={field.inputType} value='' name="" id="" readOnly placeholder={field?.placePlaceholder} />
                         <div className='flex justify-evenly gap-1 w-[18%]'>
                             <div className='h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]'>
                                 <span className='text-[10px]'>Mandatory</span>
@@ -47,7 +47,7 @@ function FieldInfo({ field }) {
                 <div className='w-full'>
                     <span className='text-[12px]'>Phone No.</span>
                     <div className='flex justify-between w-full gap-3'>
-                        <Input className='w-[82%]' type={"number"} value='' name="" id="" readOnly placeHolder={"Enter Phone Number"} />
+                        <Input className='w-[82%]' type={"number"} value='' name="" id="" readOnly placeholder={"Enter Phone Number"} />
                         <div className='flex justify-evenly gap-1 w-[18%]'>
                             <div className='h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]'>
                                 <span className='text-[10px]'>Mandatory</span>
@@ -74,7 +74,7 @@ function FieldInfo({ field }) {
                     <div className='w-full'>
                         <span className='text-[12px]'>OTP</span>
                         <div className='flex justify-between w-full gap-3'>
-                            <Input className='w-[82%]' type='text' value='' name='' id='' readOnly placeHolder='Enter OTP' />
+                            <Input className='w-[82%]' type='text' value='' name='' id='' readOnly placeholder='Enter OTP' />
                             <div className='flex justify-evenly gap-1 w-[18%]'>
                                 <div className='h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]'>
                                     <span className='text-[10px]'>Mandatory</span>
@@ -101,7 +101,7 @@ function FieldInfo({ field }) {
                     <div className='w-full'>
                         <span className='text-[12px]'>Slider</span>
                         <div className='flex justify-between w-full gap-3'>
-                            <Input className='w-[82%]' type='text' value='' name='' id='' readOnly placeHolder='Slider' />
+                            <Input className='w-[82%]' type='text' value='' name='' id='' readOnly placeholder='Slider' />
                             <div className='flex justify-evenly gap-1 w-[18%]'>
                                 <div className='h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]'>
                                     <span className='text-[10px]'>Mandatory</span>

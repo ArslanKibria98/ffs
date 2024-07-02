@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import React, { useState, useEffect } from 'react'
 
 import {
@@ -11,70 +11,77 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
-import { Checkbox2 } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import toast from "react-hot-toast"
-import { useSelector, useDispatch } from 'react-redux'
-import { setIsLoading } from "@/redux/store/loading";
-export default function AddTextField() {
-  const formId = useSelector((state) => state.formStore.formId);
-  console.log("=====================")
-  console.log(formId);
+import { Checkbox2 } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
-  const tabNames = ['Personal Info', 'Address Details', 'Tab 3', 'Tab 4'];
-  const fieldTypes = ['Numeric', 'Text', 'Email', 'Password'];
-  const dispatch = useDispatch();
-  const [tabName, setTabName] = useState(tabNames[0]);
-  const [fieldType, setFieldType] = useState(fieldTypes[0]);
-  const [fieldLabel, setFieldLabel] = useState('');
-  const [id, setId] = useState('');
-  const [fieldName, setFieldName] = useState('');
-  const [fieldPlaceholder, setFieldPlaceholder] = useState('');
-  const [minLength, setMinLength] = useState('');
-  const [maxLength, setMaxLength] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [errorMessagePosition, setErrorMessagePosition] = useState('option-one');
-  const [isMandatory, setIsMandatory] = useState(false);
+import toast from 'react-hot-toast'
+
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsLoading } from '@/redux/store/loading'
+
+export default function AddTextField({ getter, setter, resetForm }) {
+  const dispatch = useDispatch()
+  const formId = useSelector((state) => state?.formStore.form_id)
+
+  const tabNames = ['Personal Info', 'Address Details', 'Tab 3', 'Tab 4']
+  const fieldTypes = ['Numeric', 'Text', 'Email', 'Password']
+
+  const [tabName, setTabName] = useState(tabNames[0])
+  const [fieldType, setFieldType] = useState(fieldTypes[0])
+  const [fieldLabel, setFieldLabel] = useState('')
+  const [id, setId] = useState('')
+  const [fieldName, setFieldName] = useState('')
+  const [fieldPlaceholder, setFieldPlaceholder] = useState('')
+  const [minLength, setMinLength] = useState('')
+  const [maxLength, setMaxLength] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessagePosition, setErrorMessagePosition] = useState('option-one')
+  const [isMandatory, setIsMandatory] = useState(false)
   const [formDataApi, setFormDataApi] = useState([])
-  const handleSubmit = ({ getter, setter }) => {
-    
+
+  const handleSubmit = async () => {
     const formData = {
       formVersionId: formId,
       containerId: id,
-      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
-      name:tabName,
-      default_Value:"",
-      inputType:fieldType,
+      regionId: '9712CB25-9053-4BF4-936C-7C279CE5DA69',
+      name: tabName,
+      default_Value: '',
+      inputType: fieldType,
       fieldLabel,
       fieldName,
-      placeholder:fieldPlaceholder,
-      minLength:minLength,
-      maxLength:maxLength,
-      errorMsgTxt:errorMessage,
-      errorMsgPosition:errorMessagePosition,
-      is_Required:isMandatory
-    };
+      placeholder: fieldPlaceholder,
+      minLength: minLength,
+      maxLength: maxLength,
+      errorMsgTxt: errorMessage,
+      errorMsgPosition: errorMessagePosition,
+      is_Required: isMandatory
+    }
 
-    fetch('http://135.181.57.251:3048/api/Controls/CreateTextbox', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Request-Id': '9bab662d-18ca-4cac-a2af-7d8e03008707'
-      },
-      body: JSON.stringify(formData)
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-        toast.success(data.notificationMessage)
-        setter(!getter);
+    try {
+      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateTextbox', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Request-Id': '9bab662d-18ca-4cac-a2af-7d8e03008707'
+        },
+        body: JSON.stringify(formData)
       })
-      .catch((error) => {
-        console.error('Error:', error);
 
-      });
-  };
+      if (response.ok) {
+        let responseData=await response.json()
+        setter(!getter);
+        toast.success(responseData?.notificationMessage)
+        resetForm();
+      } else {
+        console.error('Failed to add Text field!')
+        toast.error("Unable to save!")
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error("Something went wrong!")
+    }
+  }
   const fetchForms = async () => {
     try {
       const response = await fetch(
@@ -88,25 +95,25 @@ export default function AddTextField() {
         }
       )
       const data = await response.json()
-      
+
       setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false));
+      dispatch(setIsLoading(false))
     } catch (error) {
       console.error('Error fetching forms:', error)
-      toast.error("Unable to get Form");
-      dispatch(setIsLoading(false));
+      toast.error('Unable to get Form')
+      dispatch(setIsLoading(false))
     }
   }
   useEffect(() => {
-    return () => fetchForms();
+    return () => fetchForms()
   }, [])
-  console.log(id,"id")
+  console.log(id, 'id')
   return (
     <div>
       <DialogTitle>Add Input Field</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-4">
-        <h5 className='text-xl font-semibold mt-4 col-span-2'>Select Tab</h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">Select Tab</h5>
 
         <div className="col-span-2">
           <Select
@@ -114,7 +121,6 @@ export default function AddTextField() {
             onValueChange={(e) => {
               setId(e)
             }}
-            
           >
             <label htmlFor="minLen" className="text-xs font-semibold">
               Tab Name
@@ -132,7 +138,7 @@ export default function AddTextField() {
           </Select>
         </div>
 
-        <h5 className='text-xl font-semibold mt-4 col-span-2'>Select Type</h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">Select Type</h5>
 
         <div className="col-span-2">
           <Select
@@ -158,55 +164,100 @@ export default function AddTextField() {
           </Select>
         </div>
 
-        <h5 className='text-xl font-semibold mt-4 col-span-2'>Field Details</h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">Field Details</h5>
 
         <div>
           <label htmlFor="fieldLabel" className="text-xs font-semibold">
             Field Label
           </label>
-          <Input name="fieldLabel" placeholder="Enter Field Label" className="p-4 h-[48px]" value={fieldLabel} onChange={(e) => setFieldLabel(e.target.value)} />
+          <Input
+            name="fieldLabel"
+            placeholder="Enter Field Label"
+            className="p-4 h-[48px]"
+            value={fieldLabel}
+            onChange={(e) => setFieldLabel(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor="fieldName" className="text-xs font-semibold">
             Field Name
           </label>
-          <Input name="fieldName" placeholder="Enter Field Name" className="p-4 h-[48px]" value={fieldName} onChange={(e) => setFieldName(e.target.value)} />
+          <Input
+            name="fieldName"
+            placeholder="Enter Field Name"
+            className="p-4 h-[48px]"
+            value={fieldName}
+            onChange={(e) => setFieldName(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor="fieldPlaceholder" className="text-xs font-semibold">
             Field Placeholder
           </label>
-          <Input name="fieldPlaceholder" placeholder="Enter Field Placeholder" className="p-4 h-[48px]" value={fieldPlaceholder} onChange={(e) => setFieldPlaceholder(e.target.value)} />
+          <Input
+            name="fieldPlaceholder"
+            placeholder="Enter Field Placeholder"
+            className="p-4 h-[48px]"
+            value={fieldPlaceholder}
+            onChange={(e) => setFieldPlaceholder(e.target.value)}
+          />
         </div>
 
-        <h5 className='text-xl font-semibold mt-4 col-span-2'>Field Length</h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">Field Length</h5>
 
         <div>
           <label htmlFor="minLen" className="text-xs font-semibold">
             Minimum Length
           </label>
-          <Input name="minLen" placeholder="0" className="p-4 h-[48px]" value={minLength} onChange={(e) => setMinLength(e.target.value)} />
+          <Input
+            name="minLen"
+            placeholder="0"
+            className="p-4 h-[48px]"
+            value={minLength}
+            onChange={(e) => setMinLength(e.target.value)}
+          />
         </div>
         <div>
           <label htmlFor="maxLen" className="text-xs font-semibold">
             Maximum Length
           </label>
-          <Input name="maxLen" placeholder="0" className="p-4 h-[48px]" value={maxLength} onChange={(e) => setMaxLength(e.target.value)} />
+          <Input
+            name="maxLen"
+            placeholder="0"
+            className="p-4 h-[48px]"
+            value={maxLength}
+            onChange={(e) => setMaxLength(e.target.value)}
+          />
         </div>
 
-        <h5 className='text-xl font-semibold mt-4 col-span-2'>Field Validation</h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">
+          Field Validation
+        </h5>
 
         <div>
           <label htmlFor="errorMessage" className="text-xs font-semibold">
             Error Message Text
           </label>
-          <Input name="errorMessage" placeholder="Type Here" className="p-4 h-[48px]" value={errorMessage} onChange={(e) => setErrorMessage(e.target.value)} />
+          <Input
+            name="errorMessage"
+            placeholder="Type Here"
+            className="p-4 h-[48px]"
+            value={errorMessage}
+            onChange={(e) => setErrorMessage(e.target.value)}
+          />
         </div>
         <div>
-          <label htmlFor="errorMessagePosition" className="text-xs font-semibold">
+          <label
+            htmlFor="errorMessagePosition"
+            className="text-xs font-semibold"
+          >
             Error Message Position
           </label>
-          <RadioGroup defaultValue="option-one" value={errorMessagePosition} onValueChange={setErrorMessagePosition}>
+          <RadioGroup
+            defaultValue="option-one"
+            value={errorMessagePosition}
+            onValueChange={setErrorMessagePosition}
+          >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="option-one" id="option-one" />
               <Label htmlFor="option-one">Option One</Label>
@@ -218,7 +269,7 @@ export default function AddTextField() {
           </RadioGroup>
         </div>
 
-        <div className='my-4 col-span-2 flex items-center space-x-2'>
+        <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
           <label
             htmlFor="terms"
@@ -236,12 +287,12 @@ export default function AddTextField() {
         >
           Add Field
         </Button>
-        <DialogClose>
-          <Button
+        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          >
+          > */}
             Cancel
-          </Button>
+          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

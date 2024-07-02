@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function Rating({ getter, setter }) {
+export default function Rating({ getter, setter, resetForm }) {
   return (
     <div>
       <DialogTitle>Add Rating</DialogTitle>

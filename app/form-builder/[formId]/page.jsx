@@ -34,13 +34,35 @@ import Slider from '@/components/form-builder/controls/Slider'
 
 import toast from 'react-hot-toast'
 import BoxLoader from '@/components/BoxLoader'
+import { SET_FORM_ID } from '@/redux/store/form';
+
+import localisationData from "@/localisation.json"
 
 function Page({ params }) {
-  alert(params.formId);
+  // alert(params.formId);
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.loadingStore.value);
-  const userId = useSelector((state) => state.authStore.id);
-  const tenantId = useSelector((state) => state.authStore.tenant_id);
+  const loading = useSelector((state) => state?.loadingStore.value);
+  const userId = useSelector((state) => state?.authStore.id);
+  const tenantId = useSelector((state) => state?.authStore.tenant_id);
+  const language = useSelector((state) => state.language.language);
+  let locData = localisationData.formBuilder.en;
+  if (language == "en") {
+    locData = localisationData.formBuilder.en;
+  } else if (language == "ar") {
+    locData = localisationData.formBuilder.ar;
+  }
+
+  const formId = useSelector((state) => state?.formStore.form_id);
+  
+  console.log(formId, "formId");
+  useEffect(() => {
+    if (!formId || formId == "") {
+      console.log("Redux state found empty, dispatching!");
+      dispatch(SET_FORM_ID(params.formId));
+    } else {
+      console.log("Redux state FILLED")
+    }
+  }, [formId, params.formId]);
 
   const [region, setRegion] = useState()
   
@@ -63,6 +85,12 @@ function Page({ params }) {
   const [usEmailAddress, setEmailAddress] = useState(false)
   const [usList, setList] = useState(false)
   const [usSlider, setSlider] = useState(false)
+
+  const [fontSizeH, setFontSizeH] = useState(16)
+  const [formDataApi, setFormDataApi] = useState([])
+  const [fontStyleH, setFontStyleH] = useState('Bold')
+  const [fontSizeF, setFontSizeF] = useState(16)
+  const [fontStyleF, setFontStyleF] = useState('Bold')
 
   const controlModalManager = [
     usAddNewTab,
@@ -109,102 +137,124 @@ function Page({ params }) {
   function controlModalModifier(index) {
     controlModalSetterManager[index](!controlModalManager[index]);
   }
+  const fetchForms = async () => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          }
+        }
+      )
+      const data = await response.json()
+      
+      setFormDataApi(data?.data?.containers)
+      dispatch(setIsLoading(false));
+    } catch (error) {
+      console.error('Error fetching forms:', error)
+      toast.error("Unable to get Form");
+      dispatch(setIsLoading(false));
+    }
+  }
 
   const controlList = [
     {
       icon: '/control-icons/addNewTab.svg',
       title: 'Add New Tab',
-      data: <AddNewTab getter={usAddNewTab} setter={setAddNewTab} />
+      data: <AddNewTab getter={usAddNewTab} setter={setAddNewTab} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTextField.svg',
       title: 'Add Text Field',
-      data: <AddTextField getter={usAddTextField} setter={setAddTextField} />
+      data: <AddTextField getter={usAddTextField} setter={setAddTextField} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addRadioButton.svg',
       title: 'Radio Button',
-      data: <RadioButton getter={usRadioButton} setter={setRadioButton} />
+      data: <RadioButton getter={usRadioButton} setter={setRadioButton} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addDropDown.svg',
       title: 'Drop Down',
-      data: <DropDown getter={usDropDown} setter={setDropDown} />
+      data: <DropDown getter={usDropDown} setter={setDropDown} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addLOSControl.svg',
       title: 'LOS Control',
-      data: <LosControl getter={usLosControl} setter={setLosControl} />
+      data: <LosControl getter={usLosControl} setter={setLosControl} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCalander.svg',
       title: 'Calendar',
-      data: <Calendar getter={usCalendar} setter={setCalendar} />
+      data: <Calendar getter={usCalendar} setter={setCalendar} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addFileUpload.svg',
       title: 'File Upload',
-      data: <FileUpload getter={usFileUpload} setter={setFileUpload} />
+      data: <FileUpload getter={usFileUpload} setter={setFileUpload} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addOtp.svg',
       title: 'Add OTP',
-      data: <AddOtp getter={usAddOtp} setter={setAddOtp} />
+      data: <AddOtp getter={usAddOtp} setter={setAddOtp} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCheckbox.svg',
       title: 'Checkbox',
-      data: <Checkbox getter={usCheckbox} setter={setCheckbox} />
+      data: <Checkbox getter={usCheckbox} setter={setCheckbox} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTime.svg',
       title: 'Time',
-      data: <Time getter={usTime} setter={setTime} />
+      data: <Time getter={usTime} setter={setTime} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addPhone.svg',
       title: 'Phone Number',
-      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} />
+      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTable.svg',
       title: 'Table',
-      data: <Table getter={usTable} setter={setTable} />
+      data: <Table getter={usTable} setter={setTable} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSignature.svg',
       title: 'Signature',
-      data: <Signature getter={usSignature} setter={setSignature} />
+      data: <Signature getter={usSignature} setter={setSignature} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCaptcha.svg',
       title: 'Captcha',
-      data: <Captcha getter={usCaptcha} setter={setCaptcha} />
+      data: <Captcha getter={usCaptcha} setter={setCaptcha} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addButton.svg',
       title: 'Button',
-      data: <AddButton getter={usAddButton} setter={setAddButton} />
+      data: <AddButton getter={usAddButton} setter={setAddButton} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addRating.svg',
       title: 'Rating',
-      data: <Rating getter={usRating} setter={setRating} />
+      data: <Rating getter={usRating} setter={setRating} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addEmailAddress.svg',
       title: 'Email Address',
-      data: <EmailAddress getter={usEmailAddress} setter={setEmailAddress} />
+      data: <EmailAddress getter={usEmailAddress} setter={setEmailAddress} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addList.svg',
       title: 'List',
-      data: <List getter={usList} setter={setList} />
+      data: <List getter={usList} setter={setList} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSlider.svg',
       title: 'Slider',
-      data: <Slider getter={usSlider} setter={setSlider} />
+      data: <Slider getter={usSlider} setter={setSlider} resetForm={fetchForms} />
     }
   ]
 
@@ -312,11 +362,6 @@ function Page({ params }) {
     'Extra-Bold'
   ]
 
-  const [fontSizeH, setFontSizeH] = useState(16)
-  const [formDataApi, setFormDataApi] = useState([])
-  const [fontStyleH, setFontStyleH] = useState('Bold')
-  const [fontSizeF, setFontSizeF] = useState(16)
-  const [fontStyleF, setFontStyleF] = useState('Bold')
 
   let formData = {
     formName: 'KYC Form',
@@ -348,28 +393,6 @@ function Page({ params }) {
     ]
   }
 
-  const fetchForms = async () => {
-    try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          }
-        }
-      )
-      const data = await response.json()
-      
-      setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false));
-    } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error("Unable to get Form");
-      dispatch(setIsLoading(false));
-    }
-  }
   useEffect(() => {
     return () => fetchForms();
   }, [])
@@ -377,14 +400,14 @@ function Page({ params }) {
   return (
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
-        <h4 className="font-semibold p-7 pb-4">Items Bar</h4>
+      <h4 className="font-semibold p-7 pb-4"> {locData?.itemsBar||"Items Bar"}</h4>
         <Tabs defaultValue="build">
           <TabsList className="grid grid-cols-2 gap-1 py-1">
             <TabsTrigger value="build" className="rounded-none">
-              Build
+              {locData?.build.name||"Build"}
             </TabsTrigger>
             <TabsTrigger value="style" className="rounded-none font-light">
-              Style
+              {locData?.style.name||"Style"}
             </TabsTrigger>
           </TabsList>
           <div className="bg-[#fff]">
@@ -397,6 +420,7 @@ function Page({ params }) {
                 LeadingList={LeadingList}
                 controlModalManager={controlModalManager}
                 setControlModalManager={controlModalModifier}
+                locData={locData}
               />
             </TabsContent>
             <TabsContent value="style" className="px-6 py-2">
@@ -415,6 +439,7 @@ function Page({ params }) {
                 setFontStyle={setFontStyleH}
                 fontStyleF={fontStyleF}
                 setFontStyleF={setFontStyleF}
+                locData={locData.style}
               />
             </TabsContent>
           </div>
@@ -424,34 +449,34 @@ function Page({ params }) {
       <div className="col-span-3 mx-4">
         <div className="bg-[#fff] pb-4">
           <h3 className="font-semibold p-7 pb-0">
-            Layout Bar &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
+          {locData?.layoutBar||"Layout Bar"} &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
             &nbsp;&nbsp;&nbsp;&nbsp;
           </h3>
 
           <div className="p-7 pt-4 flex flex-col">
             {formDataApi?.map((tab, index) => (
-              <>
+              // <>
                 <TabSection key={index} tab={tab} index={index}>
                   {tab?.controls?.map((field, index) => (
                     <FieldInfo field={field} key={index} />
                   ))}
                 </TabSection>
-              </>
+              // </>
             ))}
-            {loading && formDataApi.length < 1 ? (<><BoxLoader /></>) : ""}
-            {!loading && formDataApi.length < 1 ? (<p className='text-sm text-center text-gray-600'>
+            {loading && formDataApi?.length < 1 ? (<><BoxLoader /></>) : ""}
+            {!loading && formDataApi?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
               Form Empty!
             </p>) : ""}
           </div>
         </div>
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
-          <Link href="/form-builder/settings">
+          <Link href={`/form-builder/${formId}/settings`}>
             <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">
               Next
             </Button>
           </Link>
-          <Link href="/">
+          <Link href="/form-builder">
           <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
           >

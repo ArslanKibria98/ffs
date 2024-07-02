@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from "@/redux/store/loading";
-export default function Slider({ getter, setter }) {
+export default function Slider({ getter, setter, resetForm }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
     'Super-Light',
@@ -40,7 +40,7 @@ export default function Slider({ getter, setter }) {
   const [formDataApi, setFormDataApi] = useState([])
   const [id, setId] = useState('');
   const dispatch = useDispatch();
-  const formId = useSelector((state) => state.formStore.formId);
+  const formId = useSelector((state) => state?.formStore.form_id);
   const handleSave = async () => {
     const payload = {
       formVersionId:formId,
@@ -68,7 +68,7 @@ export default function Slider({ getter, setter }) {
         let responseData= await response.json()
         setter(!getter);
         toast.success(responseData.notificationMessage)
-        console.log('Successfully saved')
+        resetForm();
       } else {
         // Handle error
         // setter(!getter);
@@ -194,12 +194,13 @@ export default function Slider({ getter, setter }) {
         >
           Save
         </Button>
-        <DialogClose>
-          <Button
+        
+        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          >
+          > */}
             Cancel
-          </Button>
+          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

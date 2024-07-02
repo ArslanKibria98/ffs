@@ -13,11 +13,7 @@ import {
 } from '@/components/ui/dialog'
 
 export default function ControlListButton({ icon, title, controlData, index, controlModalManager, setControlModalManager }) {
-  useEffect(()=>{
-    if (controlModalManager[index]) {
-      console.log(controlModalManager, index)
-    }
-  }, [controlModalManager])
+
   return (
     <>
       <Dialog open={controlModalManager[index]} onOpenChange={()=>{setControlModalManager(index)}}>

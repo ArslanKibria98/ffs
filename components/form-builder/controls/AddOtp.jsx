@@ -17,7 +17,7 @@ import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from "@/redux/store/loading";
 
-export default function AddOtp({ getter, setter }) {
+export default function AddOtp({ getter, setter, resetForm }) {
   const fontColours = ['4-digits', '5-digits', '6-digits']
   const dispatch = useDispatch();
   const otpFormatMapping = {
@@ -25,12 +25,13 @@ export default function AddOtp({ getter, setter }) {
     '5-digits': 5,
     '6-digits': 6
   }
-  const formId = useSelector((state) => state.formStore.formId);
+  const formId = useSelector((state) => state?.formStore.form_id);
   const [question, setQuestion] = useState('')
   const [isRequired, setIsRequired] = useState(false)
   const [otpFormat, setOtpFormat] = useState('4-digits')
   const [formDataApi, setFormDataApi] = useState([])
   const [id, setId] = useState('');
+
   const handleSubmit = async () => {
     const postData = {
       formVersionId: formId,
@@ -57,7 +58,7 @@ export default function AddOtp({ getter, setter }) {
         let responseData=await response.json()
         setter(!getter);
         toast.success(responseData?.notificationMessage)
-        console.log('OTP added successfully')
+        resetForm();
       } else {
         console.error('Failed to add OTP')
         toast.error("Unable to save!")
@@ -135,7 +136,8 @@ export default function AddOtp({ getter, setter }) {
         <div className='my-4 col-span-2 flex items-center space-x-2'>
         <Checkbox2
           checked={isRequired}
-          onCheckedChange={(e) => setIsRequired(e.target.checked)}
+          defaultValue={false}
+          onCheckedChange={(e) => setIsRequired(e.checked)}
         />
         <label
           htmlFor="terms"
@@ -178,12 +180,12 @@ export default function AddOtp({ getter, setter }) {
         >
           Save
         </Button>
-        <DialogClose>
-          <Button
+        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          >
+          > */}
             Cancel
-          </Button>
+          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

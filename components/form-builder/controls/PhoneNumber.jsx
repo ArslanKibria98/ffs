@@ -16,10 +16,10 @@ import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from "@/redux/store/loading";
-export default function PhoneNumber({ getter, setter }) {
+export default function PhoneNumber({ getter, setter, resetForm }) {
   const fontFamilies = ['any']
   const dispatch = useDispatch();
-  const formId = useSelector((state) => state.formStore.formId);
+  const formId = useSelector((state) => state?.formStore.form_id);
   const [question, setQuestion] = useState('')
   const [isRequired, setIsRequired] = useState(false)
   const [phoneType, setPhoneType] = useState('Normal')
@@ -52,7 +52,7 @@ export default function PhoneNumber({ getter, setter }) {
         const data = await response.json()
         toast.success(data.notificationMessage)
         setter(!getter);
-        // Handle success (e.g., show a success message, close dialog, etc.)
+        resetForm();
       } else {
         // setter(!getter);
         console.error('Error:', response.statusText)
@@ -134,7 +134,7 @@ export default function PhoneNumber({ getter, setter }) {
         <div className='my-4 col-span-2 flex items-center space-x-2'>
         <Checkbox2 
           checked={isRequired}
-          onChange={(e) => setIsRequired(e.target.checked)}
+          onChange={(e) => setIsRequired(e.checked)}
         />
         <label
           htmlFor="terms"
@@ -188,12 +188,13 @@ export default function PhoneNumber({ getter, setter }) {
         >
           Save
         </Button>
-        <DialogClose>
-          <Button
+        
+        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          >
+          > */}
             Cancel
-          </Button>
+          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

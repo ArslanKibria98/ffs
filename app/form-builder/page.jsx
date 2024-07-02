@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
+import Link from "next/link";
 
 import {
   Table,
@@ -35,40 +36,16 @@ import { SET_FORM_ID } from "@/redux/store/form";
 
 const formFlow = () => {
   const dispatch = useDispatch();
-  const language = useSelector((state) => state.language.language);
-  const userId = useSelector((state) => state.authStore.id);
-  const tenantId = useSelector((state) => state.authStore.tenant_id);
-  const loading = useSelector((state) => state.loadingStore.value);
+  const language = useSelector((state) => state?.language?.language);
+  const userId = useSelector((state) => state?.authStore?.id);
+  const tenantId = useSelector((state) => state?.authStore?.tenant_id);
+  const loading = useSelector((state) => state?.loadingStore?.value);
+  const formI = useSelector((state) => state?.formStore);
+  console.log(formI, "formId");
+  const [localLoading, setLocalLoading] = useState(true);
 
-  const [forms, setForms] = useState([
-    // {
-    //   formId: "FFS-1",
-    //   formName: "Dummy Name",
-    //   repositoryName: "Repository",
-    //   languages: ["English", "Arabic"],
-    //   countries: ["Pakistan", "KSA"],
-    //   createdBy: "Dummy",
-    //   createdDate: "12/2/24",
-    //   lastModifiedBy: "Dummy",
-    //   lastModifiedDate: "12/2/24",
-    //   versionNumber: "1.0",
-    //   status: "Unpublished"
-    // },
-    // {
-    //   formId: "FFS-2",
-    //   formName: "Dummy Name 2",
-    //   repositoryName: "Repository 2",
-    //   languages: ["Arabic", "Turkish"],
-    //   countries: ["KSA", "Turky"],
-    //   createdBy: "Dummy 2",
-    //   createdDate: "2/2/20",
-    //   lastModifiedBy: "Dummy 2",
-    //   lastModifiedDate: "10/2/14",
-    //   versionNumber: "1.4",
-    //   status: "Published"
-    // },
-  ])
   const router=useRouter()
+  const [forms, setForms] = useState([])
 
   useEffect(() => {
     return async () => {
@@ -86,14 +63,23 @@ const formFlow = () => {
         if (data?.data?.length > 0) {
           // console.log(data.data)
           setForms(data.data)
-          dispatch(setIsLoading(false));
+          setTimeout(()=>{
+            dispatch(setIsLoading(false));
+            setLocalLoading(false);
+          }, 2000)
         } else {
-          dispatch(setIsLoading(false));
           toast.error("No forms found for this user!");
+          setTimeout(()=>{
+            dispatch(setIsLoading(false));
+            setLocalLoading(false);
+          }, 2000)
         }
       } catch (error) {
-        dispatch(setIsLoading(false));
         toast.error("Server Unavailable!");
+        setTimeout(()=>{
+          dispatch(setIsLoading(false));
+          setLocalLoading(false);
+        }, 2000)
       }
     }
   }, [])
@@ -127,6 +113,7 @@ const formFlow = () => {
         dispatch(SET_FORM_ID(responseData?.data?.id));
         router.push(`/form-builder/${responseData?.data?.id}`)
         dispatch(setIsLoading(true));
+        setLocalLoading(true);
       } else {
         console.error('Failed to create form')
       }
@@ -224,18 +211,20 @@ const formFlow = () => {
                 <TableCell>{form.versionNumber || "N/A"}</TableCell>
                 <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
                 <TableCell>
-                  <Button className="bg-blue-500 text-white">Edit</Button>
+                  <Link href={`/form-builder/${form?.formId}`}>
+                    <Button className="bg-red-500 text-white">Edit</Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
             <TableRow><TableCell></TableCell></TableRow>
           </TableBody>
-          {loading && forms.length < 1 ? (
+          {loading && localLoading && forms.length < 1 ? (
             <TableCaption>
               <BoxLoader />
             </TableCaption>
           ) : ""}
-          {!loading && forms.length < 1 ? (
+          {!loading && !localLoading && forms.length < 1 ? (
             <TableCaption className="pb-4">
               No Forms Found for this user!
             </TableCaption>

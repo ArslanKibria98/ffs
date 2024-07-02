@@ -7,12 +7,13 @@ import LeadingListButton from '@/components/LeadingListButton'
 import { Accordion, AccordionTrigger, AccordionItem, AccordionContent } from '@/components/ui/accordion';
 import { Select, SelectTrigger, SelectValue, SelectItem, SelectContent } from '@/components/ui/select';
 
-function BuildTab({ controlList, region, setRegion, countryList, LeadingList, controlModalManager, setControlModalManager }) {
+function BuildTab({ controlList, region, setRegion, countryList, LeadingList, controlModalManager, setControlModalManager,locData }) {
     return (
         <Accordion className='overflow-auto' type="single" defaultValue="item-1" collapsible>
             <AccordionItem value="item-1" className="mb-1">
                 <AccordionTrigger className="px-7 data-[state=open]:bg-[#ffeff0] data-[state=closed]:bg-[#fafafa]">
-                    Basic Controls
+                    
+                    {locData?.build.controls.basic||"Basic Controls"}
                 </AccordionTrigger>
                 <AccordionContent className="p-7 py-5 bg-[#fafafa] border-b border-[#e2e2e2] overflow-auto max-h-[307px]">
                     <div className='grid grid-cols-1 xl:grid-cols-2 gap-x-2 gap-y-2'>
@@ -33,7 +34,8 @@ function BuildTab({ controlList, region, setRegion, countryList, LeadingList, co
 
             <AccordionItem value="item-2" className="mb-1">
                 <AccordionTrigger className="px-7 data-[state=open]:bg-[#ffeff0] data-[state=closed]:bg-[#fafafa]">
-                    Regional Controls
+                    
+                    {locData?.build.controls.regional||"Regional Controls"}
                 </AccordionTrigger>
                 <AccordionContent className="border-b border-[#e2e2e2] max-h-[450px]">
                     <div className='p-7 pt-5 pb-2 bg-[#ffffff] space-y-3'>
@@ -74,7 +76,8 @@ function BuildTab({ controlList, region, setRegion, countryList, LeadingList, co
 
             <AccordionItem value="item-3" className="mb-1">
                 <AccordionTrigger className="px-7 data-[state=open]:bg-[#ffeff0] data-[state=closed]:bg-[#fafafa]">
-                    Lending Tools
+                    
+                    {locData?.build.controls.regional||"Lending Tools"}
                 </AccordionTrigger>
                 <AccordionContent className="p-7 py-5 bg-[#fafafa] border-b border-[#e2e2e2] overflow-auto max-h-[307px]">
                     <div className='flex flex-col gap-x-2 gap-y-3'>
