@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
   Select,
@@ -14,7 +14,8 @@ import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import toast from 'react-hot-toast'
-
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsLoading } from "@/redux/store/loading";
 export default function Slider({ getter, setter }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
@@ -36,11 +37,14 @@ export default function Slider({ getter, setter }) {
   const [isRequired, setIsRequired] = useState(false)
   const [minValue, setMinValue] = useState('')
   const [maxValue, setMaxValue] = useState('')
-
+  const [formDataApi, setFormDataApi] = useState([])
+  const [id, setId] = useState('');
+  const dispatch = useDispatch();
+  const formId = useSelector((state) => state.formStore.formId);
   const handleSave = async () => {
     const payload = {
-      formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
-      containerId: "5b092436-804a-4c99-6b82-08dc99b4c99f",
+      formVersionId:formId,
+      containerId: id,
       regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
       controlType: 0,
       question: question,
@@ -77,12 +81,59 @@ export default function Slider({ getter, setter }) {
       toast.error("Something went wrong!")
     }
   }
-
+  const fetchForms = async () => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          }
+        }
+      )
+      const data = await response.json()
+      
+      setFormDataApi(data?.data?.containers)
+      dispatch(setIsLoading(false));
+    } catch (error) {
+      console.error('Error fetching forms:', error)
+      toast.error("Unable to get Form");
+      dispatch(setIsLoading(false));
+    }
+  }
+  useEffect(() => {
+    return () => fetchForms();
+  }, [])
   return (
     <div>
       <DialogTitle>Add Slider</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
+      <div className="col-span-2">
+          <Select
+            className="w-full"
+            onValueChange={(e) => {
+              setId(e)
+            }}
+            
+          >
+            <label htmlFor="minLen" className="text-xs font-semibold">
+              Tab Name
+            </label>
+            <SelectTrigger className="w-full h-[48px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {formDataApi?.map((style, index) => (
+                <SelectItem key={index} value={style?.id}>
+                  {style?.containerName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
             Question

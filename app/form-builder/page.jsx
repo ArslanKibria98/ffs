@@ -31,6 +31,7 @@ import localisationData from "@/localisation.json"
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "@/redux/store/loading";
 import BoxLoader from "@/components/BoxLoader";
+import { SET_FORM_ID } from "@/redux/store/form";
 
 const formFlow = () => {
   const dispatch = useDispatch();
@@ -122,8 +123,9 @@ const formFlow = () => {
         console.log(responseData,"res123")
         localStorage.setItem('formId',responseData.data.formId)
 
-        toast.success(responseData.notificationMessage)
-        router.push('/form-builder')
+        toast.success(responseData?.notificationMessage)
+        dispatch(SET_FORM_ID(responseData?.data?.id));
+        router.push(`/form-builder/${responseData?.data?.id}`)
         dispatch(setIsLoading(true));
       } else {
         console.error('Failed to create form')

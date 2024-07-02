@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import {
   Select,
@@ -15,13 +15,20 @@ import { Checkbox2 } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import toast from "react-hot-toast"
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsLoading } from "@/redux/store/loading";
 export default function AddTextField() {
+  const formId = useSelector((state) => state.formStore.formId);
+  console.log("=====================")
+  console.log(formId);
+
   const tabNames = ['Personal Info', 'Address Details', 'Tab 3', 'Tab 4'];
   const fieldTypes = ['Numeric', 'Text', 'Email', 'Password'];
-
+  const dispatch = useDispatch();
   const [tabName, setTabName] = useState(tabNames[0]);
   const [fieldType, setFieldType] = useState(fieldTypes[0]);
   const [fieldLabel, setFieldLabel] = useState('');
+  const [id, setId] = useState('');
   const [fieldName, setFieldName] = useState('');
   const [fieldPlaceholder, setFieldPlaceholder] = useState('');
   const [minLength, setMinLength] = useState('');
@@ -29,11 +36,12 @@ export default function AddTextField() {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorMessagePosition, setErrorMessagePosition] = useState('option-one');
   const [isMandatory, setIsMandatory] = useState(false);
-
+  const [formDataApi, setFormDataApi] = useState([])
   const handleSubmit = ({ getter, setter }) => {
+    
     const formData = {
-      formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
-      containerId: "5b092436-804a-4c99-6b82-08dc99b4c99f",
+      formVersionId: formId,
+      containerId: id,
       regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
       name:tabName,
       default_Value:"",
@@ -64,10 +72,35 @@ export default function AddTextField() {
       })
       .catch((error) => {
         console.error('Error:', error);
-        toast.error("Something went wrong!")
+
       });
   };
-
+  const fetchForms = async () => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          }
+        }
+      )
+      const data = await response.json()
+      
+      setFormDataApi(data?.data?.containers)
+      dispatch(setIsLoading(false));
+    } catch (error) {
+      console.error('Error fetching forms:', error)
+      toast.error("Unable to get Form");
+      dispatch(setIsLoading(false));
+    }
+  }
+  useEffect(() => {
+    return () => fetchForms();
+  }, [])
+  console.log(id,"id")
   return (
     <div>
       <DialogTitle>Add Input Field</DialogTitle>
@@ -79,9 +112,9 @@ export default function AddTextField() {
           <Select
             className="w-full"
             onValueChange={(e) => {
-              setTabName(e)
+              setId(e)
             }}
-            defaultValue={tabName}
+            
           >
             <label htmlFor="minLen" className="text-xs font-semibold">
               Tab Name
@@ -90,9 +123,9 @@ export default function AddTextField() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {tabNames.map((style, index) => (
-                <SelectItem key={index} value={style}>
-                  {style}
+              {formDataApi?.map((style, index) => (
+                <SelectItem key={index} value={style?.id}>
+                  {style?.containerName}
                 </SelectItem>
               ))}
             </SelectContent>
