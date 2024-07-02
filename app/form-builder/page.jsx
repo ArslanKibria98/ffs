@@ -32,13 +32,12 @@ import localisationData from "@/localisation.json"
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "@/redux/store/loading";
 import BoxLoader from "@/components/BoxLoader";
-import { SET_FORM_ID } from "@/redux/store/form";
+import { SET_FORM_ID, SET_FORM_INFO } from "@/redux/store/form";
 
 const formFlow = () => {
   const dispatch = useDispatch();
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
-  const tenantId = useSelector((state) => state?.authStore?.tenant_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
   const formI = useSelector((state) => state?.formStore);
   console.log(formI, "formId");
@@ -110,7 +109,8 @@ const formFlow = () => {
         localStorage.setItem('formId',responseData.data.formId)
 
         toast.success(responseData?.notificationMessage)
-        dispatch(SET_FORM_ID(responseData?.data?.id));
+        // dispatch(SET_FORM_ID(responseData?.data?.id));
+        dispatch(SET_FORM_INFO(responseData?.data?.id, responseData?.data?.formId))
         router.push(`/form-builder/${responseData?.data?.id}`)
         dispatch(setIsLoading(true));
         setLocalLoading(true);

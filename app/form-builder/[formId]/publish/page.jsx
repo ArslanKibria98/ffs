@@ -2,7 +2,8 @@
 import React from 'react'
 import Image from 'next/image'
 import successIcon from '@/assets/images/SuccessIcon.svg'
-import { Button } from '@mui/material'
+
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
 import { useSelector } from 'react-redux'

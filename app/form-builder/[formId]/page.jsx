@@ -394,7 +394,10 @@ function Page({ params }) {
   }
 
   useEffect(() => {
-    return () => fetchForms();
+    return () => {
+      dispatch(setIsLoading(true));
+      fetchForms()
+    };
   }, [])
 
   return (
