@@ -1,466 +1,247 @@
-'use client'
-import React, { useState, useEffect } from 'react'
+"use client"
+import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation';
+import Image from "next/image";
 
-import { useSelector, useDispatch } from 'react-redux'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableCaption
+} from "@/components/ui/table"
+import {
+  Command,
+  CommandInput,
+} from "@/components/ui/command"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+
+import toast from "react-hot-toast"
+
+import localisationData from "@/localisation.json"
+import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "@/redux/store/loading";
+import BoxLoader from "@/components/BoxLoader";
 
-import { Button } from '@/components/ui/button'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import FieldInfo from '@/components/form-builder/FieldInfo'
-import Link from 'next/link'
-
-import TabSection from '@/components/form-builder/TabSection'
-import BuildTab from '@/components/form-builder/tabs/BuildTab'
-import StyleTab from '@/components/form-builder/tabs/StyleTab'
-import AddNewTab from '@/components/form-builder/controls/AddNewTab'
-import AddTextField from '@/components/form-builder/controls/AddTextField'
-import RadioButton from '@/components/form-builder/controls/RadioButton'
-import DropDown from '@/components/form-builder/controls/DropDown'
-import LosControl from '@/components/form-builder/controls/LosControl'
-import Calendar from '@/components/form-builder/controls/Calendar'
-import FileUpload from '@/components/form-builder/controls/FileUpload'
-import AddOtp from '@/components/form-builder/controls/AddOtp'
-import Checkbox from '@/components/form-builder/controls/Checkbox'
-import Time from '@/components/form-builder/controls/Time'
-import PhoneNumber from '@/components/form-builder/controls/PhoneNumber'
-import Table from '@/components/form-builder/controls/Table'
-import Signature from '@/components/form-builder/controls/Signature'
-import Captcha from '@/components/form-builder/controls/Captcha'
-import AddButton from '@/components/form-builder/controls/AddButton'
-import Rating from '@/components/form-builder/controls/Rating'
-import EmailAddress from '@/components/form-builder/controls/EmailAddress'
-import List from '@/components/form-builder/controls/List'
-import Slider from '@/components/form-builder/controls/Slider'
-
-import toast from 'react-hot-toast'
-import BoxLoader from '@/components/BoxLoader'
-
-function Page() {
+const formFlow = () => {
   const dispatch = useDispatch();
-  const loading = useSelector((state) => state.loadingStore.value);
+  const language = useSelector((state) => state.language.language);
   const userId = useSelector((state) => state.authStore.id);
   const tenantId = useSelector((state) => state.authStore.tenant_id);
+  const loading = useSelector((state) => state.loadingStore.value);
 
-  const [region, setRegion] = useState()
-  
-  const [usAddNewTab, setAddNewTab] = useState(false)
-  const [usAddTextField, setAddTextField] = useState(false)
-  const [usRadioButton, setRadioButton] = useState(false)
-  const [usDropDown, setDropDown] = useState(false)
-  const [usLosControl, setLosControl] = useState(false)
-  const [usCalendar, setCalendar] = useState(false)
-  const [usFileUpload, setFileUpload] = useState(false)
-  const [usAddOtp, setAddOtp] = useState(false)
-  const [usCheckbox, setCheckbox] = useState(false)
-  const [usTime, setTime] = useState(false)
-  const [usPhoneNumber, setPhoneNumber] = useState(false)
-  const [usTable, setTable] = useState(false)
-  const [usSignature, setSignature] = useState(false)
-  const [usCaptcha, setCaptcha] = useState(false)
-  const [usAddButton, setAddButton] = useState(false)
-  const [usRating, setRating] = useState(false)
-  const [usEmailAddress, setEmailAddress] = useState(false)
-  const [usList, setList] = useState(false)
-  const [usSlider, setSlider] = useState(false)
+  const [forms, setForms] = useState([
+    // {
+    //   formId: "FFS-1",
+    //   formName: "Dummy Name",
+    //   repositoryName: "Repository",
+    //   languages: ["English", "Arabic"],
+    //   countries: ["Pakistan", "KSA"],
+    //   createdBy: "Dummy",
+    //   createdDate: "12/2/24",
+    //   lastModifiedBy: "Dummy",
+    //   lastModifiedDate: "12/2/24",
+    //   versionNumber: "1.0",
+    //   status: "Unpublished"
+    // },
+    // {
+    //   formId: "FFS-2",
+    //   formName: "Dummy Name 2",
+    //   repositoryName: "Repository 2",
+    //   languages: ["Arabic", "Turkish"],
+    //   countries: ["KSA", "Turky"],
+    //   createdBy: "Dummy 2",
+    //   createdDate: "2/2/20",
+    //   lastModifiedBy: "Dummy 2",
+    //   lastModifiedDate: "10/2/14",
+    //   versionNumber: "1.4",
+    //   status: "Published"
+    // },
+  ])
+  const router=useRouter()
 
-  const controlModalManager = [
-    usAddNewTab,
-    usAddTextField,
-    usRadioButton,
-    usDropDown,
-    usLosControl,
-    usCalendar,
-    usFileUpload,
-    usAddOtp,
-    usCheckbox,
-    usTime,
-    usPhoneNumber,
-    usTable,
-    usSignature,
-    usCaptcha,
-    usAddButton,
-    usRating,
-    usEmailAddress,
-    usList,
-    usSlider,
-  ];
-  const controlModalSetterManager = [
-    setAddNewTab,
-    setAddTextField,
-    setRadioButton,
-    setDropDown,
-    setLosControl,
-    setCalendar,
-    setFileUpload,
-    setAddOtp,
-    setCheckbox,
-    setTime,
-    setPhoneNumber,
-    setTable,
-    setSignature,
-    setCaptcha,
-    setAddButton,
-    setRating,
-    setEmailAddress,
-    setList,
-    setSlider,
-  ];
-  function controlModalModifier(index) {
-    controlModalSetterManager[index](!controlModalManager[index]);
-  }
-
-  const controlList = [
-    {
-      icon: '/control-icons/addNewTab.svg',
-      title: 'Add New Tab',
-      data: <AddNewTab getter={usAddNewTab} setter={setAddNewTab} />
-    },
-    {
-      icon: '/control-icons/addTextField.svg',
-      title: 'Add Text Field',
-      data: <AddTextField getter={usAddTextField} setter={setAddTextField} />
-    },
-    {
-      icon: '/control-icons/addRadioButton.svg',
-      title: 'Radio Button',
-      data: <RadioButton getter={usRadioButton} setter={setRadioButton} />
-    },
-    {
-      icon: '/control-icons/addDropDown.svg',
-      title: 'Drop Down',
-      data: <DropDown getter={usDropDown} setter={setDropDown} />
-    },
-    {
-      icon: '/control-icons/addLOSControl.svg',
-      title: 'LOS Control',
-      data: <LosControl getter={usLosControl} setter={setLosControl} />
-    },
-    {
-      icon: '/control-icons/addCalander.svg',
-      title: 'Calendar',
-      data: <Calendar getter={usCalendar} setter={setCalendar} />
-    },
-    {
-      icon: '/control-icons/addFileUpload.svg',
-      title: 'File Upload',
-      data: <FileUpload getter={usFileUpload} setter={setFileUpload} />
-    },
-    {
-      icon: '/control-icons/addOtp.svg',
-      title: 'Add OTP',
-      data: <AddOtp getter={usAddOtp} setter={setAddOtp} />
-    },
-    {
-      icon: '/control-icons/addCheckbox.svg',
-      title: 'Checkbox',
-      data: <Checkbox getter={usCheckbox} setter={setCheckbox} />
-    },
-    {
-      icon: '/control-icons/addTime.svg',
-      title: 'Time',
-      data: <Time getter={usTime} setter={setTime} />
-    },
-    {
-      icon: '/control-icons/addPhone.svg',
-      title: 'Phone Number',
-      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} />
-    },
-    {
-      icon: '/control-icons/addTable.svg',
-      title: 'Table',
-      data: <Table getter={usTable} setter={setTable} />
-    },
-    {
-      icon: '/control-icons/addSignature.svg',
-      title: 'Signature',
-      data: <Signature getter={usSignature} setter={setSignature} />
-    },
-    {
-      icon: '/control-icons/addCaptcha.svg',
-      title: 'Captcha',
-      data: <Captcha getter={usCaptcha} setter={setCaptcha} />
-    },
-    {
-      icon: '/control-icons/addButton.svg',
-      title: 'Button',
-      data: <AddButton getter={usAddButton} setter={setAddButton} />
-    },
-    {
-      icon: '/control-icons/addRating.svg',
-      title: 'Rating',
-      data: <Rating getter={usRating} setter={setRating} />
-    },
-    {
-      icon: '/control-icons/addEmailAddress.svg',
-      title: 'Email Address',
-      data: <EmailAddress getter={usEmailAddress} setter={setEmailAddress} />
-    },
-    {
-      icon: '/control-icons/addList.svg',
-      title: 'List',
-      data: <List getter={usList} setter={setList} />
-    },
-    {
-      icon: '/control-icons/addSlider.svg',
-      title: 'Slider',
-      data: <Slider getter={usSlider} setter={setSlider} />
-    }
-  ]
-
-  const LeadingList = [
-    {
-      icon: '/leading-icons/addLoanCalculator.svg',
-      title: 'Loan Calculator',
-      func: () => {
-        alert('Loan Calculator Button')
-      }
-    },
-    {
-      icon: '/leading-icons/addVehicleEvaluator.svg',
-      title: 'Vehicle Evaluator',
-      func: () => {
-        alert('Vehicle Evaluator Button')
-      }
-    }
-  ]
-
-  const countryList = [
-    {
-      name: 'Saudia Arabia',
-      value: 'KSA'
-    },
-    {
-      name: 'Yemen',
-      value: 'YME'
-    }
-  ]
-
-  const selectedRegionOptions = [
-    {
-      name: 'Yakeen Lite (Mobile Ownership Verification)',
-      value: 'yakeen-lite'
-    },
-    {
-      name: 'Nafath Biometric Lite',
-      value: 'nafath-bio-lite'
-    },
-    {
-      name: 'Nafath Biometric Full',
-      value: 'nafath-bio-full'
-    },
-    {
-      name: 'Unifonic OTP',
-      value: 'unifonic-otp'
-    },
-    {
-      name: 'Unifonic SMS',
-      value: 'unifonic-sms'
-    },
-    {
-      name: 'Unifonic OTP',
-      value: 'unifonic-otp'
-    },
-    {
-      name: 'Unifonic SMS',
-      value: 'unifonic-sms'
-    }
-  ]
-
-  const styleColours1 = [
-    'bg-[#1978DB]',
-    'bg-[#01ADFB]',
-    'bg-[#00C1D9]',
-    'bg-[#009A8C]',
-    'bg-[#39923C]',
-    'bg-[#F11F65]',
-    'bg-[#637E8D]',
-    'bg-[#FF9C00]',
-    'bg-[#EB4B18]',
-    'bg-[#D83030]',
-    'bg-[#4155B9]',
-    'bg-[#242424]',
-    'bg-[#FFFFFF]'
-  ]
-
-  const densities = [
-    {
-      name: 'Default',
-      image: '/styling-icons/densityDefault.png'
-    },
-    {
-      name: 'Smaller',
-      image: '/styling-icons/densityDefault.png'
-    },
-    {
-      name: 'Bigger',
-      image: '/styling-icons/densityDefault.png'
-    },
-    {
-      name: 'Classic',
-      image: '/styling-icons/densityDefault.png'
-    }
-  ]
-
-  const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-  const fontStyles = [
-    'Super-Light',
-    'Light',
-    'Medium',
-    'Semi-Bold',
-    'Bold',
-    'Extra-Bold'
-  ]
-
-  const [fontSizeH, setFontSizeH] = useState(16)
-  const [formDataApi, setFormDataApi] = useState([])
-  const [fontStyleH, setFontStyleH] = useState('Bold')
-  const [fontSizeF, setFontSizeF] = useState(16)
-  const [fontStyleF, setFontStyleF] = useState('Bold')
-
-  let formData = {
-    formName: 'KYC Form',
-    tabs: [
-      {
-        id: 13278738,
-        name: 'Personal Information',
-        fields: [
-          {
-            name: 'Full Name',
-            mandatory: false
-          },
-          {
-            name: 'Phone Number',
-            mandatory: true
-          }
-        ]
-      },
-      {
-        id: 13278737,
-        name: 'Address Information',
-        fields: [
-          {
-            name: 'Field 2',
-            mandatory: true
-          }
-        ]
-      }
-    ]
-  }
-
-  const fetchForms = async () => {
-    try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
-        {
+  useEffect(() => {
+    return async () => {
+      try {
+        const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          }
+            'Request-Id':'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
+          },
+         
+        }) 
+        const data = await response.json()
+        // console.log(data.data);
+        if (data?.data?.length > 0) {
+          // console.log(data.data)
+          setForms(data.data)
+          dispatch(setIsLoading(false));
+        } else {
+          dispatch(setIsLoading(false));
+          toast.error("No forms found for this user!");
         }
-      )
-      const data = await response.json()
-      
-      setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false));
-    } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error("Unable to get Form");
-      dispatch(setIsLoading(false));
+      } catch (error) {
+        dispatch(setIsLoading(false));
+        toast.error("Server Unavailable!");
+      }
     }
-  }
-  useEffect(() => {
-    return () => fetchForms();
   }, [])
 
+  const handleCreateForm = async () => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/InitiateForm',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id': '081eff6f-0897-467f-9925-e202db311ac4'
+          },
+          body: JSON.stringify({
+            tenantId: userId,
+            formName: '',
+            userId: userId,
+            repositoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+          })
+        }
+      )
+      if (response.ok) {
+        let responseData = await response.json()
+        // Fetch the updated forms list
+        // const updatedForms = await response.json()
+        console.log(responseData,"res123")
+        localStorage.setItem('formId',responseData.data.formId)
+
+        toast.success(responseData.notificationMessage)
+        router.push('/form-builder')
+        dispatch(setIsLoading(true));
+      } else {
+        console.error('Failed to create form')
+      }
+    } catch (error) {
+      console.error('Error creating form:', error)
+    }
+  }
+
+  let locData = localisationData.home.en;
+  // console.log(locData);
+
+  if (language == "en") {
+    locData = localisationData.home.en;
+  } else if (language == "ar") {
+    locData = localisationData.home.ar;
+  }
+
   return (
-    <div className="grid grid-cols-4">
-      <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
-        <h4 className="font-semibold p-7 pb-4">Items Bar</h4>
-        <Tabs defaultValue="build">
-          <TabsList className="grid grid-cols-2 gap-1 py-1">
-            <TabsTrigger value="build" className="rounded-none">
-              Build
-            </TabsTrigger>
-            <TabsTrigger value="style" className="rounded-none font-light">
-              Style
-            </TabsTrigger>
-          </TabsList>
-          <div className="bg-[#fff]">
-            <TabsContent value="build">
-              <BuildTab
-                controlList={controlList}
-                region={region}
-                setRegion={setRegion}
-                countryList={countryList}
-                LeadingList={LeadingList}
-                controlModalManager={controlModalManager}
-                setControlModalManager={controlModalModifier}
-              />
-            </TabsContent>
-            <TabsContent value="style" className="px-6 py-2">
-              <StyleTab
-                styleColours1={styleColours1}
-                styleColours2={styleColours1}
-                styleColours3={styleColours1}
-                densities={densities}
-                fontSizes={fontSizes}
-                fontSize={fontSizeH}
-                setFontSize={setFontSizeH}
-                fontSizeF={fontSizeF}
-                setFontSizeF={setFontSizeF}
-                fontStyles={fontStyles}
-                fontStyle={fontStyleH}
-                setFontStyle={setFontStyleH}
-                fontStyleF={fontStyleF}
-                setFontStyleF={setFontStyleF}
-              />
-            </TabsContent>
-          </div>
-        </Tabs>
-      </div>
-
-      <div className="col-span-3 mx-4">
-        <div className="bg-[#fff] pb-4">
-          <h3 className="font-semibold p-7 pb-0">
-            Layout Bar &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </h3>
-
-          <div className="p-7 pt-4 flex flex-col">
-            {formDataApi?.map((tab, index) => (
-              <>
-                <TabSection key={index} tab={tab} index={index}>
-                  {tab?.controls?.map((field, index) => (
-                    <FieldInfo field={field} key={index} />
-                  ))}
-                </TabSection>
-              </>
-            ))}
-            {loading && formDataApi.length < 1 ? (<><BoxLoader /></>) : ""}
-            {!loading && formDataApi.length < 1 ? (<p className='text-sm text-center text-gray-600'>
-              Form Empty!
-            </p>) : ""}
-          </div>
-        </div>
-
-        <div className="flex flex-row-reverse gap-4 py-1 my-4">
-          <Link href="/form-builder/settings">
-            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">
-              Next
-            </Button>
-          </Link>
-          <Link href="/">
-          <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
-          >
-            Previous
+    <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
+      <div className="w-full flex justify-between items-center my-3">
+     
+        <Select className="" defaultValue="folder">
+          <SelectTrigger className="max-w-[160px] h-[46px] space-x-1 font-semibold text-md w-fit bg-transparent border-0">
+            <Image src="/folder.svg" alt="Folder icon" width={24} height={24} />
+            <SelectValue placeholder={locData?.folder || "Folder"} className="px-0 mx-0"/>
+          </SelectTrigger>
+          <SelectContent className="p-0">
+            <SelectItem value="folder" className="border-b border-[#f8c8ca] hover:bg-[#ececec]">Folder</SelectItem>
+            <SelectItem value="onboarding" className="border-b border-[#f8c8ca] hover:bg-[#ececec]">Onboarding Folder</SelectItem>
+            <SelectItem value="kyc" className="border-b border-[#f8c8ca] hover:bg-[#ececec]">KYC Folder</SelectItem>
+            <SelectItem value="kyb" className="border-b border-[#f8c8ca] hover:bg-[#ececec]">KYB Folder</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="flex justify-evenly gap-2 items-center">
+          <Command className="w-[400px] xl:w-[500px]">
+            <CommandInput placeholder={locData?.search || "Search"} />
+          </Command>
+          <Select className="">
+            <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
+              <SelectValue placeholder={locData?.filter || "Filter By"}/>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select className="">
+            <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
+              <SelectValue placeholder={locData?.sort || "Sort By"}/>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
+     
+          <Button onClick={handleCreateForm} className="bg-[#e2252e] hover:bg-[#e2252eec] font-normal text-[16px] h-[45px]">
+            + {locData?.createNewForm || "Create New Form"}
           </Button>
-          </Link>
+      
         </div>
+      </div>
+      <div className="w-full rounded-xl bg-white overflow-hidden">
+        <Table className="rounded-lg border bg-white overflow-x-scroll">
+          <TableHeader>
+            <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
+              <TableHead className="min-w-[100px] text-white">{locData?.columns?.formID || "Form ID"}</TableHead>
+              <TableHead className="min-w-[110px] text-white">{locData?.columns?.formName || "Form Name"}</TableHead>
+              <TableHead className="min-w-[160px] text-white">{locData?.columns?.repository || "Repository"}</TableHead>
+              <TableHead className="min-w-[150px] text-white">{locData?.columns?.languages || "Languages"}</TableHead>
+              <TableHead className="min-w-[150px] text-white">{locData?.columns?.countries || "Countries"}</TableHead>
+              <TableHead className="min-w-[130px] text-white">{locData?.columns?.createdBy || "Created By"}</TableHead>
+              <TableHead className="min-w-[130px] text-white">{locData?.columns?.createdDate || "Created Date"}</TableHead>
+              <TableHead className="min-w-[160px] text-white">{locData?.columns?.lastModifiedBy || "Last Modified By"}</TableHead>
+              <TableHead className="min-w-[160px] text-white">{locData?.columns?.lastModifiedDate || "Last Modified Date"}</TableHead>
+              <TableHead className="text-white">{locData?.columns?.version || "Version"}</TableHead>
+              <TableHead className="text-white">{locData?.columns?.status || "Status"}</TableHead>
+              <TableHead className="text-white">{locData?.columns?.action || "Action"}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {forms && forms?.map((form, index) => (
+              <TableRow key={index} className={index % 2 == 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
+                <TableCell>{form?.formId?.substring(0, 8) || "N/A"}</TableCell>
+                <TableCell>{form?.formName || "N/A"}</TableCell>
+                <TableCell>{form?.repositoryName || "N/A"}</TableCell>
+                <TableCell>{form?.languages?.join(', ') || "N/A"}</TableCell>
+                <TableCell>{form?.countries?.join(', ') || "N/A"}</TableCell>
+                <TableCell>{form.createdBy || "N/A"}</TableCell>
+                <TableCell>{form.createdDate || "N/A"}</TableCell>
+                <TableCell>{form.lastModifiedBy || "N/A"}</TableCell>
+                <TableCell>{form.lastModifiedDate || "N/A"}</TableCell>
+                <TableCell>{form.versionNumber || "N/A"}</TableCell>
+                <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
+                <TableCell>
+                  <Button className="bg-blue-500 text-white">Edit</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            <TableRow><TableCell></TableCell></TableRow>
+          </TableBody>
+          {loading && forms.length < 1 ? (
+            <TableCaption>
+              <BoxLoader />
+            </TableCaption>
+          ) : ""}
+          {!loading && forms.length < 1 ? (
+            <TableCaption className="pb-4">
+              No Forms Found for this user!
+            </TableCaption>
+          ) : ""}
+        </Table>
       </div>
     </div>
   )
 }
 
-export default Page
+export default formFlow
