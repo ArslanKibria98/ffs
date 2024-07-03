@@ -31,10 +31,10 @@ export default function App() {
           <Route path="form-builder/form" element={<BuilderLayout />}>
         
             <Route index element={<BuilderPage />} />
-            <Route path="form-builder/form/settings" element={<FormSettingsPage />} />
-            <Route path="form-builder/form/preview" element={<FormPreviewPage />} />
-            <Route path="form-builder/form/save" element={<FormSavePage />} />
-            <Route path="form-builder/form/publish" element={<FormPublishPage />} />
+            <Route path="settings" element={<FormSettingsPage />} />
+            <Route path="preview" element={<FormPreviewPage />} />
+            <Route path="save" element={<FormSavePage />} />
+            <Route path="publish" element={<FormPublishPage />} />
         
           </Route>
         

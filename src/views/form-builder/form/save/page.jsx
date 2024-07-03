@@ -70,19 +70,17 @@ export default function FormSavePage() {
           onChange={handleChange}
         />
         <div className="flex flex-row-reverse gap-4 py-4 my-4">
-          {/* <Link href={`/form-builder/${formId}/publish`}> */}
           <Button
             onClick={handleSubmit}
             className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
           >
             Next
           </Button>
-          {/* </Link> */}
-          <Link href={`/form-builder/${formId}/preview`}>
+          <a href={`/form-builder/form/preview`}>
             <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light">
               Previous
             </Button>
-          </Link>
+          </a>
         </div>
       </div>
         {localLoading && (

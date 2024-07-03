@@ -474,18 +474,18 @@ export default function BuilderPage() {
         </div>
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
-          <Link href={`/form-builder/${formId}/settings`}>
+          <a href={`/form-builder/form/settings`}>
             <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">
               Next
             </Button>
-          </Link>
-          <Link href="/form-builder">
+          </a>
+          <a href="/form-builder">
           <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
           >
             Previous
           </Button>
-          </Link>
+          </a>
         </div>
       </div>
     </div>

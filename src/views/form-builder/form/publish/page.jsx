@@ -36,18 +36,18 @@ export default function FormPublishPage() {
                 <Button className='bg-[#E2242E] p-4 rounded-xl text-white'>View HTML Tag</Button>
             </div> */}
             <div className="flex flex-row-reverse gap-4 py-4 my-4">
-              <Link href={`/form-builder`}>
+              <a href={`/form-builder`}>
                 <Button
                   className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
                 >
                   View HTML Tag
                 </Button>
-              </Link>
-              <Link href={`/form-builder`}>
+              </a>
+              <a href={`/form-builder`}>
                 <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light">
                   Back to Home
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

@@ -272,11 +272,11 @@ export default function FormSettingsPage() {
           >
             Next
           </Button>
-          <Link href={`/form-builder/${formId}`}>
+          <a href={`/form-builder/${formId}`}>
             <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
               Previous
             </Button>
-          </Link>
+          </a>
         </div>
       </div>
     </div>

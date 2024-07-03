@@ -25,11 +25,11 @@ const ProgressBar = ({ children }) => {
   ]
 
   useEffect(() => {
-    console.log(stepIndex);
-    if (stepPage.includes(window.location.href)) {
-      setStepIndex(stepPage.indexOf(window.location.href));
+    // console.log(window.location.pathname);
+    if (stepPage.includes(window.location.pathname)) {
+      setStepIndex(stepPage.indexOf(window.location.pathname));
     }
-  }, [window.location.href])
+  }, [window.location.pathname])
   let locData = localisationData.progressBar.en;
   // console.log(locData);
 

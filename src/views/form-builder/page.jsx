@@ -208,9 +208,9 @@ export default function FormBuilder() {
                 <TableCell>{form.versionNumber || "N/A"}</TableCell>
                 <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
                 <TableCell>
-                  <Link href={`/form-builder/${form?.formId}`}>
+                  <a href={`/form-builder/form`}>
                     <Button className="bg-red-500 text-white">Edit</Button>
-                  </Link>
+                  </a>
                 </TableCell>
               </TableRow>
             ))}

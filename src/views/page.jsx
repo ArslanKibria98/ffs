@@ -27,7 +27,7 @@ export default function AuthHandover() {
           tenant_id: '3FA85F64-5717-4562-B3FC-2C963F66AFA6'
         })
       )
-      window.location.href = '/form-builder';
+      // window.location.href = '/form-builder';
     }
   }, [])
 
