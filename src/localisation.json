@@ -1,0 +1,191 @@
+{
+  "home": {
+    "en": {
+      "folder": "Folder",
+      "search": "Search",
+      "filter": "Filter by",
+      "sort": "Sort by",
+      "createNewForm": "Create New Form",
+      "columns": {
+        "formID": "Form ID",
+        "formName": "Form Name",
+        "repository": "Repository",
+        "languages": "Languages",
+        "countries": "Countries",
+        "createdBy": "Created By",
+        "createdDate": "Created Date",
+        "lastModifiedBy": "Last Modified By",
+        "lastModifiedDate": "Last Modified Date",
+        "version": "Version",
+        "status": "Status",
+        "action": "Action"
+      },
+      "formStatus": ["Publish", "Unpublish"]
+    },
+    "ar": {
+      "folder": "مجلد",
+      "search": "يبحث",
+      "filter": "مصنف بواسطة",
+      "sort": "ترتيب حسب",
+      "createNewForm": "إنشاء نموذج جديد",
+      "columns": {
+        "formID": "معرف النموذج",
+        "formName": "اسم النموذج",
+        "repository": "مستودع",
+        "languages": "اللغات",
+        "countries": "بلدان",
+        "createdBy": "انشأ من قبل",
+        "createdDate": "تاريخ الإنشاء",
+        "lastModifiedBy": "التعديل الأخير من قبل",
+        "lastModifiedDate": "اخر تحديث",
+        "version": "إصدار",
+        "status": "حالة",
+        "action": "تصرف"
+      },
+      "formStatus": ["ينشر", "إلغاء النشر"]
+    }
+  },
+  "progressBar": {
+    "en": {
+      "addingFormFields": "Adding Form Fields",
+      "formSetting": "Form Settings",
+      "preview": "Preview",
+      "save": "Save",
+      "PublishInfo": "Publish Info"
+    },
+    "ar": {
+      "addingFormFields": "إضافة حقول النموذج",
+      "formSetting": "إعدادات النموذج",
+      "preview": "معاينة",
+      "save": "حفظ",
+      "PublishInfo": "معلومات النشر"
+    }
+  },
+  "formSetting": {
+    "en": {
+      "name":"Form Details",
+      "field1": "Required Field Indicator",
+      "field2": "Target URL",
+      "field3": "Success Message",
+      "field4": "Fail Message",
+      "lSetting": "Language Settings",
+      "dLanguage": "Default LanguageL",
+      "allLanguage": "Select all languages?",
+      "sLanguage": "Select Languages",
+      "sCountry": "Country Settings",
+      "cSetting": "Select Countries",
+      "dCountry": "Default Country",
+      "allCountry": "Select all Countries?"
+    },
+    "ar": {
+      "name":"تفاصيل النموذج",
+      "field1": "مؤشر الحقل المطلوب",
+      "field2": "الرابط",
+      "field3": "نجاح رسالة",
+      "field4": "رسالة فاشلة",
+      "lSetting": "اعدادات اللغة",
+      "dLanguage": "اللغة الافتراضية",
+      "allLanguage": "تحديد كافة اللغات؟",
+      "sLanguage": "حدد اللغات",
+      "sCountry": "إعدادات البلد",
+      "cSetting": "اختر البلدان",
+      "dCountry": "البلد الافتراضي",
+      "allCountry": "تحديد كافة البلدان؟"
+    }
+  },
+  "formBuilder": {
+    "en": {
+      "itemsBar": "Items Bar",
+      "layoutBar": "Layout Bar",
+      "viewForm": "View Form",
+      "tab": "Tab",
+      "field": "Fields",
+      "build": {
+        "name": "Build",
+        "controls": {
+          "basic": "Basic Controls",
+          "regional": "Regional Controls",
+          "selectCountry": "Select Country",
+          "totalCost": "Total Cost",
+          "lending": "Lending Tools",
+          "loanCalc": "Loan Calculator",
+          "vehicle": "Vehicle Evaluator"
+        }
+      },
+      "style": {
+        "name": "Style",
+        "colors": {
+          "basic": "Background Color",
+          "regional": "Heading Color",
+          "lending": "Field Color"
+        },
+        "densities": {
+          "name": "Density",
+          "default": "Default",
+          "smaller": "Smaller",
+          "bigger": "Bigger",
+          "classic": "Classic"
+        },
+        "font": {
+          "heading": {
+            "name": "Heading Font",
+            "size": "Font Size",
+            "style": "Font Style"
+          },
+          "field": {
+            "name": "Field Font",
+            "size": "Font Size",
+            "style": "Font Style"
+          }
+        }
+      }
+    },
+    "ar": {
+      "itemsBar": "شريط العناصر",
+      "layoutBar": "شريط التخطيط",
+      "viewForm": "عرض النموذج",
+      "tab": "علامة تبويب",
+      "field": "الحقول",
+
+      "build": {
+        "name": "بناء",
+        "controls": {
+          "basic": "عناصر تحكم أساسية",
+          "regional": "عناصر تحكم إقليمية",
+          "selectCountry": "اختيار الدولة",
+          "totalCost": "التكلفة الإجمالية",
+          "lending": "أدوات الإقراض",
+          "loanCalc": "حاسبة القرض",
+          "vehicle": "مقيِّم السيارة"
+        }
+      },
+      "style": {
+        "name": "النمط",
+        "colors": {
+          "basic": "لون الخلفية",
+          "regional": "لون العنوان",
+          "lending": "لون الحقل"
+        },
+        "densities": {
+          "name": "الكثافة",
+          "default": "افتراضي",
+          "smaller": "أصغر",
+          "bigger": "أكبر",
+          "classic": "كلاسيكي"
+        },
+        "font": {
+          "heading": {
+            "name": "خط العنوان",
+            "size": "حجم الخط",
+            "style": "نمط الخط"
+          },
+          "field": {
+            "name": "خط الحقل",
+            "size": "حجم الخط",
+            "style": "نمط الخط"
+          }
+        }
+      }
+    }
+  }
+}
