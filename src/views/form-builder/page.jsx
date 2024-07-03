@@ -216,12 +216,12 @@ export default function FormBuilder() {
             ))}
             <TableRow><TableCell></TableCell></TableRow>
           </TableBody>
-          {loading && localLoading && forms.length < 1 ? (
+          {(loading || localLoading) && forms.length < 1 ? (
             <TableCaption>
               <BoxLoader />
             </TableCaption>
           ) : ""}
-          {!loading && !localLoading && forms.length < 1 ? (
+          {(!loading && !localLoading) && forms.length < 1 ? (
             <TableCaption className="pb-4">
               No Forms Found for this user!
             </TableCaption>
