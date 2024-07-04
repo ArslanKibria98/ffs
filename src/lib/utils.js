@@ -61,7 +61,7 @@ function colorDistance(lab1, lab2) {
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
 
-export async function deleteApi(id) {
+export async function deleteApi(id, resetForm) {
   
   try {
       const response = await fetch(`http://135.181.57.251:3048/api/Controls/DeleteControl?controlId=${id}`, {
@@ -73,8 +73,8 @@ export async function deleteApi(id) {
       });
 
       const data = await response.json();
+      resetForm();
       console.log(data);
-
   } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
       toast.error("Unable to perform task");

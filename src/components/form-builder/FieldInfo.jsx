@@ -7,7 +7,7 @@ import { deleteApi } from '@/lib/utils'
 
 
 
-function FieldInfo({ field }) {
+function FieldInfo({ field, resetForm }) {
     // console.log(field,"1234")
     
     // console.log(field,"field")
@@ -31,7 +31,7 @@ function FieldInfo({ field }) {
                                 <span className='text-[10px]'>Edit</span>
                                 <img src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16} />
                             </Button>
-                            <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]" onClick={()=>{deleteApi(field.controlId)}}>
+                            <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]" onClick={()=>{deleteApi(field.controlId, resetForm)}}>
                                 <span className='text-[10px]'>Delete</span>
                                 <img src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16} />
                             </Button>
