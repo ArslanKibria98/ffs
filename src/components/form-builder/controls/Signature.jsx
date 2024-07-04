@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function Signature({ getter, setter, resetForm }) {
+export default function Signature({ getter, setter, formDataApi, resetForm }) {
   return (
     <div>
       <DialogTitle>Add Signature</DialogTitle>

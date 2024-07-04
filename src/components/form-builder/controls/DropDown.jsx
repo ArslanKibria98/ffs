@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Checkbox2 } from "@/components/ui/checkbox"
-export default function DropDown({ getter, setter, resetForm }) {
+export default function DropDown({ getter, setter, formDataApi, resetForm }) {
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontStyles = [
     'Super-Light',

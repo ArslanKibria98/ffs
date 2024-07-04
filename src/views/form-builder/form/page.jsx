@@ -168,92 +168,92 @@ export default function BuilderPage() {
     {
       icon: '/control-icons/addTextField.svg',
       title: 'Add Text Field',
-      data: <AddTextField getter={usAddTextField} setter={setAddTextField} resetForm={fetchForms} />
+      data: <AddTextField getter={usAddTextField} setter={setAddTextField} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addRadioButton.svg',
       title: 'Radio Button',
-      data: <RadioButton getter={usRadioButton} setter={setRadioButton} resetForm={fetchForms} />
+      data: <RadioButton getter={usRadioButton} setter={setRadioButton} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addDropDown.svg',
       title: 'Drop Down',
-      data: <DropDown getter={usDropDown} setter={setDropDown} resetForm={fetchForms} />
+      data: <DropDown getter={usDropDown} setter={setDropDown} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addLOSControl.svg',
       title: 'LOS Control',
-      data: <LosControl getter={usLosControl} setter={setLosControl} resetForm={fetchForms} />
+      data: <LosControl getter={usLosControl} setter={setLosControl} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCalander.svg',
       title: 'Calendar',
-      data: <Calendar getter={usCalendar} setter={setCalendar} resetForm={fetchForms} />
+      data: <Calendar getter={usCalendar} setter={setCalendar} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addFileUpload.svg',
       title: 'File Upload',
-      data: <FileUpload getter={usFileUpload} setter={setFileUpload} resetForm={fetchForms} />
+      data: <FileUpload getter={usFileUpload} setter={setFileUpload} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addOtp.svg',
       title: 'Add OTP',
-      data: <AddOtp getter={usAddOtp} setter={setAddOtp} resetForm={fetchForms} />
+      data: <AddOtp getter={usAddOtp} setter={setAddOtp} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCheckbox.svg',
       title: 'Checkbox',
-      data: <Checkbox getter={usCheckbox} setter={setCheckbox} resetForm={fetchForms} />
+      data: <Checkbox getter={usCheckbox} setter={setCheckbox} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTime.svg',
       title: 'Time',
-      data: <Time getter={usTime} setter={setTime} resetForm={fetchForms} />
+      data: <Time getter={usTime} setter={setTime} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addPhone.svg',
       title: 'Phone Number',
-      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} resetForm={fetchForms} />
+      data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTable.svg',
       title: 'Table',
-      data: <Table getter={usTable} setter={setTable} resetForm={fetchForms} />
+      data: <Table getter={usTable} setter={setTable} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSignature.svg',
       title: 'Signature',
-      data: <Signature getter={usSignature} setter={setSignature} resetForm={fetchForms} />
+      data: <Signature getter={usSignature} setter={setSignature} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCaptcha.svg',
       title: 'Captcha',
-      data: <Captcha getter={usCaptcha} setter={setCaptcha} resetForm={fetchForms} />
+      data: <Captcha getter={usCaptcha} setter={setCaptcha} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addButton.svg',
       title: 'Button',
-      data: <AddButton getter={usAddButton} setter={setAddButton} resetForm={fetchForms} />
+      data: <AddButton getter={usAddButton} setter={setAddButton} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addRating.svg',
       title: 'Rating',
-      data: <Rating getter={usRating} setter={setRating} resetForm={fetchForms} />
+      data: <Rating getter={usRating} setter={setRating} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addEmailAddress.svg',
       title: 'Email Address',
-      data: <EmailAddress getter={usEmailAddress} setter={setEmailAddress} resetForm={fetchForms} />
+      data: <EmailAddress getter={usEmailAddress} formDataApi={formDataApi} setter={setEmailAddress} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addList.svg',
       title: 'List',
-      data: <List getter={usList} setter={setList} resetForm={fetchForms} />
+      data: <List getter={usList} setter={setList} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSlider.svg',
       title: 'Slider',
-      data: <Slider getter={usSlider} setter={setSlider} resetForm={fetchForms} />
+      data: <Slider getter={usSlider} setter={setSlider} formDataApi={formDataApi} resetForm={fetchForms} />
     }
   ]
 
@@ -459,9 +459,9 @@ export default function BuilderPage() {
           <div className="p-7 pt-4 flex flex-col">
             {formDataApi?.map((tab, index) => (
               // <>
-                <TabSection key={index} tab={tab} index={index}>
+                <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
                   {tab?.controls?.map((field, index) => (
-                    <FieldInfo field={field} key={index} />
+                    <FieldInfo field={field} key={index} resetForm={fetchForms} />
                   ))}
                 </TabSection>
               // </>

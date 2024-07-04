@@ -18,7 +18,7 @@ import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from "../../../redux/store/loading";
 
-export default function PhoneNumber({ getter, setter, resetForm }) {
+export default function PhoneNumber({ getter, setter, formDataApi, resetForm }) {
   const fontFamilies = ['any']
   const dispatch = useDispatch();
   const formId = useSelector((state) => state?.formStore.form_id);
@@ -26,7 +26,6 @@ export default function PhoneNumber({ getter, setter, resetForm }) {
   const [isRequired, setIsRequired] = useState(false)
   const [phoneType, setPhoneType] = useState('Normal')
   const [phoneNumber, setPhoneNumber] = useState('')
-  const [formDataApi, setFormDataApi] = useState([])
   const [id, setId] = useState('');
   const handleSave = async () => {
     const requestBody = {
@@ -68,31 +67,7 @@ export default function PhoneNumber({ getter, setter, resetForm }) {
       // Handle network error
     }
   }
-  const fetchForms = async () => {
-    try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          }
-        }
-      )
-      const data = await response.json()
-      
-      setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false));
-    } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error("Unable to get Form");
-      dispatch(setIsLoading(false));
-    }
-  }
-  useEffect(() => {
-    return () => fetchForms();
-  }, [])
+  
   return (
     <div>
       <DialogTitle>Add Phone Number</DialogTitle>

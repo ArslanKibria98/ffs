@@ -18,7 +18,7 @@ import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from '../../../redux/store/loading'
 
-export default function AddTextField({ getter, setter, resetForm }) {
+export default function AddTextField({ getter, setter, formDataApi, resetForm }) {
   const dispatch = useDispatch()
   const formId = useSelector((state) => state?.formStore.form_id)
 
@@ -36,7 +36,6 @@ export default function AddTextField({ getter, setter, resetForm }) {
   const [errorMessage, setErrorMessage] = useState('')
   const [errorMessagePosition, setErrorMessagePosition] = useState('option-one')
   const [isMandatory, setIsMandatory] = useState(false)
-  const [formDataApi, setFormDataApi] = useState([])
 
   const handleSubmit = async () => {
     const formData = {
@@ -80,32 +79,7 @@ export default function AddTextField({ getter, setter, resetForm }) {
       toast.error("Something went wrong!")
     }
   }
-  const fetchForms = async () => {
-    try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          }
-        }
-      )
-      const data = await response.json()
-
-      setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false))
-    } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error('Unable to get Form')
-      dispatch(setIsLoading(false))
-    }
-  }
-  useEffect(() => {
-    return () => fetchForms()
-  }, [])
-  console.log(id, 'id')
+  
   return (
     <div>
       <DialogTitle>Add Input Field</DialogTitle>

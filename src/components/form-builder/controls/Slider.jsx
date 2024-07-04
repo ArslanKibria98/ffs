@@ -1,125 +1,86 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectItem,
-  SelectContent
-} from '@/components/ui/select'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { DialogTitle, DialogClose } from '@/components/ui/dialog'
-import { Checkbox2 } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
+  SelectContent,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DialogTitle, DialogClose } from "@/components/ui/dialog";
+import { Checkbox2 } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
-import toast from 'react-hot-toast'
+import toast from "react-hot-toast";
 
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 
-export default function Slider({ getter, setter, resetForm }) {
-  const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-  const fontStyles = [
-    'Super-Light',
-    'Light',
-    'Medium',
-    'Semi-Bold',
-    'Bold',
-    'Extra-Bold'
-  ]
-  const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
-  const fontColours = ['5/04/2003 (mm/dd/yyyy)', '3/04/2003 (mm/dd/yyyy)', '1/04/2003 (mm/dd/yyyy)', '7/04/2003 (mm/dd/yyyy)', '9/04/2003 (mm/dd/yyyy)', '10/04/2003 (mm/dd/yyyy)']
-
-  const [fontSize, setFontSize] = useState(16)
-  const [fontStyle, setFontStyle] = useState('Bold')
-  const [fontFamily, setFontFamily] = useState('Normal')
-  const [fontColour, setFontColour] = useState('Black')
-  const [question, setQuestion] = useState('')
-  const [isRequired, setIsRequired] = useState(false)
-  const [minValue, setMinValue] = useState('')
-  const [maxValue, setMaxValue] = useState('')
-  const [formDataApi, setFormDataApi] = useState([])
-  const [id, setId] = useState('');
+export default function Slider({ getter, setter, formDataApi, resetForm }) {
+  const [question, setQuestion] = useState("");
+  const [isRequired, setIsRequired] = useState(false);
+  const [minValue, setMinValue] = useState("");
+  const [maxValue, setMaxValue] = useState("");
+  const [id, setId] = useState("");
   const dispatch = useDispatch();
   const formId = useSelector((state) => state?.formStore.form_id);
   const handleSave = async () => {
     const payload = {
-      formVersionId:formId,
+      formVersionId: formId,
       containerId: id,
       regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
       controlType: 0,
       question: question,
       is_Required: isRequired,
       min_Value: parseInt(minValue),
-      max_Value: parseInt(maxValue)
-    }
+      max_Value: parseInt(maxValue),
+    };
 
     try {
-      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateSlider', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Request-Id': '6cc5ae1e-1490-4d26-b347-d1f76e87665d'
-        },
-        body: JSON.stringify(payload)
-      })
+      const response = await fetch(
+        "http://135.181.57.251:3048/api/Controls/CreateSlider",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Request-Id": "6cc5ae1e-1490-4d26-b347-d1f76e87665d",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (response.ok) {
         // Handle success
-        let responseData= await response.json()
+        let responseData = await response.json();
         setter(!getter);
-        toast.success(responseData.notificationMessage)
+        toast.success(responseData.notificationMessage);
         resetForm();
       } else {
         // Handle error
         // setter(!getter);
-        console.log('Failed to save')
-        toast.error("Failed to save")
+        console.log("Failed to save");
+        toast.error("Failed to save");
       }
     } catch (error) {
       // setter(!getter);
-      console.error('Error:', error)
-      toast.error("Something went wrong!")
+      console.error("Error:", error);
+      toast.error("Something went wrong!");
     }
-  }
-  const fetchForms = async () => {
-    try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
-          }
-        }
-      )
-      const data = await response.json()
-      
-      setFormDataApi(data?.data?.containers)
-      dispatch(setIsLoading(false));
-    } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error("Unable to get Form");
-      dispatch(setIsLoading(false));
-    }
-  }
-  useEffect(() => {
-    return () => fetchForms();
-  }, [])
+  };
+
   return (
     <div>
       <DialogTitle>Add Slider</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-      <div className="col-span-2">
+        <div className="col-span-2">
           <Select
             className="w-full"
             onValueChange={(e) => {
-              setId(e)
+              setId(e);
             }}
-            
           >
             <label htmlFor="minLen" className="text-xs font-semibold">
               Tab Name
@@ -148,8 +109,8 @@ export default function Slider({ getter, setter, resetForm }) {
             onChange={(e) => setQuestion(e.target.value)}
           />
         </div>
-        <div className='my-4 col-span-2 flex items-center space-x-2'>
-          <Checkbox2 
+        <div className="my-4 col-span-2 flex items-center space-x-2">
+          <Checkbox2
             checked={isRequired}
             onChange={() => setIsRequired(!isRequired)}
           />
@@ -160,8 +121,10 @@ export default function Slider({ getter, setter, resetForm }) {
             Required?
           </label>
         </div>
-        
-        <label className='text-[16px] font-semibold col-span-2'>Slider Values</label>
+
+        <label className="text-[16px] font-semibold col-span-2">
+          Slider Values
+        </label>
 
         <div>
           <label htmlFor="minValue" className="text-xs font-semibold">
@@ -188,7 +151,7 @@ export default function Slider({ getter, setter, resetForm }) {
           />
         </div>
       </div>
-     
+
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
@@ -196,15 +159,15 @@ export default function Slider({ getter, setter, resetForm }) {
         >
           Save
         </Button>
-        
+
         <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           {/* <Button
             className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
           > */}
-            Cancel
+          Cancel
           {/* </Button> */}
         </DialogClose>
       </div>
     </div>
-  )
+  );
 }
