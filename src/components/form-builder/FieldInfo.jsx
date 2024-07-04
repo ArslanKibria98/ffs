@@ -3,32 +3,13 @@ import React from 'react'
 import { Input } from '../ui/input'
 import { Switch } from '../ui/switch'
 import { Button } from '../ui/button'
+import { deleteApi } from '@/lib/utils'
+
 
 
 function FieldInfo({ field }) {
-    // console.log(field)
-    const handlecallApi = async () => {
-        try {
-            alert(field.controlId)
-            const response = await fetch('http://135.181.57.251:3048/api/Controls/DeleteControl', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Request-Id': 'bf0256a6-9507-4b32-808a-30efbc9ab14d'
-                },
-                body: {
-                    controlId: field.controlId
-                }
-            });
-
-            const data = await response.json();
-            console.log(data);
-
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error);
-            toast.error("Unable to perform task");
-        }
-    }
+    // console.log(field,"1234")
+    
     // console.log(field,"field")
     return (
         <div className='flex flex-col gap-2'>
@@ -50,7 +31,7 @@ function FieldInfo({ field }) {
                                 <span className='text-[10px]'>Edit</span>
                                 <img src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16} />
                             </Button>
-                            <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]" onClick={handlecallApi}>
+                            <Button variant="ghost" className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]" onClick={()=>{deleteApi(field.controlId)}}>
                                 <span className='text-[10px]'>Delete</span>
                                 <img src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16} />
                             </Button>

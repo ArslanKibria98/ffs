@@ -3,6 +3,7 @@ import React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { deleteApi } from '@/lib/utils'
 
 function TabSection({ tab, index, children }) {
     return (
@@ -20,13 +21,13 @@ function TabSection({ tab, index, children }) {
                     <div className='w-full'>
                         <span className='text-[12px]'>Tab Name</span>
                         <div className='flex justify-between w-full gap-3'>
-                            <Input className='w-[90%]' type="text" value={tab?.containerName?tab?.containerName:"--"} name="" id="" readOnly/>
+                            <Input className='w-[90%]' type="text" value={tab?.containerName ? tab?.containerName : "--"} name="" id="" readOnly/>
                             <div className='flex justify-evenly gap-1 w-[10%]'>
                                 <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff9d00]">
                                     <span className='text-[10px]'>Edit</span>
                                     <img src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16} />
                                 </Button>
-                                <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff0200]">
+                                <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff0200]" onClick = {()=>{deleteApi(tab?.id)}}>
                                     <span className='text-[10px]'>Delete</span>
                                     <img src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16} />
                                 </Button>
