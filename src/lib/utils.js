@@ -60,3 +60,23 @@ function colorDistance(lab1, lab2) {
   const deltaB = lab1[2] - lab2[2];
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
+
+export async function deleteApi(id) {
+  
+  try {
+      const response = await fetch(`http://135.181.57.251:3048/api/Controls/DeleteControl?controlId=${id}`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Request-Id': 'bf0256a6-9507-4b32-808a-30efbc9ab14d'
+          }
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+  } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+      toast.error("Unable to perform task");
+  }
+}
