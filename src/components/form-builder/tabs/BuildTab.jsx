@@ -77,7 +77,7 @@ function BuildTab({ controlList, region, setRegion, countryList, LeadingList, co
             <AccordionItem value="item-3" className="mb-1">
                 <AccordionTrigger className="px-7 data-[state=open]:bg-[#ffeff0] data-[state=closed]:bg-[#fafafa]">
                     
-                    {locData?.build.controls.regional||"Lending Tools"}
+                    {locData?.build.controls.lending||"Lending Tools"}
                 </AccordionTrigger>
                 <AccordionContent className="p-7 py-5 bg-[#fafafa] border-b border-[#e2e2e2] overflow-auto max-h-[307px]">
                     <div className='flex flex-col gap-x-2 gap-y-3'>

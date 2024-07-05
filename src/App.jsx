@@ -11,6 +11,7 @@ import BuilderLayout from "./layouts/BuilderLayout";
 
 import AuthHandover from "./views/page";
 import FormBuilder from "./views/form-builder/page";
+import FormRender from "./views/render-form/page";
 
 import BuilderPage from "./views/form-builder/form/page";
 import FormSettingsPage from "./views/form-builder/form/settings/page";
@@ -27,6 +28,7 @@ export default function App() {
 
           <Route index element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
+          <Route path="render-form" element={<FormRender />} />
         
           <Route path="form-builder/form" element={<BuilderLayout />}>
         

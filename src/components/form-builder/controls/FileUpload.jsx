@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 
-export default function FileUpload({ getter, setter, formDataApi, resetForm }) {
+export default function FileUpload({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const formId = useSelector((state) => state?.formStore.form_id);
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);

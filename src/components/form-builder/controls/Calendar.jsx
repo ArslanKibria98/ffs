@@ -13,23 +13,9 @@ import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { Checkbox2 } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 
-export default function Calendar({ getter, setter, formDataApi, resetForm }) {
-  const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-  const fontStyles = [
-    'Super-Light',
-    'Light',
-    'Medium',
-    'Semi-Bold',
-    'Bold',
-    'Extra-Bold'
-  ]
-  const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
-  const fontColours = ['5/04/2003 (mm/dd/yyyy)', '3/04/2003 (mm/dd/yyyy)', '1/04/2003 (mm/dd/yyyy)', '7/04/2003 (mm/dd/yyyy)', '9/04/2003 (mm/dd/yyyy)', '10/04/2003 (mm/dd/yyyy)']
-
-  const [fontSize, setFontSize] = useState(16)
-  const [fontStyle, setFontStyle] = useState('Bold')
-  const [fontFamily, setFontFamily] = useState('Normal')
-  const [fontColour, setFontColour] = useState('Black')
+export default function Calendar({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const dateFormats = ['5/04/2003 (mm/dd/yyyy)', '3/04/2003 (mm/dd/yyyy)', '1/04/2003 (mm/dd/yyyy)', '7/04/2003 (mm/dd/yyyy)', '9/04/2003 (mm/dd/yyyy)', '10/04/2003 (mm/dd/yyyy)']
+  const [dateFormat, setDateFormat] = useState('Black')
 
   return (
     <div>
@@ -59,19 +45,19 @@ export default function Calendar({ getter, setter, formDataApi, resetForm }) {
         <label className='text-[16px] font-semibold col-span-2'>Choices</label>
 
         <div>
-          <label htmlFor="fontColour" className="text-xs font-semibold">
+          <label htmlFor="dateFormat" className="text-xs font-semibold">
           Choose Format
           </label>
           <Select
             className="w-full"
-            onValueChange={(e) => setFontColour(e)}
-            defaultValue={fontColour}
+            onValueChange={(e) => setDateFormat(e)}
+            defaultValue={dateFormat}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {fontColours.map((style, index) => (
+              {dateFormats.map((style, index) => (
                 <SelectItem key={index} value={style}>
                   {style}
                 </SelectItem>

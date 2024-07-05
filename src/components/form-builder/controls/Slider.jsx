@@ -18,14 +18,14 @@ import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 
-export default function Slider({ getter, setter, formDataApi, resetForm }) {
+export default function Slider({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [minValue, setMinValue] = useState("");
   const [maxValue, setMaxValue] = useState("");
   const [id, setId] = useState("");
-  const dispatch = useDispatch();
   const formId = useSelector((state) => state?.formStore.form_id);
+  
   const handleSave = async () => {
     const payload = {
       formVersionId: formId,

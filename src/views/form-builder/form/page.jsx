@@ -38,12 +38,12 @@ import BoxLoader from '@/components/BoxLoader'
 import localisationData from "../../../localisation.json"
 
 export default function BuilderPage() {
-  // alert(params.formId);
   const dispatch = useDispatch();
   const loading = useSelector((state) => state?.loadingStore.value);
   const userId = useSelector((state) => state?.authStore.id);
   const tenantId = useSelector((state) => state?.authStore.tenant_id);
   const language = useSelector((state) => state.language.language);
+
   let locData = localisationData.formBuilder.en;
   if (language == "en") {
     locData = localisationData.formBuilder.en;
@@ -52,16 +52,6 @@ export default function BuilderPage() {
   }
 
   const formId = useSelector((state) => state?.formStore.form_id);
-  
-  console.log(formId, "formId");
-  // useEffect(() => {
-  //   if (!formId || formId == "") {
-  //     console.log("Redux state found empty, dispatching!");
-  //     dispatch(SET_FORM_ID(params.formId));
-  //   } else {
-  //     console.log("Redux state FILLED")
-  //   }
-  // }, [formId, params.formId]);
 
   const [region, setRegion] = useState()
   
@@ -139,7 +129,7 @@ export default function BuilderPage() {
   const fetchForms = async () => {
     try {
       const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${formId}`,
         {
           method: 'GET',
           headers: {
@@ -149,8 +139,8 @@ export default function BuilderPage() {
         }
       )
       const data = await response.json()
-      
       setFormDataApi(data?.data?.containers)
+      
       dispatch(setIsLoading(false));
     } catch (error) {
       console.error('Error fetching forms:', error)
@@ -168,6 +158,7 @@ export default function BuilderPage() {
     {
       icon: '/control-icons/addTextField.svg',
       title: 'Add Text Field',
+      controlType: 0,
       data: <AddTextField getter={usAddTextField} setter={setAddTextField} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
@@ -175,84 +166,101 @@ export default function BuilderPage() {
       title: 'Radio Button',
       data: <RadioButton getter={usRadioButton} setter={setRadioButton} formDataApi={formDataApi} resetForm={fetchForms} />
     },
+    // controlType: 0,
     {
       icon: '/control-icons/addDropDown.svg',
       title: 'Drop Down',
+      // controlType: 0,
       data: <DropDown getter={usDropDown} setter={setDropDown} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addLOSControl.svg',
       title: 'LOS Control',
+      // controlType: 0,
       data: <LosControl getter={usLosControl} setter={setLosControl} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCalander.svg',
       title: 'Calendar',
+      // controlType: 0,
       data: <Calendar getter={usCalendar} setter={setCalendar} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addFileUpload.svg',
       title: 'File Upload',
+      controlType: 3,
       data: <FileUpload getter={usFileUpload} setter={setFileUpload} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addOtp.svg',
       title: 'Add OTP',
+      controlType: 4,
       data: <AddOtp getter={usAddOtp} setter={setAddOtp} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCheckbox.svg',
       title: 'Checkbox',
+      // controlType: 0,
       data: <Checkbox getter={usCheckbox} setter={setCheckbox} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTime.svg',
       title: 'Time',
+      // controlType: 0,
       data: <Time getter={usTime} setter={setTime} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addPhone.svg',
       title: 'Phone Number',
+      controlType: 5,
       data: <PhoneNumber getter={usPhoneNumber} setter={setPhoneNumber} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addTable.svg',
       title: 'Table',
+      // controlType: 0,
       data: <Table getter={usTable} setter={setTable} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSignature.svg',
       title: 'Signature',
+      // controlType: 0,
       data: <Signature getter={usSignature} setter={setSignature} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addCaptcha.svg',
       title: 'Captcha',
+      // controlType: 0,
       data: <Captcha getter={usCaptcha} setter={setCaptcha} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addButton.svg',
       title: 'Button',
+      controlType: 1,
       data: <AddButton getter={usAddButton} setter={setAddButton} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addRating.svg',
       title: 'Rating',
+      // controlType: 0,
       data: <Rating getter={usRating} setter={setRating} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addEmailAddress.svg',
       title: 'Email Address',
+      // controlType: 0,
       data: <EmailAddress getter={usEmailAddress} formDataApi={formDataApi} setter={setEmailAddress} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addList.svg',
       title: 'List',
+      // controlType: 0,
       data: <List getter={usList} setter={setList} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {
       icon: '/control-icons/addSlider.svg',
       title: 'Slider',
+      controlType: 2,
       data: <Slider getter={usSlider} setter={setSlider} formDataApi={formDataApi} resetForm={fetchForms} />
     }
   ]
@@ -399,10 +407,23 @@ export default function BuilderPage() {
     };
   }, [])
 
+  function getControlbyType(field) {
+    const indexOfControl = controlList.findIndex(control => control.controlType === field?.controlType);
+  
+    if (indexOfControl!== -1) {
+      return React.cloneElement(controlList[indexOfControl].data, {
+        isUpdate: true,
+        updateFieldData: field
+      });
+    }
+  
+    return controlList[1].data;
+  }
+
   return (
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
-      <h4 className="font-semibold p-7 pb-4"> {locData?.itemsBar||"Items Bar"}</h4>
+        <h4 className="font-semibold p-7 pb-4"> {locData?.itemsBar||"Items Bar"}</h4>
         <Tabs defaultValue="build">
           <TabsList className="grid grid-cols-2 gap-1 py-1">
             <TabsTrigger value="build" className="rounded-none">
@@ -452,19 +473,18 @@ export default function BuilderPage() {
       <div className="col-span-3 mx-4">
         <div className="bg-[#fff] pb-4">
           <h3 className="font-semibold p-7 pb-0">
-          {locData?.layoutBar||"Layout Bar"} &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
+            {locData?.layoutBar||"Layout Bar"} &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
             &nbsp;&nbsp;&nbsp;&nbsp;
           </h3>
 
           <div className="p-7 pt-4 flex flex-col">
             {formDataApi?.map((tab, index) => (
-              // <>
-                <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
-                  {tab?.controls?.map((field, index) => (
-                    <FieldInfo field={field} key={index} resetForm={fetchForms} />
-                  ))}
-                </TabSection>
-              // </>
+              <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
+                {tab?.controls?.map((field, index) => (
+                  <FieldInfo field={field} key={index} resetForm={fetchForms} updateModalData={getControlbyType(field)} />
+                ))}
+                {/* {getControlbyType(1)} */}
+              </TabSection>
             ))}
             {loading && formDataApi?.length < 1 ? (<><BoxLoader /></>) : ""}
             {!loading && formDataApi?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
@@ -480,11 +500,11 @@ export default function BuilderPage() {
             </Button>
           </a>
           <a href="/form-builder">
-          <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
-          >
-            Previous
-          </Button>
+            <Button
+              className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
+            >
+              Previous
+            </Button>
           </a>
         </div>
       </div>

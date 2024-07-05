@@ -18,31 +18,31 @@ import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from '../../../redux/store/loading'
 
-export default function AddTextField({ getter, setter, formDataApi, resetForm }) {
+export default function AddTextField({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch()
   const formId = useSelector((state) => state?.formStore.form_id)
 
-  const tabNames = ['Personal Info', 'Address Details', 'Tab 3', 'Tab 4']
+  // console.log(updateFieldData);
+
   const fieldTypes = ['Numeric', 'Text', 'Email', 'Password']
 
-  const [tabName, setTabName] = useState(tabNames[0])
-  const [fieldType, setFieldType] = useState(fieldTypes[0])
-  const [fieldLabel, setFieldLabel] = useState('')
-  const [id, setId] = useState('')
-  const [fieldName, setFieldName] = useState('')
-  const [fieldPlaceholder, setFieldPlaceholder] = useState('')
-  const [minLength, setMinLength] = useState('')
-  const [maxLength, setMaxLength] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [errorMessagePosition, setErrorMessagePosition] = useState('option-one')
-  const [isMandatory, setIsMandatory] = useState(false)
+  const [fieldType, setFieldType] = useState(!isUpdate ? fieldTypes[0] : updateFieldData.inputType)
+  const [fieldLabel, setFieldLabel] = useState(!isUpdate ? "" : updateFieldData.name)
+  const [id, setId] = useState("")
+  const [fieldName, setFieldName] = useState(!isUpdate ? "" : updateFieldData.name)
+  const [fieldPlaceholder, setFieldPlaceholder] = useState(!isUpdate ? "" : updateFieldData.placePlaceholder)
+  const [minLength, setMinLength] = useState(!isUpdate ? "" : updateFieldData.minLength)
+  const [maxLength, setMaxLength] = useState(!isUpdate ? "" : updateFieldData.maxLength)
+  const [errorMessage, setErrorMessage] = useState(!isUpdate ? "" : updateFieldData.errorMsgTxt)
+  const [errorMessagePosition, setErrorMessagePosition] = useState(!isUpdate ? 'option-one' : updateFieldData.errorMsgPosition)
+  const [isMandatory, setIsMandatory] = useState(!isUpdate ? false : updateFieldData.is_Required)
 
   const handleSubmit = async () => {
     const formData = {
       formVersionId: formId,
       containerId: id,
       regionId: '9712CB25-9053-4BF4-936C-7C279CE5DA69',
-      name: tabName,
+      name: fieldName,
       default_Value: '',
       inputType: fieldType,
       fieldLabel,
@@ -54,7 +54,8 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm })
       errorMsgPosition: errorMessagePosition,
       is_Required: isMandatory
     }
-
+    console.log(formData)
+    // return;
     try {
       const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateTextbox', {
         method: 'POST',
@@ -79,36 +80,84 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm })
       toast.error("Something went wrong!")
     }
   }
+
+  const handleUpdate = async () => {
+    const formUpdateData = {
+      id: updateFieldData.controlId,
+      controlId: updateFieldData.controlId,
+      name: fieldName,
+      placeholder: fieldPlaceholder,
+      default_Value: "string",
+      inputType: fieldType,
+      minLength: minLength,
+      maxLength: maxLength,
+      errorMsgTxt: errorMessage,
+      errorMsgPosition: errorMessagePosition,
+      is_Required: isMandatory
+    }
+    
+    try {
+      const response = await fetch('http://135.181.57.251:3048/api/Controls/UpdateTextbox', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Request-Id': 'd59ba714-d9ab-48b8-a830-8d116b72df00'
+        },
+        body: JSON.stringify(formUpdateData)
+      })
+
+      if (response.ok) {
+        let responseData = await response.json()
+        if (!responseData.success) {
+          toast.error(responseData?.notificationMessage);
+          return;
+        }
+        toast.success(responseData?.notificationMessage)
+        resetForm();
+        document.getElementById("TFDialogClose").click();
+      } else {
+        console.error('Failed to edit Text field!')
+        toast.error("Unable to edit!")
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error("Something went wrong!")
+    }
+  }
   
   return (
     <div>
-      <DialogTitle>Add Input Field</DialogTitle>
+      <DialogTitle>{!isUpdate ? "Add " : "Edit "} Input Field</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-4">
-        <h5 className="text-xl font-semibold mt-4 col-span-2">Select Tab</h5>
+        {!isUpdate && (
+          <>
+            <h5 className="text-xl font-semibold mt-4 col-span-2">Select Tab</h5>
 
-        <div className="col-span-2">
-          <Select
-            className="w-full"
-            onValueChange={(e) => {
-              setId(e)
-            }}
-          >
-            <label htmlFor="minLen" className="text-xs font-semibold">
-              Tab Name
-            </label>
-            <SelectTrigger className="w-full h-[48px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {formDataApi?.map((style, index) => (
-                <SelectItem key={index} value={style?.id}>
-                  {style?.containerName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <div className="col-span-2">
+              <Select
+                className="w-full"
+                onValueChange={(e) => {
+                  setId(e)
+                }}
+              >
+                <label htmlFor="minLen" className="text-xs font-semibold">
+                  Tab Name
+                </label>
+                <SelectTrigger className="w-full h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {formDataApi?.map((style, index) => (
+                    <SelectItem key={index} value={style?.id}>
+                      {style?.containerName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        )}
 
         <h5 className="text-xl font-semibold mt-4 col-span-2">Select Type</h5>
 
@@ -242,7 +291,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm })
         </div>
 
         <div className="my-4 col-span-2 flex items-center space-x-2">
-          <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
+          <Checkbox2 checked={isMandatory} onCheckedChange={(e)=>setIsMandatory(e)} />
           <label
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -255,16 +304,12 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm })
       <div className="flex flex-row-reverse gap-4 py-1 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-          onClick={handleSubmit}
+          onClick={!isUpdate ? handleSubmit : handleUpdate}
         >
-          Add Field
+          {!isUpdate ? "Add " : "Save "} Field
         </Button>
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-          {/* <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          > */}
-            Cancel
-          {/* </Button> */}
+        <DialogClose id='TFDialogClose' className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          Cancel
         </DialogClose>
       </div>
     </div>

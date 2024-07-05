@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function List({ getter, setter, formDataApi, resetForm }) {
+export default function List({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   return (
     <div>
       <DialogTitle>Add List</DialogTitle>

@@ -18,7 +18,7 @@ import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from "../../../redux/store/loading";
 
-export default function AddOtp({ getter, setter, formDataApi, resetForm }) {
+export default function AddOtp({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const fontColours = ['4-digits', '5-digits', '6-digits']
   const dispatch = useDispatch();
   const otpFormatMapping = {

@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
-export default function EmailAddress({ getter, setter, formDataApi, resetForm }) {
+export default function EmailAddress({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   return (
     <div>
       <DialogTitle>Add Email Address</DialogTitle>

@@ -9,25 +9,19 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
+
 import toast from 'react-hot-toast'
-export default function AddNewTab({ getter, setter, resetForm }) {
+import { useSelector } from 'react-redux'
+
+export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
+  const formId = useSelector((state) => state?.formStore.form_id)
+
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
-  const fontStyles = [
-    'Super-Light',
-    'Light',
-    'Medium',
-    'Semi-Bold',
-    'Bold',
-    'Extra-Bold'
-  ]
   const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
   const fontColours = ['Black', 'White', 'Red', 'Blue', 'Yellow', 'Green']
 
   const [tabName, setTabName] = useState('')
-  const [minLen, setMinLen] = useState('')
-  const [maxLen, setMaxLen] = useState('')
   const [fontSize, setFontSize] = useState(16)
-  const [fontStyle, setFontStyle] = useState('Bold')
   const [fontFamily, setFontFamily] = useState('Normal')
   const [fontColour, setFontColour] = useState('Black')
 
@@ -35,7 +29,7 @@ export default function AddNewTab({ getter, setter, resetForm }) {
     const data = {
       containerType: 0,
       parentContainerId: "00000000-0000-0000-0000-000000000000",
-      formVersionId: "aaeaf5b0-079f-48fa-c4da-08dc950b4ce7",
+      formVersionId: formId,
       fontSize:fontSize.toString(),
       fontFamily:fontFamily,
       fontColor:fontColour,
