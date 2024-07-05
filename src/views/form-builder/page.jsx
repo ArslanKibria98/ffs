@@ -107,7 +107,7 @@ export default function FormBuilder() {
 
         toast.success(responseData?.notificationMessage)
         // dispatch(SET_FORM_ID(responseData?.data?.id));
-        dispatch(SET_FORM_INFO(responseData?.data?.id, responseData?.data?.formId))
+        dispatch(SET_FORM_INFO(responseData?.data?.formId, responseData?.data?.id))
         window.location.href = "/form-builder/form"
         dispatch(setIsLoading(true));
         setLocalLoading(true);

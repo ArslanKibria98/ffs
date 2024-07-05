@@ -4,8 +4,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { deleteApi } from '@/lib/utils'
+import { useDispatch } from 'react-redux'
+import { setIsLoading } from '@/redux/store/loading'
 
 function TabSection({ tab, index, children, resetForm }) {
+    const dispatch = useDispatch()
+
+    function resetFormForward() {
+        console.log("Forward function in Tab Section");
+        resetForm();
+    }
+
     return (
         <div className=''>
             {/* Tab Name Box */}
@@ -27,7 +36,10 @@ function TabSection({ tab, index, children, resetForm }) {
                                     <span className='text-[10px]'>Edit</span>
                                     <img src="/form-layout-icons/editIcon.svg" alt="Edit Icon" height={16} width={16} />
                                 </Button>
-                                <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff0200]" onClick = {()=>{deleteApi(tab?.id, resetForm)}}>
+                                <Button variant="ghost" className="h-[40px] flex flex-col text-[#838383] hover:text-[#ff0200]" onClick = {()=>{
+                                    dispatch(setIsLoading(true));
+                                    deleteApi(tab?.id, resetFormForward, true)
+                                }}>
                                     <span className='text-[10px]'>Delete</span>
                                     <img src="/form-layout-icons/deleteIcon.svg" alt="Delete Icon" height={16} width={16} />
                                 </Button>

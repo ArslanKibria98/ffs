@@ -12,9 +12,16 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../ui/dialog";
+import { useDispatch } from "react-redux";
+import { setIsLoading } from "@/redux/store/loading";
 
 function FieldInfo({ field, resetForm, updateModalData }) {
-//   console.log(updateModalData)
+  const dispatch = useDispatch();
+
+  function resetFormForward() {
+      console.log("Forward function in Tab Section");
+      resetForm();
+  }
 
   // console.log(field,"field")
   return (
@@ -70,7 +77,8 @@ function FieldInfo({ field, resetForm, updateModalData }) {
                 variant="ghost"
                 className="h-[40px] w-[50px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]"
                 onClick={() => {
-                  deleteApi(field.controlId, resetForm);
+                  dispatch(setIsLoading(true))
+                  deleteApi(field.controlId, resetFormForward, false);
                 }}
               >
                 <span className="text-[10px]">Delete</span>
