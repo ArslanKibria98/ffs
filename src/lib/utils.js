@@ -1,5 +1,6 @@
 import { clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import toast from 'react-hot-toast';
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
@@ -11,11 +12,11 @@ export function isCloseToWhite(hexColor, threshold = 40) {
     const rgb = hexToRgb(hex);
     const xyz = rgbToXyz(rgb);
     return xyzToLab(xyz);
-    };
-    
-    const labColor = hexToLab(extractHexFromTailwindClass(hexColor));
-    const deltaE = colorDistance(labColor, whiteLab);
-    // console.log(deltaE, labColor, whiteLab)
+  };
+
+  const labColor = hexToLab(extractHexFromTailwindClass(hexColor));
+  const deltaE = colorDistance(labColor, whiteLab);
+  // console.log(deltaE, labColor, whiteLab)
 
   return deltaE <= threshold;
 }
@@ -23,7 +24,7 @@ export function isCloseToWhite(hexColor, threshold = 40) {
 function extractHexFromTailwindClass(className) {
   const hexRegex = /\[#([A-Fa-f0-9]{6})\]/;
   const match = className.match(hexRegex);
-  return match? `#${match[1]}` : null;
+  return match ? `#${match[1]}` : null;
 }
 
 // Helper functions
@@ -61,22 +62,26 @@ function colorDistance(lab1, lab2) {
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
 
-export async function deleteApi(id, resetForm) {
-  
+export async function deleteApi(id, resetForm, forTab) {
+  const apiString = forTab ? `http://135.181.57.251:3048/api/Controls/DeleteContainer?ContainerId=${id}` :
+  `http://135.181.57.251:3048/api/Controls/DeleteControl?controlId=${id}`
   try {
-      const response = await fetch(`http://135.181.57.251:3048/api/Controls/DeleteControl?controlId=${id}`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-              'Request-Id': 'bf0256a6-9507-4b32-808a-30efbc9ab14d'
-          }
+    let data = false;
+      const response = await fetch(apiString, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Request-Id': id
+        }
       });
 
-      const data = await response.json();
+      data = await response.json();
+      toast.success("Operation Successful");
       resetForm();
-      console.log(data);
-  } catch (error) {
-      console.error('There was a problem with the fetch operation:', error);
-      toast.error("Unable to perform task");
+    }
+   catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    toast.error("Unable to perform task");
+    resetForm();
   }
 }
