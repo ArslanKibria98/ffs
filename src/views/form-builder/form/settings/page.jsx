@@ -16,7 +16,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import toast from 'react-hot-toast'
 import localisationData from '../../../../localisation.json'
 import { useSelector, useDispatch } from 'react-redux'
-import { Link } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 
 export default function FormSettingsPage() {
   // const router = useRouter()
@@ -43,6 +43,7 @@ export default function FormSettingsPage() {
     'Bangladash'
   ]
   const language = useSelector((state) => state.language.language)
+  const navigate = useNavigate()
   const [fieldLabel, setFieldLabel] = useState('')
   const [fieldName, setFieldName] = useState('')
   const [fieldPlaceholder, setFieldPlaceholder] = useState('')
@@ -52,7 +53,6 @@ export default function FormSettingsPage() {
   const [defaultCountry, setDefaultCountry] = useState('')
   const [selectedLanguages, setSelectedLanguages] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
-
   const handleLanguageChange = (language) => {
     setSelectedLanguages((prev) =>
       prev.includes(language)
@@ -71,7 +71,7 @@ export default function FormSettingsPage() {
 
   const handleSubmit = async () => {
     const formData = {
-      formVersionId: 'aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+      formVersionId: version_id,
       formRequiredFieldIndicator: fieldLabel,
       targetUrl: fieldName,
       successMessage: fieldPlaceholder,
@@ -100,7 +100,8 @@ export default function FormSettingsPage() {
         console.log(responseData, '1---1')
         toast.success(responseData?.notificationMessage)
         // router.push(`/form-builder/form/preview`)
-        window.location.href = `/form-builder/form/preview`;
+        navigate(`/form-builder/form/preview`)
+        // window.location.href = `/form-builder/form/preview`;
       } else {
         let responseData = await response.json()
         toast.success(responseData?.errors[0])

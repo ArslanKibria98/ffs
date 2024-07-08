@@ -7,8 +7,10 @@ import { Link } from "react-router-dom"
 import { useSelector } from 'react-redux'
 
 export default function FormPublishPage() {
+  const location  =window.location.origin  ;
+  console.log(location,"location")
   const version_id = useSelector((state) => state?.formStore.version_id)
-
+  const form_Id = useSelector((state) => state?.formStore.form_id)
   return (
     <>
       <div className="px-4 bg-[#FAFAFA] grid grid-cols-1">
@@ -18,13 +20,12 @@ export default function FormPublishPage() {
               <img src={successIcon} />
             </div>
             <div className="font-bold text-4xl">Thank You!</div>
-            <div>Form ID : F-12345</div>
+            <div>Form ID : {form_Id}</div>
             <div>Date : 25/03/2024</div>
             <div className="underline ">
               Access URL :
-              <span className="">
-                {' '}
-                http://8.213.12.345/notifications/sms-in-app/without-template
+              <span className="" onClick={()=>{window.open(`${location}/render-form`)}}>
+               {`${location}/render-form`}
               </span>
             </div>
             <div>
