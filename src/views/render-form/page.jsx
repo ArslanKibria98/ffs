@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useFormik } from 'formik'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Slider } from "@/components/ui/slider"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import toast from 'react-hot-toast'
-import { useSelector } from 'react-redux'
+import React, { useState, useEffect } from 'react';
+import { useFormik } from 'formik';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Slider } from "@/components/ui/slider";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
@@ -32,17 +32,18 @@ export default function FormRender() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
           }
         }
-      )
-      const data = await response.json()
-      console.log(data, 'data')
-      setFormDataApi(data?.data?.containers)
+      );
+      const data = await response.json();
+      console.log(data, 'data');
+      setFormDataApi(data?.data?.containers);
     } catch (error) {
-      console.error('Error fetching forms:', error)
-      toast.error("Unable to get form!")
+      console.error('Error fetching forms:', error);
+      toast.error("Unable to get form!");
     }
-  }
+  };
 
   useEffect(() => {
     fetchForms();
@@ -50,9 +51,57 @@ export default function FormRender() {
 
   const formik = useFormik({
     initialValues: {},
-    onSubmit: values => {
+    onSubmit:async values => {
       console.log('Form Data:', values);
-      toast.success('Form submitted successfully!');
+      const textBoxInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 0))).map(key => ({
+        "controlId": key.toLowerCase(),
+        "textBoxInput": values[key]
+      }));
+
+      const otpInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 4))).map(key => ({
+        "controlId": key.toLowerCase(),
+        "otpInput": values[key]
+      }));
+      const phoneNumberInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 5))).map(key => ({
+        "controlId": key.toLowerCase(),
+        "phoneNumber": values[key],
+        "phoneType": "any",
+
+      }));
+      // const controlFileInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 3))).map(key => ({
+      //   "controlId": key.toLowerCase(),
+      //   "fileFormat": 0,
+      //   "phoneType": "any",
+
+      // }));
+      console.log('Formatted Data:', { textBoxInput,otpInput });
+      // toast.success('Form submitted successfully!');
+      try {
+        const data = {
+          "formVersionId":version_id,
+          textBoxInput,
+          phoneNumberInstanceInput,
+          otpInput
+        }
+        const response = await fetch('http://135.181.57.251:3048/api/FormInstance/CreateFormInstance', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Request-Id': 'b561073e-d25b-4057-a1d3-7299129ff0f2'
+          },
+          body: JSON.stringify(data)
+        })
+        const dataRes = await response.json();
+        console.log(dataRes, 'data');
+        toast.success(dataRes?.notificationMessage)
+        // You can add your POST API call here
+        // e.g., postFormData(textBoxInput);
+      } catch (error) {
+        console.error('Error fetching form data:', error);
+        toast.error('Failed to submit form.');
+      }
+      // You can add your POST API call here
+      // e.g., postFormData({ textBoxInput, otpInput });
     },
   });
 
@@ -62,8 +111,8 @@ export default function FormRender() {
   };
 
   return (
-    <div className="max-w-[1000px] mx-auto p-14">
-      <h3 className="font-semibold text-xl mb-4">Form Fields</h3>
+    <div className="max-w-[1000px] h-[83vh] mx-auto p-14">
+      {/* <h3 className="font-semibold text-xl mb-4">Form Fields</h3> */}
       <form onSubmit={formik.handleSubmit}>
         {formDataApi?.map((tab, index) => (
           <div key={index} className="bg-white rounded-xl px-6 py-8">
@@ -77,11 +126,11 @@ export default function FormRender() {
         ))}
         <div className="flex flex-row-reverse gap-4 py-4 my-4">
           <Button type="submit" className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">Submit</Button>
-          <Button type="button" onClick={handleSave} className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg">Save</Button>
+          {/* <Button type="button" onClick={handleSave} className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg">Save</Button> */}
         </div>
       </form>
     </div>
-  )
+  );
 }
 
 function GetRelevantField({ control, formik }) {
@@ -98,14 +147,14 @@ function GetRelevantField({ control, formik }) {
           <Input
             className="border-black mt-2"
             type="text"
-            name={field.id}
+            name={field.controlId}
             placeholder={field?.placeholder}
             onChange={formik.handleChange}
-            value={formik.values[field.name] || ''}
+            value={formik.values[field.controlId] || ''}
           />
         </div>
       </div>
-    )
+    );
   }
 
   if (field?.controlType === 1) {  //  Button
@@ -121,12 +170,12 @@ function GetRelevantField({ control, formik }) {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   if (field?.controlType === 2) {  //  Slider
     return (
-      <div className='col-span-2'>
+      <div className="col-span-2 flex justify-center">
         <p className="text-[12px]">
           {field.name}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
@@ -136,41 +185,41 @@ function GetRelevantField({ control, formik }) {
             defaultValue={[33]}
             max={100}
             step={1}
-            onChange={value => formik.setFieldValue(field.id, value)}
+            onChange={value => formik.setFieldValue(field.name, value)}
           />
         </div>
       </div>
-    )
+    );
   }
 
   if (field?.controlType === 3) {  //  File
     return (
       <div>
         <p className="text-[12px]">
-          {field?.name}
+          {field?.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="grid gap-4 pb-4 text-transparent">
           <Input
             className="border-gray-500 text-transparent placeholder:text-transparent text-center placeholder:text-center border-dotted mt-1 py-6 h-[100px]"
             type="file"
-            name={field.id}
+            name={field.name}
             onChange={event => formik.setFieldValue(field.name, event.currentTarget.files[0])}
           />
         </div>
       </div>
-    )
+    );
   }
 
   if (field?.controlType === 4) {  //  Otp
     return (
       <div>
         <p className="text-[12px]">
-          {field.name}
+          {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="flex justify-between w-full gap-3 pt-2">
-          <InputOTP maxLength={4} onChange={value => formik.setFieldValue(field.id, value)}>
+          <InputOTP maxLength={4} onChange={value => formik.setFieldValue(field.controlId, value)}>
             <InputOTPGroup>
               <InputOTPSlot index={0} />
               <InputOTPSlot index={1} />
@@ -180,27 +229,29 @@ function GetRelevantField({ control, formik }) {
           </InputOTP>
         </div>
       </div>
-    )
+    );
   }
 
   if (field?.controlType === 5) {  //  PhoneNumber
     return (
       <div>
         <p className="text-[12px]">
-          {field.name}
+          {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="flex justify-between w-full gap-3">
           <Input
             className="border-black mt-2"
             type="text"
-            name={field.id}
+            name={field.controlId}
             placeholder={field?.placeholder}
             onChange={formik.handleChange}
-            value={formik.values[field.name] || ''}
+            value={formik.values[field.controlId] || ''}
           />
         </div>
       </div>
-    )
+    );
   }
+
+  return null;
 }

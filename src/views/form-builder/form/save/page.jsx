@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,9 +10,10 @@ import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
 
 export default function FormSavePage() {
+  const navigate=useNavigate()
   const version_id = useSelector((state) => state?.formStore.version_id)
   const form_Id = useSelector((state) => state?.formStore.form_id)
-
+console.log(form_Id,"123")
   const [localLoading, setLocalLoading] = useState(false)
   const [formName, setFormName] = useState('')
   const handleChange = (event) => {
@@ -38,7 +39,8 @@ export default function FormSavePage() {
 
       if (response.ok) {
         let resData = await response.json()
-        window.location.href = "/form-builder/form/publish";
+        navigate("/form-builder/form/publish")
+        // window.location.href = "/form-builder/form/publish";
         console.log('Form submitted successfully', resData)
         toast.success(resData.notificationMessage)
         setLocalLoading(false)

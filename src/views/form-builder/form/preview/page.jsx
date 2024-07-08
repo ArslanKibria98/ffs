@@ -24,6 +24,7 @@ import { useSelector } from 'react-redux'
 // import { Link } from "react-router-dom"
 
 export default function FormPreviewPage() {
+  const version_id = useSelector((state) => state?.formStore.version_id);
   // const version_id = useSelector((state) => state?.formStore.version_id);
 
   const [formDataApi, setFormDataApi] = useState([
@@ -73,7 +74,7 @@ export default function FormPreviewPage() {
   const fetchForms = async () => {
     try {
       const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=aaeaf5b0-079f-48fa-c4da-08dc950b4ce7',
+        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
         {
           method: 'GET',
           headers: {
