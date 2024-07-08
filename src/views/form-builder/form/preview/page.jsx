@@ -20,6 +20,7 @@ import {
 // import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
+import BoxLoader from '@/components/BoxLoader'
 
 // import { Link } from "react-router-dom"
 
@@ -27,51 +28,53 @@ export default function FormPreviewPage() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   // const version_id = useSelector((state) => state?.formStore.version_id);
 
+  const [loader, setLoader] = useState(true);
   const [formDataApi, setFormDataApi] = useState([
-    {
-      containerName: "Tab Name",
-      controls: [
-        { //  Text Field
-          controlType: 0,
-          name: "Personal Details",
-          is_Required: true,
-          placeholder: "Enter text here"
-        },
-        { //  Button
-          controlType: 1,
-          name: "DummyButton",
-          is_Required: false,
-          placeholder: "A dummy button"
-        },
-        { //  Slider
-          controlType: 2,
-          name: "Range Slider",
-          is_Required: true,
-          placeholder: "Select age range"
-        },
-        { //  File
-          controlType: 3,
-          name: "File Upload",
-          is_Required: false,
-          placeholder: "Upload File Here"
-        },
-        { //  Phone Number
-          controlType: 5,
-          name: "Phone Number",
-          is_Required: true,
-          placeholder: "+92 300 0000000"
-        },
-        { //  OTP
-          controlType: 4,
-          name: "DummyButton",
-          is_Required: false,
-          placeholder: ""
-        },
-      ]
-    }
+    // {
+    //   containerName: "Tab Name",
+    //   controls: [
+    //     { //  Text Field
+    //       controlType: 0,
+    //       name: "Personal Details",
+    //       is_Required: true,
+    //       placeholder: "Enter text here"
+    //     },
+    //     { //  Button
+    //       controlType: 1,
+    //       name: "DummyButton",
+    //       is_Required: false,
+    //       placeholder: "A dummy button"
+    //     },
+    //     { //  Slider
+    //       controlType: 2,
+    //       name: "Range Slider",
+    //       is_Required: true,
+    //       placeholder: "Select age range"
+    //     },
+    //     { //  File
+    //       controlType: 3,
+    //       name: "File Upload",
+    //       is_Required: false,
+    //       placeholder: "Upload File Here"
+    //     },
+    //     { //  Phone Number
+    //       controlType: 5,
+    //       name: "Phone Number",
+    //       is_Required: true,
+    //       placeholder: "+92 300 0000000"
+    //     },
+    //     { //  OTP
+    //       controlType: 4,
+    //       name: "DummyButton",
+    //       is_Required: false,
+    //       placeholder: ""
+    //     },
+    //   ]
+    // }
   ])
 
   const fetchForms = async () => {
+    setLoader(true);
     try {
       const response = await fetch(
         `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
@@ -86,9 +89,11 @@ export default function FormPreviewPage() {
       console.log(data, 'data')
       setFormDataApi(data?.data?.containers)
       // setForms(data)
+      setLoader(false)
     } catch (error) {
       console.error('Error fetching forms:', error)
       toast.error("Unable to get form!")
+      setLoader(false)
     }
   }
   useEffect(() => {
@@ -109,6 +114,10 @@ export default function FormPreviewPage() {
           </div>
         </div>
       ))}
+      {!loader && formDataApi?.length < 1 ? (
+        <span>No fields in form!</span>
+      ) : ""}
+      {loader&&<BoxLoader />}
       <div className="flex flex-row-reverse gap-4 py-4 my-4">
         <a href={`/form-builder/form/save`}>
           <Button
@@ -146,7 +155,7 @@ export function GetRelevantField(control) {
             className="border-black mt-2"
             type="text"
             name="input"
-            placeholder={field?.placeholder}
+            placeholder={field?.placePlaceholder}
           />
         </div>
       </div>
@@ -171,9 +180,9 @@ export function GetRelevantField(control) {
 
   if (field?.controlType == 2) {  //  Slider
     return (
-      <div className='col-span-2'>
+      <div className='col-span-2 flex flex-col gap-y-2'>
         <p className="text-[12px]">
-          {field.name}
+          {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="flex justify-between w-full gap-3">
@@ -243,7 +252,7 @@ export function GetRelevantField(control) {
             className="border-black mt-2"
             type="text"
             name="input"
-            placeholder={field?.placeholder}
+            placeholder={field?.phone_Number}
           />
         </div>
       </div>

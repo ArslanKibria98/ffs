@@ -19,10 +19,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 
 export default function Slider({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
-  const [question, setQuestion] = useState("");
-  const [isRequired, setIsRequired] = useState(false);
-  const [minValue, setMinValue] = useState("");
-  const [maxValue, setMaxValue] = useState("");
+  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
+  const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.min_Value);
+  const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
   
@@ -69,33 +69,76 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
     }
   };
 
+  const handleUpdate = async () => {
+    const formUpdateData = {
+      controlId: updateFieldData.controlId,
+      question: question,
+      is_Required: isRequired,
+      min_Value: parseInt(minValue),
+      max_Value: parseInt(maxValue),
+    };
+
+    try {
+      const response = await fetch(
+        "http://135.181.57.251:3048/api/Controls/UpdateSlider",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formUpdateData),
+        }
+      );
+
+      if (response.ok) {
+        let responseData = await response.json();
+        if (!responseData.success) {
+          toast.error(responseData?.notificationMessage);
+          return;
+        }
+        toast.success(responseData?.notificationMessage);
+        resetForm();
+        document.getElementById("SliDialogClose").click();
+      } else {
+        console.error("Failed to edit Slider field!");
+        toast.error("Unable to edit!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong!");
+    }
+  }
+
   return (
     <div>
-      <DialogTitle>Add Slider</DialogTitle>
+      <DialogTitle>{!isUpdate ? "Add" : "Edit"} Slider</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        <div className="col-span-2">
-          <Select
-            className="w-full"
-            onValueChange={(e) => {
-              setId(e);
-            }}
-          >
-            <label htmlFor="minLen" className="text-xs font-semibold">
-              Tab Name
-            </label>
-            <SelectTrigger className="w-full h-[48px]">
-              <SelectValue placeholder="Select Tab" />
-            </SelectTrigger>
-            <SelectContent>
-              {formDataApi?.map((style, index) => (
-                <SelectItem key={index} value={style?.id}>
-                  {style?.containerName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {isUpdate ? "" : (
+          <div className="col-span-2">
+            <Select
+              className="w-full"
+              onValueChange={(e) => {
+                setId(e);
+              }}
+            >
+              <label htmlFor="minLen" className="text-xs font-semibold">
+                Tab Name
+              </label>
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {formDataApi?.map((style, index) => (
+                  <SelectItem key={index} value={style?.id}>
+                    {style?.containerName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
             Question
@@ -111,7 +154,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
-            onChange={() => setIsRequired(!isRequired)}
+            onCheckedChange={(e) => setIsRequired(e)}
           />
           <label
             htmlFor="terms"
@@ -154,17 +197,13 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-          onClick={handleSave}
+          onClick={!isUpdate ? handleSave : handleUpdate}
         >
-          Save
+          {!isUpdate ? "Save" : "Update"}
         </Button>
 
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-          {/* <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          > */}
+        <DialogClose id="SliDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
-          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

@@ -279,11 +279,11 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">Option One</Label>
+              <Label htmlFor="option-one">Error above field</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Option Two</Label>
+              <Label htmlFor="option-two">Error below field</Label>
             </div>
           </RadioGroup>
         </div>

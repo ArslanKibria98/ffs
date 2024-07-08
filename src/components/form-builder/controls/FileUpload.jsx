@@ -124,8 +124,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
-            defaultValue={false}
-            onCheckedChange={(e) => setIsRequired(e.checked)}
+            onCheckedChange={(e) => setIsRequired(e)}
           />
           <label
             htmlFor="terms"

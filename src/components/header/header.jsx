@@ -22,7 +22,9 @@ const Header = () => {
       <div className="fixed top-0 left-0 w-full mx-auto px-2 flex bg-[#FFF0F0] z-50">
         <div className="p-4 flex justify-between w-full">
           <div className="flex-1">
-            <img src={finovaLogo} width={153} height={48} alt="" />
+            <a href="/form-builder">
+              <img src={finovaLogo} width={153} height={48} alt="" />
+            </a>
           </div>
           
           <div className="flex-2 flex items-center">

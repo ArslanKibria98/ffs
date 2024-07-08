@@ -92,7 +92,7 @@ export default function AddOtp({
   };
 
   const handleUpdate = async () => {
-    alert(otpFormatMapping[otpFormat]);
+    // alert(otpFormatMapping[otpFormat]);
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,

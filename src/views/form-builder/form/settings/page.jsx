@@ -100,8 +100,8 @@ export default function FormSettingsPage() {
         console.log(responseData, '1---1')
         toast.success(responseData?.notificationMessage)
         // router.push(`/form-builder/form/preview`)
-        navigate(`/form-builder/form/preview`)
-        // window.location.href = `/form-builder/form/preview`;
+        // navigate(`/form-builder/form/preview`)
+        window.location.href = `/form-builder/form/preview`;
       } else {
         let responseData = await response.json()
         toast.success(responseData?.errors[0])
