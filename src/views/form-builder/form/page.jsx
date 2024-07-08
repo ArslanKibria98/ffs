@@ -126,6 +126,7 @@ export default function BuilderPage() {
     controlModalSetterManager[index](!controlModalManager[index]);
   }
   const fetchForms = async () => {
+    dispatch(setIsLoading(true));
     try {
       const response = await fetch(
         `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
@@ -474,14 +475,17 @@ export default function BuilderPage() {
             {locData?.layoutBar||"Layout Bar"} &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
             &nbsp;&nbsp;&nbsp;&nbsp;
           </h3>
+          {/* {console.log(formData)} */}
 
-          <div className="p-7 pt-4 flex flex-col">
-            {formDataApi?.map((tab, index) => (
+          <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center">
+            {!loading && formDataApi?.map((tab, index) => (
               <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
                 {tab?.controls?.map((field, index) => (
                   <FieldInfo field={field} key={index} resetForm={fetchForms} updateModalData={getControlbyType(field)} />
                 ))}
-                {/* {getControlbyType(1)} */}
+                {!loading && tab?.controls?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
+                  No fields in this Tab!
+                </p>) : ""}
               </TabSection>
             ))}
             {loading && formDataApi?.length < 1 ? (<><BoxLoader /></>) : ""}

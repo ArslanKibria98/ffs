@@ -25,14 +25,15 @@ export default function PhoneNumber({
   resetForm,
   isUpdate = false, updateFieldData = null
 }) {
-  const fontFamilies = ["any"];
-  const dispatch = useDispatch();
   const version_id = useSelector((state) => state?.formStore.version_id);
-  const [question, setQuestion] = useState("");
-  const [isRequired, setIsRequired] = useState(false);
-  const [phoneType, setPhoneType] = useState("Normal");
-  const [phoneNumber, setPhoneNumber] = useState("");
+
+  const fontFamilies = ["any", "Normal"];
+  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData?.question);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.is_Required);
+  const [phoneType, setPhoneType] = useState(!isUpdate ? "Normal" : updateFieldData?.phone_Type);
+  const [phoneNumber, setPhoneNumber] = useState(!isUpdate ? "" : updateFieldData?.phone_Number);
   const [id, setId] = useState("");
+
   const handleSave = async () => {
     const requestBody = {
       formVersionId: version_id,
@@ -62,46 +63,82 @@ export default function PhoneNumber({
         setter(!getter);
         resetForm();
       } else {
-        // setter(!getter);
         console.error("Error:", response.statusText);
         toast.error("Unable to Save!");
-        // Handle error (e.g., show an error message)
       }
     } catch (error) {
-      // setter(!getter);
       console.error("Error:", error);
       toast.error("Something went wrong!");
-      // Handle network error
     }
   };
 
+  const handleUpdate = async () => {
+    const formUpdateData = {
+      controlId: updateFieldData.controlId,
+      question: question,
+      is_Required: isRequired,
+      phone_Type: phoneType,
+      phone_Number: phoneNumber,
+    }
+    
+    try {
+      const response = await fetch('http://135.181.57.251:3048/api/Controls/UpdatePhoneNumber', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formUpdateData)
+      })
+
+      if (response.ok) {
+        let responseData = await response.json()
+        if (!responseData.success) {
+          toast.error(responseData?.notificationMessage);
+          return;
+        }
+        toast.success(responseData?.notificationMessage)
+        resetForm();
+        document.getElementById("PHDialogClose").click();
+      } else {
+        console.error('Failed to edit phone number field!')
+        toast.error("Unable to edit!")
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      toast.error("Something went wrong!")
+    }
+  }
+
   return (
     <div>
-      <DialogTitle>Add Phone Number</DialogTitle>
+      <DialogTitle>{!isUpdate ? "Add" : "Edit"} Phone Number</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        <div className="col-span-2">
-          <Select
-            className="w-full"
-            onValueChange={(e) => {
-              setId(e);
-            }}
-          >
-            <label htmlFor="minLen" className="text-xs font-semibold">
-              Tab Name
-            </label>
-            <SelectTrigger className="w-full h-[48px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {formDataApi?.map((style, index) => (
-                <SelectItem key={index} value={style?.id}>
-                  {style?.containerName}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {isUpdate ? "" : (
+          <div className="col-span-2">
+            <Select
+              className="w-full"
+              onValueChange={(e) => {
+                setId(e);
+              }}
+            >
+              <label htmlFor="minLen" className="text-xs font-semibold">
+                Tab Name
+              </label>
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {formDataApi?.map((style, index) => (
+                  <SelectItem key={index} value={style?.id}>
+                    {style?.containerName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
             Question
@@ -117,7 +154,7 @@ export default function PhoneNumber({
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
-            onChange={(e) => setIsRequired(e.checked)}
+            onCheckedChange={(e) => setIsRequired(e)}
           />
           <label
             htmlFor="terms"
@@ -137,11 +174,11 @@ export default function PhoneNumber({
           </label>
           <Select
             className="w-full"
+            value={isUpdate ? phoneType : null}
             onValueChange={(e) => setPhoneType(e)}
-            defaultValue={phoneType}
           >
             <SelectTrigger className="w-full">
-              <SelectValue />
+              <SelectValue placeholder="Choose phone number format." />
             </SelectTrigger>
             <SelectContent>
               {fontFamilies.map((style, index) => (
@@ -169,17 +206,13 @@ export default function PhoneNumber({
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-          onClick={handleSave}
+          onClick={!isUpdate ? handleSave : handleUpdate}
         >
-          Save
+          {!isUpdate ? "Save" : "Update"}
         </Button>
 
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-          {/* <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          > */}
+        <DialogClose id='PHDialogClose' className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
-          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

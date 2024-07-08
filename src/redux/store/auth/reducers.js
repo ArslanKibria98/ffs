@@ -2,8 +2,8 @@ const initialState = {
   email: '',
   role: '',
   nickname: '',
-  id: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
-  tenant_id: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
+  id: 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
+  tenant_id: 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
   suid: '',
 };
 

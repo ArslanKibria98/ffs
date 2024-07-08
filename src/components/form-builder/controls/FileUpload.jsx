@@ -98,7 +98,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
               Tab Name
             </label>
             <SelectTrigger className="w-full h-[48px]">
-              <SelectValue />
+              <SelectValue placeholder="Select Tab" />
             </SelectTrigger>
             <SelectContent>
               {formDataApi?.map((style, index) => (

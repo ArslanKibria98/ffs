@@ -143,7 +143,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
                   Tab Name
                 </label>
                 <SelectTrigger className="w-full h-[48px]">
-                  <SelectValue />
+                  <SelectValue placeholder="Select Tab" />
                 </SelectTrigger>
                 <SelectContent>
                   {formDataApi?.map((style, index) => (
