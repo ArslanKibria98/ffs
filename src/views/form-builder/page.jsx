@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import {
   Table,
@@ -30,15 +30,14 @@ import localisationData from "../../localisation.json"
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "../../redux/store/loading";
-import { SET_FORM_ID, SET_FORM_INFO } from "../../redux/store/form";
+import { SET_FORM_INFO, SET_VERSION_ID } from "../../redux/store/form";
 
 export default function FormBuilder() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
   const loading = useSelector((state) => state?.loadingStore?.value);
-  const formI = useSelector((state) => state?.formStore);
-  console.log(formI, "formId");
   const [localLoading, setLocalLoading] = useState(true);
 
   const [forms, setForms] = useState([])
@@ -50,7 +49,6 @@ export default function FormBuilder() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id':'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
           },
          
         }) 
@@ -88,7 +86,6 @@ export default function FormBuilder() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': '081eff6f-0897-467f-9925-e202db311ac4'
           },
           body: JSON.stringify({
             tenantId: userId,
@@ -102,13 +99,16 @@ export default function FormBuilder() {
         let responseData = await response.json()
         // Fetch the updated forms list
         // const updatedForms = await response.json()
+        console.log("after response")
         console.log(responseData,"res123")
         localStorage.setItem('formId',responseData.data.formId)
 
         toast.success(responseData?.notificationMessage)
-        // dispatch(SET_FORM_ID(responseData?.data?.id));
-        dispatch(SET_FORM_INFO(responseData?.data?.formId, responseData?.data?.id))
-        window.location.href = "/form-builder/form"
+        console.log("before dispatch")
+        dispatch(SET_FORM_INFO(responseData?.data?.formId, responseData?.data?.formVersionId))
+        console.log("before navigate")
+        navigate("/form-builder/form");
+        console.log("before loading")
         dispatch(setIsLoading(true));
         setLocalLoading(true);
       } else {
@@ -196,7 +196,7 @@ export default function FormBuilder() {
           <TableBody>
             {forms && forms?.map((form, index) => (
               <TableRow key={index} className={index % 2 == 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
-                <TableCell>{form?.formId?.substring(0, 8) || "N/A"}</TableCell>
+                <TableCell>{form?.formVersionId?.substring(0, 8) || "N/A"}</TableCell>
                 <TableCell>{form?.formName || "N/A"}</TableCell>
                 <TableCell>{form?.repositoryName || "N/A"}</TableCell>
                 <TableCell>{form?.languages?.join(', ') || "N/A"}</TableCell>
@@ -208,9 +208,13 @@ export default function FormBuilder() {
                 <TableCell>{form.versionNumber || "N/A"}</TableCell>
                 <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
                 <TableCell>
-                  <a href={`/form-builder/form`}>
-                    <Button className="bg-red-500 text-white">Edit</Button>
-                  </a>
+                  {/* <a href={`/form-builder/form`}> */}
+                    <Button onClick={()=>{
+                      dispatch(SET_VERSION_ID(form?.formVersionId));
+                      dispatch(setIsLoading(true));
+                      navigate("/form-builder/form");
+                    }} className="bg-red-500 text-white">Edit</Button>
+                  {/* </a> */}
                 </TableCell>
               </TableRow>
             ))}

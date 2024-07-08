@@ -21,7 +21,7 @@ import { Link } from "react-router-dom"
 export default function FormSettingsPage() {
   // const router = useRouter()
 
-  const formId = useSelector((state) => state?.formStore.form_id)
+  const version_id = useSelector((state) => state?.formStore.version_id)
 
   const availableLanguages = [
     'English',
@@ -90,7 +90,6 @@ export default function FormSettingsPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': 'a1336723-9a4b-44d0-8fa3-0239dd6b60e3'
           },
           body: JSON.stringify(formData)
         }
@@ -272,7 +271,7 @@ export default function FormSettingsPage() {
           >
             Next
           </Button>
-          <a href={`/form-builder/${formId}`}>
+          <a href={`/form-builder/form`}>
             <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
               Previous
             </Button>

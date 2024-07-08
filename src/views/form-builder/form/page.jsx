@@ -33,7 +33,6 @@ import Slider from '@/components/form-builder/controls/Slider'
 
 import toast from 'react-hot-toast'
 import BoxLoader from '@/components/BoxLoader'
-// import { SET_FORM_ID } from 'redux/store/form';
 
 import localisationData from "../../../localisation.json"
 
@@ -51,7 +50,7 @@ export default function BuilderPage() {
     locData = localisationData.formBuilder.ar;
   }
 
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
 
   const [region, setRegion] = useState()
   
@@ -129,12 +128,11 @@ export default function BuilderPage() {
   const fetchForms = async () => {
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${formId}`,
+        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
           }
         }
       )

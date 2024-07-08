@@ -7,7 +7,7 @@ import { Link } from "react-router-dom"
 import { useSelector } from 'react-redux'
 
 export default function FormPublishPage() {
-  const formId = useSelector((state) => state?.formStore.form_id)
+  const version_id = useSelector((state) => state?.formStore.version_id)
 
   return (
     <>

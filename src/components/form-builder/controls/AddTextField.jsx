@@ -20,7 +20,7 @@ import { setIsLoading } from '../../../redux/store/loading'
 
 export default function AddTextField({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch()
-  const formId = useSelector((state) => state?.formStore.form_id)
+  const version_id = useSelector((state) => state?.formStore.version_id)
 
   // console.log(updateFieldData);
 
@@ -39,9 +39,9 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
 
   const handleSubmit = async () => {
     const formData = {
-      formVersionId: formId,
+      formVersionId: version_id,
       containerId: id,
-      regionId: '9712CB25-9053-4BF4-936C-7C279CE5DA69',
+      regionId: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
       name: fieldName,
       default_Value: '',
       inputType: fieldType,
@@ -61,7 +61,6 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Request-Id': '9bab662d-18ca-4cac-a2af-7d8e03008707'
         },
         body: JSON.stringify(formData)
       })
@@ -101,7 +100,6 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Request-Id': 'd59ba714-d9ab-48b8-a830-8d116b72df00'
         },
         body: JSON.stringify(formUpdateData)
       })

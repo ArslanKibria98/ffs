@@ -1,10 +1,10 @@
-export const SET_FORM_INFO = (form_id, id) => {
+export const SET_FORM_INFO = (form_id, version_id) => {
   return (dispatch) => {
     dispatch({
       type: 'SET_FORM_INFO',
       payload: {
-        id: id,
         form_id: form_id,
+        version_id: version_id,
       }
     })
   }
@@ -21,12 +21,12 @@ export const SET_FORM_ID = (form_id) => {
   }
 }
 
-export const SET_ID = (id) => {
+export const SET_VERSION_ID = (version_id) => {
   return (dispatch) => {
     dispatch({
-      type: 'SET_ID',
+      type: 'SET_VERSION_ID',
       payload: {
-        id: id
+        version_id: version_id
       }
     })
   }
@@ -46,7 +46,7 @@ export const SET_FORM_CONTROLS = (form) => {
 const formAction = {
   SET_FORM_INFO,
   SET_FORM_ID,
-  SET_ID,
+  SET_VERSION_ID,
   SET_FORM_CONTROLS
 }
 

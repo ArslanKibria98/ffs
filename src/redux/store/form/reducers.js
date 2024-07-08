@@ -1,6 +1,6 @@
 const initialState = {
-  id: '',
   form_id: '',
+  version_id: '',
   form_controls: []
 }
 
@@ -11,8 +11,8 @@ export const formReducer = (state = initialState, action) => {
     case 'SET_FORM_INFO':
       return {
         // ...state,
-        id: action.payload.id,
-        form_id: action.payload.form_id
+        form_id: action.payload.form_id,
+        version_id: action.payload.version_id,
       }
     case 'SET_FORM_ID':
       console.warn(action.payload.form_id)
@@ -20,10 +20,10 @@ export const formReducer = (state = initialState, action) => {
         ...state,
         form_id: action.payload.form_id
       }
-    case 'SET_ID':
+    case 'SET_VERSION_ID':
       return {
         ...state,
-        id: action.payload.id
+        version_id: action.payload.version_id
       }
     case 'SET_FORM_CONTROLS':
       return {

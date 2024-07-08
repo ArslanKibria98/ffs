@@ -24,13 +24,13 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
   const [minValue, setMinValue] = useState("");
   const [maxValue, setMaxValue] = useState("");
   const [id, setId] = useState("");
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
   
   const handleSave = async () => {
     const payload = {
-      formVersionId: formId,
+      formVersionId: version_id,
       containerId: id,
-      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
+      regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
       is_Required: isRequired,
@@ -45,7 +45,6 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Request-Id": "6cc5ae1e-1490-4d26-b347-d1f76e87665d",
           },
           body: JSON.stringify(payload),
         }

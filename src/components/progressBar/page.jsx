@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const ProgressBar = ({ children }) => {
   const [stepIndex, setStepIndex] = useState(0);
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
   const language = useSelector((state) => state.language.language);
   const stepPage = [
     `/form-builder/form`,

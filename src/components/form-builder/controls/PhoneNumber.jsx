@@ -27,7 +27,7 @@ export default function PhoneNumber({
 }) {
   const fontFamilies = ["any"];
   const dispatch = useDispatch();
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [phoneType, setPhoneType] = useState("Normal");
@@ -35,9 +35,9 @@ export default function PhoneNumber({
   const [id, setId] = useState("");
   const handleSave = async () => {
     const requestBody = {
-      formVersionId: formId,
+      formVersionId: version_id,
       containerId: id,
-      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
+      regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
       is_Required: isRequired,
@@ -51,7 +51,6 @@ export default function PhoneNumber({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Request-Id": "9887f58e-9353-4086-b566-29c1745a84ce",
           },
           body: JSON.stringify(requestBody),
         }

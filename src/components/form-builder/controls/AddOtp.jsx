@@ -26,7 +26,7 @@ export default function AddOtp({ getter, setter, formDataApi, resetForm, isUpdat
     '5-digits': 5,
     '6-digits': 6
   }
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState('')
   const [isRequired, setIsRequired] = useState(false)
   const [otpFormat, setOtpFormat] = useState('4-digits')
@@ -34,9 +34,9 @@ export default function AddOtp({ getter, setter, formDataApi, resetForm, isUpdat
 
   const handleSubmit = async () => {
     const postData = {
-      formVersionId: formId,
+      formVersionId: version_id,
       containerId: id,
-      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
+      regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
   
       question: question,
@@ -49,7 +49,6 @@ export default function AddOtp({ getter, setter, formDataApi, resetForm, isUpdat
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Request-Id': 'aeb6cea3-3d50-4e58-8c87-e2cb535fefc9'
         },
         body: JSON.stringify(postData)
       })

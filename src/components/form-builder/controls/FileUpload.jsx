@@ -17,7 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 
 export default function FileUpload({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [id, setId] = useState("");
@@ -38,9 +38,9 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
   ];
   const handleSubmit = async () => {
     const postData = {
-      formVersionId: formId,
+      formVersionId: version_id,
       containerId: id,
-      regionId: "9712CB25-9053-4BF4-936C-7C279CE5DA69",
+      regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
       is_Required: isRequired,
@@ -54,7 +54,6 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Request-Id": "aeb6cea3-3d50-4e58-8c87-e2cb535fefc9",
           },
           body: JSON.stringify(postData),
         }

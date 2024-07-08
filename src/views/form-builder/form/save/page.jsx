@@ -10,8 +10,8 @@ import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
 
 export default function FormSavePage() {
-  const formId = useSelector((state) => state?.formStore.form_id)
-  const formMainId = useSelector((state) => state?.formStore.id)
+  const version_id = useSelector((state) => state?.formStore.version_id)
+  const form_Id = useSelector((state) => state?.formStore.form_id)
 
   const [localLoading, setLocalLoading] = useState(false)
   const [formName, setFormName] = useState('')
@@ -21,7 +21,7 @@ export default function FormSavePage() {
   const handleSubmit = async () => {
     setLocalLoading(true)
     const data = {
-      formId: formMainId,
+      formId: form_Id,
       FormName: formName
     }
     try {
@@ -31,7 +31,6 @@ export default function FormSavePage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': 'e23954bb-c2fc-4c48-b47b-591c436c58a6'
           },
           body: JSON.stringify(data)
         }

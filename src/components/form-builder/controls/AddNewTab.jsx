@@ -14,7 +14,7 @@ import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
-  const formId = useSelector((state) => state?.formStore.form_id)
+  const version_id = useSelector((state) => state?.formStore.version_id)
 
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
@@ -29,7 +29,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
     const data = {
       containerType: 0,
       parentContainerId: "00000000-0000-0000-0000-000000000000",
-      formVersionId: formId,
+      formVersionId: version_id,
       fontSize:fontSize.toString(),
       fontFamily:fontFamily,
       fontColor:fontColour,
@@ -41,7 +41,6 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Request-Id': 'b561073e-d25b-4057-a1d3-7299129ff0f2'
         },
         body: JSON.stringify(data)
       })

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 
 export default function FormRender() {
-  const formId = useSelector((state) => state?.formStore.form_id);
+  const version_id = useSelector((state) => state?.formStore.version_id);
 
   const [formDataApi, setFormDataApi] = useState([
     {
@@ -27,12 +27,11 @@ export default function FormRender() {
   const fetchForms = async () => {
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${formId}`,
+        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Request-Id': 'eef836f0-1a0d-43e5-8200-b02fe4730ce4'
           }
         }
       )

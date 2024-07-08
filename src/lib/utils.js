@@ -71,7 +71,6 @@ export async function deleteApi(id, resetForm, forTab) {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Request-Id': id
         }
       });
 
