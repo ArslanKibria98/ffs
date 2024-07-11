@@ -35,6 +35,9 @@ import { SET_FORM_INFO, SET_VERSION_ID } from "../../redux/store/form";
 export default function FormBuilder() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
   const loading = useSelector((state) => state?.loadingStore?.value);
@@ -43,20 +46,18 @@ export default function FormBuilder() {
   const [forms, setForms] = useState([])
 
   useEffect(() => {
-    return async () => {
+    const fetchForms = async () => {
       try {
         const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllForms?UserId=A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
-         
         }) 
         const data = await response.json()
-        // console.log(data.data);
         if (data?.data?.length > 0) {
-          // console.log(data.data)
           setForms(data.data)
+          setTotalPages(Math.ceil(data.data.length / rowsPerPage))
           setTimeout(()=>{
             dispatch(setIsLoading(false));
             setLocalLoading(false);
@@ -76,7 +77,9 @@ export default function FormBuilder() {
         }, 2000)
       }
     }
-  }, [])
+
+    fetchForms();
+  }, [rowsPerPage, dispatch])
 
   const handleCreateForm = async () => {
     try {
@@ -97,18 +100,10 @@ export default function FormBuilder() {
       )
       if (response.ok) {
         let responseData = await response.json()
-        // Fetch the updated forms list
-        // const updatedForms = await response.json()
-        console.log("after response")
-        console.log(responseData,"res123")
         localStorage.setItem('formId',responseData.data.formId)
-
         toast.success(responseData?.notificationMessage)
-        console.log("before dispatch")
         dispatch(SET_FORM_INFO(responseData?.data?.formId, responseData?.data?.formVersionId))
-        console.log("before navigate")
         navigate("/form-builder/form");
-        console.log("before loading")
         dispatch(setIsLoading(true));
         setLocalLoading(true);
       } else {
@@ -119,19 +114,34 @@ export default function FormBuilder() {
     }
   }
 
-  let locData = localisationData.home.en;
-  // console.log(locData);
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
 
+  let locData = localisationData.home.en;
   if (language == "en") {
     locData = localisationData.home.en;
   } else if (language == "ar") {
     locData = localisationData.home.ar;
   }
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    if (totalPages <= 3) {
+      for (let i = 0; i < totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (page > 0) pageNumbers.push(page - 1);
+      pageNumbers.push(page);
+      if (page < totalPages - 1) pageNumbers.push(page + 1);
+    }
+    return pageNumbers;
+  };
+  const currentData = forms.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
-     
         <Select className="" defaultValue="folder">
           <SelectTrigger className="max-w-[160px] h-[46px] space-x-1 font-semibold text-md w-fit bg-transparent border-0">
             <img src="/folder.svg" alt="Folder icon" width={24} height={24} />
@@ -168,11 +178,9 @@ export default function FormBuilder() {
               <SelectItem value="system">System</SelectItem>
             </SelectContent>
           </Select>
-     
           <Button onClick={handleCreateForm} className="bg-[#e2252e] hover:bg-[#e2252eec] font-normal text-[16px] h-[45px]">
             + {locData?.createNewForm || "Create New Form"}
           </Button>
-      
         </div>
       </div>
       <div className="w-full rounded-xl bg-white overflow-hidden">
@@ -194,8 +202,8 @@ export default function FormBuilder() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {forms && forms?.map((form, index) => (
-              <TableRow key={index} className={index % 2 == 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
+            {currentData.map((form, index) => (
+              <TableRow key={index} className={index % 2 === 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
                 <TableCell>{form?.formVersionId?.substring(0, 8) || "N/A"}</TableCell>
                 <TableCell>{form?.formName || "N/A"}</TableCell>
                 <TableCell>{form?.repositoryName || "N/A"}</TableCell>
@@ -208,13 +216,11 @@ export default function FormBuilder() {
                 <TableCell>{form.versionNumber || "N/A"}</TableCell>
                 <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
                 <TableCell>
-                  {/* <a href={`/form-builder/form`}> */}
-                    <Button onClick={()=>{
-                      dispatch(SET_VERSION_ID(form?.formVersionId));
-                      dispatch(setIsLoading(true));
-                      navigate("/form-builder/form");
-                    }} className="bg-red-500 text-white">Edit</Button>
-                  {/* </a> */}
+                  <Button onClick={()=>{
+                    dispatch(SET_VERSION_ID(form?.formVersionId));
+                    dispatch(setIsLoading(true));
+                    navigate("/form-builder/form");
+                  }} className="bg-red-500 text-white">Edit</Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -231,8 +237,33 @@ export default function FormBuilder() {
             </TableCaption>
           ) : ""}
         </Table>
+        <div className="flex justify-end items-center mt-4">
+          <button
+            onClick={() => handlePageChange(null, page - 1)}
+            disabled={page === 0}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`<`}
+          </button>
+          {generatePageNumbers().map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(null, pageNumber)}
+              className={`px-4 py-2 mx-1 ${page === pageNumber ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"} rounded`}
+            >
+              
+              {pageNumber + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(null, page + 1)}
+            disabled={page >= totalPages - 1}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`>`}
+          </button>
+        </div>
       </div>
-      {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}
     </div>
   )
 }
