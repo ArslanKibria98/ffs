@@ -11,9 +11,13 @@ import { Button } from '@/components/ui/button'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 
 import toast from 'react-hot-toast'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setIsLoading } from '@/redux/store/loading'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector((state) => state?.loadingStore?.value)
   const version_id = useSelector((state) => state?.formStore.version_id)
 
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
@@ -26,6 +30,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
   const [fontColour, setFontColour] = useState('Black')
 
   const handleSubmit = async () => {
+    dispatch(setIsLoading(true))
     const data = {
       containerType: 0,
       parentContainerId: "00000000-0000-0000-0000-000000000000",
@@ -51,15 +56,18 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
         let responseData=await response.json()
         setter(!getter);
         toast.success(responseData.notificationMessage)
+        dispatch(setIsLoading(false))
         resetForm();
       } else {
         // Handle error (e.g., show an error message)
         console.error('Failed to save tab')
         toast.error("Failed to save tab!");
+        dispatch(setIsLoading(false))
       }
     } catch (error) {
       console.error('An error occurred while saving the tab:', error)
       toast.error("Something went wrong!");
+      dispatch(setIsLoading(false))
     }
   }
 
@@ -153,6 +161,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={handleSubmit}
+          disabled={isLoading}
         >
           Save
         </Button>

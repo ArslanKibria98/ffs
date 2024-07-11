@@ -488,7 +488,7 @@ export default function BuilderPage() {
                 </p>) : ""}
               </TabSection>
             ))}
-            {loading && formDataApi?.length < 1 ? (<><BoxLoader /></>) : ""}
+            {loading ? (<><BoxLoader /></>) : ""}
             {!loading && formDataApi?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
               Form Empty!
             </p>) : ""}
