@@ -28,7 +28,7 @@ export default function App() {
 
           <Route index element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
-          <Route path="render-form" element={<FormRender />} />
+          <Route path="render-form/:id" element={<FormRender />} />
         
           <Route path="form-builder/form" element={<BuilderLayout />}>
         

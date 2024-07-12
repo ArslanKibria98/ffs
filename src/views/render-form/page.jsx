@@ -7,10 +7,13 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import BoxLoader from '@/components/BoxLoader';
+import { useParams } from 'react-router-dom';
 
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
 const [loader,setLoader]=useState(false)
+const params=useParams()
+console.log(params.id)
   const [formDataApi, setFormDataApi] = useState(
     [
   //   {
@@ -26,12 +29,11 @@ const [loader,setLoader]=useState(false)
   //   }
   ]
 );
-
   const fetchForms = async () => {
     setLoader(true);
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
+        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${params?.id}`,
         {
           method: 'GET',
           headers: {
