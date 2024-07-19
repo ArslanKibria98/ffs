@@ -469,31 +469,40 @@ export default function BuilderPage() {
         </Tabs>
       </div>
 
-      <div className="col-span-3 mx-4">
-        <div className="bg-[#fff] pb-4">
-          <h3 className="font-semibold p-7 pb-0">
-            {locData?.layoutBar||"Layout Bar"} &nbsp;&nbsp;&nbsp;&nbsp; {formData.formName}{' '}
-            &nbsp;&nbsp;&nbsp;&nbsp;
-          </h3>
-          {/* {console.log(formData)} */}
-
-          <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center">
+      <div className="col-span-3 mx-4 pt-6">
+        {(!loading && formDataApi.length > 0) ? (
+          <Tabs defaultValue={formDataApi && formDataApi[0]?.containerName}>
+            <TabsList className="formBuilderTablist">
             {!loading && formDataApi?.map((tab, index) => (
-              <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
-                {tab?.controls?.map((field, index) => (
-                  <FieldInfo field={field} key={index} resetForm={fetchForms} updateModalData={getControlbyType(field)} />
-                ))}
-                {!loading && tab?.controls?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
-                  No fields in this Tab!
-                </p>) : ""}
-              </TabSection>
+              <TabsTrigger value={tab?.containerName} key={index} className="px-5 h-10 mb-0 mr-1">
+                {tab?.containerName}
+              </TabsTrigger>
             ))}
-            {loading ? (<><BoxLoader /></>) : ""}
-            {!loading && formDataApi?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
-              Form Empty!
-            </p>) : ""}
-          </div>
-        </div>
+            </TabsList>
+            {!loading && formDataApi?.map((tab, index) => (
+              <TabsContent value={tab?.containerName} key={index} className="my-0 py-0 w-full">
+                <div className="bg-[#fff] pb-4">
+                  <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center">
+                      <TabSection key={index} tab={tab} index={index} resetForm={fetchForms}>
+                        {tab?.controls?.map((field, index) => (
+                          <FieldInfo field={field} key={index} resetForm={fetchForms} updateModalData={getControlbyType(field)} />
+                        ))}
+                        {!loading && tab?.controls?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
+                          No fields in this Tab!
+                        </p>) : ""}
+                      </TabSection>
+                    {loading ? (<><BoxLoader /></>) : ""}
+                    {!loading && formDataApi?.length < 1 ? (<p className='text-sm text-center text-gray-600'>
+                      Form Empty!
+                    </p>) : ""}
+                  </div>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        ) : (
+          <BoxLoader />
+        )}
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
           <a href={`/form-builder/form/settings`}>

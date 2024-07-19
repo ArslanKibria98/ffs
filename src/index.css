@@ -251,3 +251,13 @@
     transform: translate(100%, 100%);
   }
 }
+
+/* .formBuilderTablist { */
+  /* border: 1px solid red; */
+/* } */
+.formBuilderTablist:first-child {
+  border-radius: 0 10px 0 0;
+}
+.formBuilderTablist:last-child {
+  border-radius: 0 0 0 10px;
+}
