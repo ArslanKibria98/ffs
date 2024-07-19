@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 import {
   Table,
@@ -43,16 +43,17 @@ import { setIsLoading } from "../../redux/store/loading";
 import { SET_FORM_INFO } from "../../redux/store/form";
 
 export default function FormBuilder() {
+  const params=useParams()
+  console.log(params,"==--==")
   const navigate = useNavigate();
+  const location = window.location.origin;
   const dispatch = useDispatch();
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
   const tenantId = useSelector((state) => state?.authStore?.tenant_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [localLoading, setLocalLoading] = useState(true);
-
   const [forms, setForms] = useState([])
-
   useEffect(() => {
     return async () => {
       try {
@@ -60,6 +61,7 @@ export default function FormBuilder() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization':`Bearer ${params.id}`
           },
          
         }) 

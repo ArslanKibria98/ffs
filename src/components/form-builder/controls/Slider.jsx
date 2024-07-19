@@ -141,7 +141,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
 
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-            Question
+            Caption
           </label>
           <Input
             name="tabName"

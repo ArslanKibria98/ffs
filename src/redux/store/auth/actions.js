@@ -7,7 +7,8 @@ export const SET_USER_INFO = (user) => {
         role: user.role,
         nickname: user.nickname,
         id: user.id,
-        tenant_id: user.tenant_id
+        tenant_id: user.tenant_id,
+        token:user.token
       }
     })
   }
@@ -24,9 +25,18 @@ export const SET_TENANT_ID = (tenant_id) => {
   }
 }
 
+export const REMOVE_TOKEN = () => {
+  return (dispatch) => {
+    dispatch({
+      type: 'REMOVE_TOKEN'
+    })
+  }
+}
+
 const authAction = {
   SET_USER_INFO,
-  SET_TENANT_ID
+  SET_TENANT_ID,
+  REMOVE_TOKEN
 }
 
 export default authAction
