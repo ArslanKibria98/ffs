@@ -105,16 +105,20 @@ export default function FormPreviewPage() {
     test: container.containerName,
     ...container
 }));
-console.log(formDataApi,transformedData,"==--==")
+
+  // console.log(formDataApi[0]?.containerName?.toString())
+  var defaultTabValue = formDataApi[0]?.containerName?.toString() + "";
+
   return (
     <div className="max-w-[1000px] mx-auto p-14">
       <h3 className="font-semibold text-xl mb-4">Form Fields</h3>
-      {console.log(formDataApi)}
-      <Tabs defaultValue={formDataApi[0]?.containerName}>
+      {/* {defaultTabValue} */}
+      <Tabs defaultValue={defaultTabValue}>
          <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
           {formDataApi.map((tab, index) => (
            <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
-             <h5 className='text-sm'>{`${index + 1} - ${tab?.containerName ? tab?.containerName : 'Tab Name'}`}</h5>
+             <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
+             {/* <h5 className='text-sm'>{`${index + 1} - ${tab?.containerName ? tab?.containerName : 'Tab Name'}`}</h5> */}
            </TabsTrigger>
           ))}
          </TabsList>
