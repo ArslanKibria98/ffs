@@ -24,7 +24,7 @@ export default function Calendar({ getter, setter, formDataApi, resetForm, isUpd
       <div className="grid grid-cols-2 gap-8 gap-y-3">
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-          Question
+          Caption
           </label>
           <Input
             name="tabName"

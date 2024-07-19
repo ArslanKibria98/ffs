@@ -123,7 +123,7 @@ export default function FormPreviewPage() {
           ))}
          </TabsList>
          {formDataApi.map((tab, index) => (
-          <TabsContent key={index} value={tab?.containerName} className="border bg-white p-4 rounded-xl w-full min-h-[400px]">
+          <TabsContent key={index} value={tab?.containerName} className="border grid grid-cols-2 gap-3 bg-white p-4 rounded-xl w-full min-h-[400px]">
               {tab?.controls?.map((field, fieldIndex) => (
                 <GetRelevantField key={fieldIndex} control={field} />
               ))}
@@ -168,7 +168,7 @@ export function GetRelevantField(control) {
         </p>
         <div className="flex justify-between w-full gap-3">
           <Input
-            className="border-black mt-2"
+            className="border-gray-400 mt-2"
             type="text"
             name="input"
             placeholder={field?.placePlaceholder}
@@ -215,7 +215,7 @@ export function GetRelevantField(control) {
     return (
       <div>
         <p className="text-[12px]">
-          {field?.name}
+          {field?.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="grid gap-4 pb-4 text-transparent">
@@ -268,7 +268,7 @@ export function GetRelevantField(control) {
         </p>
         <div className="flex justify-between w-full gap-3">
           <Input
-            className="border-black mt-2"
+            className="border-gray-400 mt-2"
             type="text"
             name="input"
             placeholder={field?.phone_Number}

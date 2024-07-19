@@ -111,7 +111,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
         </div>
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-            Question
+          Caption
           </label>
           <Input
             name="tabName"

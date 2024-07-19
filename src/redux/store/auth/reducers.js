@@ -5,6 +5,7 @@ const initialState = {
   id: 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
   tenant_id: 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
   suid: '',
+  token:'',
 };
 
 // 리듀서 역할 2 : state를 변경시키는 함수를 정의한다.
@@ -14,6 +15,7 @@ export const authReducer = (state = initialState, action) => {
     case 'SET_USER_INFO':
       return {
         ...state,
+        token:action.payload.token,
         email: action.payload.email,
         role: action.payload.role,
         nickname: action.payload.nickname,
@@ -25,6 +27,11 @@ export const authReducer = (state = initialState, action) => {
       return {
         ...state,
         tenant_id: action.payload.tenant_id,
+      };
+    case 'REMOVE_TOKEN':
+      return {
+        ...state,
+        token: ""
       };
     default:
       return state;
