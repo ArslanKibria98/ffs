@@ -21,10 +21,11 @@ import { setIsLoading } from "../../../redux/store/loading";
 export default function Rating({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
-  const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.min_Value);
+  const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.ratingValue);
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
+  const token = useSelector((state) => state?.authStore?.token);
   useEffect(() => {
     return () => {
       const dynamicRegionId = uuidv4();
@@ -39,17 +40,18 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
       controlType: 0,
       question: question,
       is_Required: isRequired,
-      min_Value: parseInt(minValue),
-      max_Value: parseInt(maxValue),
+      ratingValue: parseInt(minValue),
+      ratingComment:"test"
     };
 
     try {
       const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateSlider",
+        "http://135.181.57.251:3048/api/Controls/CreateRating",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify(payload),
         }
@@ -79,17 +81,18 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
       controlId: updateFieldData.controlId,
       question: question,
       is_Required: isRequired,
-      min_Value: parseInt(minValue),
-      max_Value: parseInt(maxValue),
+      ratingValue: parseInt(minValue),
+      ratingComment:"test",
     };
 
     try {
       const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/UpdateSlider",
+        "http://135.181.57.251:3048/api/Controls/UpdateRating",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify(formUpdateData),
         }
@@ -175,7 +178,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
 
         <div>
           <label htmlFor="minValue" className="text-xs font-semibold">
-          Rating 1
+          Value
           </label>
           <Input
             name="minValue"
@@ -185,7 +188,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
             onChange={(e) => setMinValue(e.target.value)}
           />
         </div>
-        <div>
+        {/* <div>
           <label htmlFor="maxValue" className="text-xs font-semibold">
           Rating 2
           </label>
@@ -232,7 +235,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
             value={maxValue}
             onChange={(e) => setMaxValue(e.target.value)}
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">

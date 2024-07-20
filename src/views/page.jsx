@@ -3,11 +3,12 @@ import React, { useEffect } from 'react'
 import Cookies from 'js-cookie';
 
 import { useDispatch, useSelector } from "react-redux"
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SET_USER_INFO } from "../redux/store/auth";
 
 export default function AuthHandover() {
   const params=useParams()
+  const navigate=useNavigate()
   console.log(params)
   const dispatch = useDispatch();
   const userId = useSelector((state) => state?.authStore?.id);
@@ -22,19 +23,48 @@ export default function AuthHandover() {
   }
   const decodedToken = decodeAccessToken(token)
   console.log(decodedToken,"--098765")
+  const getUserId = async (id) => {
+    try {
+      const response = await fetch(
+        `http://135.181.57.251:3048/api/User/GetUserByIdentityUserId?IdentityUserId=${id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization':`Bearer ${token}`
+          },
+         
+        }
+      );
+
+      if (response.ok) {
+        let responseData = await response.json();
+        if (!responseData.success) {
+          toast.error(responseData?.notificationMessage);
+          return;
+        }
+        dispatch(
+          SET_USER_INFO({
+            email: 'dummy@dummy.com',
+            role: decodedToken?.payload?.role || 'dummy',
+            nickname: 'dummy',
+            id: responseData?.data.id || 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
+            tenant_id: decodedToken?.payload?.TenantId || 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
+            token:token,
+          })
+        )
+        navigate("/form-builder")
+      } 
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong!");
+    }
+  }
   useEffect(() => {
     return () => {
-      dispatch(
-        SET_USER_INFO({
-          email: 'dummy@dummy.com',
-          role: decodedToken?.payload?.role || 'dummy',
-          nickname: 'dummy',
-          id: decodedToken?.payload?.sub || 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
-          tenant_id: decodedToken?.payload?.TenantId || 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
-          token:token,
-        })
-      )
-       window.location.href = '/form-builder';
+      getUserId(decodedToken?.payload?.sub)
+    
+      //  window.location.href = '/form-builder';
     }
   }, [userId]);
 

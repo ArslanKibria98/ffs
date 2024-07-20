@@ -56,50 +56,52 @@ export default function FormBuilder() {
   const [localLoading, setLocalLoading] = useState(true);
   const [forms, setForms] = useState([])
   const [totalPages, setTotalPages] = useState(0)
-  useEffect(() => {
-    return async () => {
-      try {
-        const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}`,{
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${token}`
-          },
-         
-        }) 
-        const data = await response.json()
-        // console.log(data.data);
-        if (data?.data?.length > 0) {
-          // console.log(data.data)
-          setForms(data.data)
-          setTotalPages(Math.ceil(data.data.length / rowsPerPage))
-          setTimeout(()=>{
-            dispatch(setIsLoading(false));
-            setLocalLoading(false);
-          }, 2000)
-        } else {
-          toast.error("No forms found for this user!");
-          setTimeout(()=>{
-            dispatch(setIsLoading(false));
-            setLocalLoading(false);
-          }, 2000)
-        }
-      } catch (error) {
-        toast.error("Server Unavailable!");
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handlePageChange =async (event, newPage) => {
+    setPage(newPage)
+    try {
+      const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=15`,{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':`Bearer ${token}`
+        },
+       
+      }) 
+      const data = await response.json()
+      // console.log(data.data);
+      if (data?.data?.length > 0) {
+        // console.log(data.data)
+        setForms(data.data)
+        setTotalPages(Math.ceil(data.data.length / rowsPerPage))
+        setTimeout(()=>{
+          dispatch(setIsLoading(false));
+          setLocalLoading(false);
+        }, 2000)
+      } else {
+        toast.error("No forms found for this user!");
         setTimeout(()=>{
           dispatch(setIsLoading(false));
           setLocalLoading(false);
         }, 2000)
       }
+    } catch (error) {
+      toast.error("Server Unavailable!");
+      setTimeout(()=>{
+        dispatch(setIsLoading(false));
+        setLocalLoading(false);
+      }, 2000)
+    }
+};
+  useEffect(() => {
+    return async () => {
+      handlePageChange(null,page)
     }
   }, [])
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const handlePageChange = (event, newPage) => {
-      setPage(newPage);
-      console.log(newPage)
-  };
+
+
 
   const generatePageNumbers = () => {
     const pageNumbers = [];
@@ -305,24 +307,24 @@ export default function FormBuilder() {
         <div className="flex justify-end items-center mt-4">
           <button
             onClick={() => handlePageChange(null, page - 1)}
-            disabled={page === 0}
+            disabled={page<=1}
             className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
           >
             {`<`}
           </button>
-          {generatePageNumbers().map((pageNumber) => (
+        
             <button
-              key={pageNumber}
-              onClick={() => handlePageChange(null, pageNumber)}
-              className={`px-4 py-2 mx-1 ${page === pageNumber ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"} rounded`}
+              
+              // onClick={() => handlePageChange(null, pageNumber)}
+              className={`px-4 py-2 mx-1 ${page === page ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"} rounded`}
             >
               
-              {pageNumber + 1}
+              {page}
             </button>
-          ))}
+       
           <button
             onClick={() => handlePageChange(null, page + 1)}
-            disabled={page >= totalPages - 1}
+            // disabled={page >= totalPages - 1}
             className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
           >
             {`>`}
