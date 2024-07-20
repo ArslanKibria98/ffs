@@ -27,7 +27,8 @@ export default function App() {
       <Routes>
         {/* add routes with layouts */}
         <Route path="/" element={<RootLayout />}>
-          <Route index path=":token" element={<AuthHandover />} />
+          <Route index element={<AuthHandover />} />
+          <Route path=":token" element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
           <Route path="form-version-table" element={<FormTable />} />
           <Route path="form-versions" element={<FormVersionPage />} />
