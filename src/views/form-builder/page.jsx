@@ -55,6 +55,7 @@ export default function FormBuilder() {
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [localLoading, setLocalLoading] = useState(true);
   const [forms, setForms] = useState([])
+  const [totalPages, setTotalPages] = useState(0)
   useEffect(() => {
     return async () => {
       try {
@@ -71,6 +72,7 @@ export default function FormBuilder() {
         if (data?.data?.length > 0) {
           // console.log(data.data)
           setForms(data.data)
+          setTotalPages(Math.ceil(data.data.length / rowsPerPage))
           setTimeout(()=>{
             dispatch(setIsLoading(false));
             setLocalLoading(false);
@@ -96,9 +98,9 @@ export default function FormBuilder() {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const handlePageChange = (event, newPage) => {
       setPage(newPage);
+      console.log(newPage)
   };
 
-  
   const generatePageNumbers = () => {
     const pageNumbers = [];
     if (totalPages <= 3) {
