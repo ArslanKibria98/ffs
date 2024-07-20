@@ -43,13 +43,14 @@ import { setIsLoading } from "../../redux/store/loading";
 import { SET_FORM_INFO } from "../../redux/store/form";
 
 export default function FormBuilder() {
-  const params=useParams()
-  console.log(params,"==--==")
+  // const params=useParams()
+  // console.log(params,"==--==")
   const navigate = useNavigate();
   const location = window.location.origin;
   const dispatch = useDispatch();
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
+  const token = useSelector((state) => state?.authStore?.token);
   const tenantId = useSelector((state) => state?.authStore?.tenant_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [localLoading, setLocalLoading] = useState(true);
@@ -57,11 +58,11 @@ export default function FormBuilder() {
   useEffect(() => {
     return async () => {
       try {
-        const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}`,{
+        const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization':`Bearer ${params.id}`
+            'Authorization':`Bearer ${token}`
           },
          
         }) 
@@ -94,11 +95,12 @@ export default function FormBuilder() {
   const handleCreateForm = async () => {
     try {
       const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/InitiateForm',
+        'http://135.181.57.251:3048/api/Form/CreateForm',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify({
             tenantId: tenantId,
@@ -227,7 +229,7 @@ export default function FormBuilder() {
                       <ChevronDown className="h-5 " />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="p-0">
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate(`/render-form/${form?.formVersionId}`)}}>
                         <QrCode className="h-4"/>&nbsp;&nbsp;
                         Live
                       </DropdownMenuItem>
@@ -237,7 +239,7 @@ export default function FormBuilder() {
                         Unpublish
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate("/form-versions")}}>
                         <History className="h-4"/>&nbsp;&nbsp;
                         Versions
                       </DropdownMenuItem>

@@ -13,6 +13,7 @@ export default function FormSavePage() {
   const navigate=useNavigate()
   const version_id = useSelector((state) => state?.formStore.version_id)
   const form_Id = useSelector((state) => state?.formStore.form_id)
+  const token = useSelector((state) => state?.authStore?.token);
 console.log(form_Id,"123")
   const [localLoading, setLocalLoading] = useState(false)
   const [formName, setFormName] = useState('')
@@ -32,6 +33,7 @@ console.log(form_Id,"123")
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify(data)
         }

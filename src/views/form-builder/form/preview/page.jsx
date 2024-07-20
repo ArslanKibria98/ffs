@@ -28,6 +28,7 @@ import BoxLoader from '@/components/BoxLoader'
 
 export default function FormPreviewPage() {
   const version_id = useSelector((state) => state?.formStore.version_id);
+  const token = useSelector((state) => state?.authStore?.token);
   // const version_id = useSelector((state) => state?.formStore.version_id);
 
   const [loader, setLoader] = useState(true);
@@ -79,11 +80,12 @@ export default function FormPreviewPage() {
     setLoader(true);
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
+        `http://135.181.57.251:3048/api/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization':`Bearer ${token}`
           }
         }
       )

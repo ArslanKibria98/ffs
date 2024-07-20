@@ -23,10 +23,12 @@ import {
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
+import { useNavigate } from "react-router-dom";
 
 // import { Link } from "react-router-dom"
 
 export default function FormVersionPage() {
+  const navigate=useNavigate();
   const version_id = useSelector((state) => state?.formStore.version_id);
   // const version_id = useSelector((state) => state?.formStore.version_id);
 
@@ -34,7 +36,9 @@ export default function FormVersionPage() {
 
   return (
     <div className="max-w-[1000px] min-h-[83vh] mx-auto p-2">
-      <div class="col-start-2 grid grid-cols-12 border rounded">
+<h3 className="pb-3 pt-8 text-[20px] font-[600]">Form Versions</h3>
+      <div class="col-start-2 grid grid-cols-12 border rounded-lg bg-[#ffffff]">
+
         <div className="col-span-7 grid grid-cols-3">
           <div className="p-6">
             <div className="text-[12px] font-[400] text-[#000000]">Form ID</div>
@@ -61,7 +65,7 @@ export default function FormVersionPage() {
         </div>
         <div className="col-span-5 ">
           <div className="p-6 gap-2 flex">
-          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700">
+          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate("/form-version-table")}}>
           Form Report
             </Button>
             <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg">

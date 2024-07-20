@@ -19,6 +19,7 @@ import FormPreviewPage from "./views/form-builder/form/preview/page";
 import FormVersionPage from "./views/form-builder/form/formVersions/page";
 import FormSavePage from "./views/form-builder/form/save/page";
 import FormPublishPage from "./views/form-builder/form/publish/page";
+import FormTable from "./views/form-builder/form/formTable/page";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/" element={<RootLayout />}>
           <Route index path=":token" element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
+          <Route path="form-version-table" element={<FormTable />} />
           <Route path="form-versions" element={<FormVersionPage />} />
           <Route path="render-form/:id" element={<FormRender />} />
           <Route path="form-builder/form" element={<BuilderLayout />}>

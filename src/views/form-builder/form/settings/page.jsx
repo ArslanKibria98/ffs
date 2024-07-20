@@ -45,6 +45,7 @@ export default function FormSettingsPage() {
   const language = useSelector((state) => state.language.language)
   const navigate = useNavigate()
   const [fieldLabel, setFieldLabel] = useState('')
+  const token = useSelector((state) => state?.authStore?.token);
   const [fieldName, setFieldName] = useState('')
   const [fieldPlaceholder, setFieldPlaceholder] = useState('')
   const [fieldPlaceholderFail, setFieldPlaceholderFail] = useState('')
@@ -90,6 +91,7 @@ export default function FormSettingsPage() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify(formData)
         }

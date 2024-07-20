@@ -40,6 +40,7 @@ export default function BuilderPage() {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state?.loadingStore.value);
   const userId = useSelector((state) => state?.authStore.id);
+  const token = useSelector((state) => state?.authStore?.token);
   const tenantId = useSelector((state) => state?.authStore.tenant_id);
   const language = useSelector((state) => state.language.language);
 
@@ -129,12 +130,13 @@ export default function BuilderPage() {
     dispatch(setIsLoading(true));
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${version_id}`,
+        `http://135.181.57.251:3048/api/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`,
         {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          }
+            'Authorization':`Bearer ${token}`
+          },
         }
       )
       const data = await response.json()

@@ -37,7 +37,7 @@ export default function FormRender() {
     setLoader(true);
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormByVersionId?FormVersionId=${params?.id}`,
+        `http://135.181.57.251:3048/api/Form/GetFormDetailsByVersionId?FormVersionId=${params?.id}`,
         {
           method: "GET",
           headers: {

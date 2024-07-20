@@ -1,7 +1,7 @@
 // import "../globals.css"
 import React, { useEffect } from 'react'
 
-import { useDispatch } from "react-redux"
+import { useDispatch,useSelector } from "react-redux"
 import { useParams } from 'react-router-dom';
 import { SET_USER_INFO } from "../redux/store/auth";
 
@@ -10,7 +10,7 @@ export default function AuthHandover() {
   console.log(params)
   const dispatch = useDispatch();
   const token = params.token;
-
+  const userId = useSelector((state) => state?.authStore?.id);
   function decodeAccessToken(token) {
     const jwt = token.split('.')
     const header = JSON.parse(atob(jwt[0]))
@@ -31,7 +31,7 @@ console.log(decodedToken,"--098765")
           token:token,
         })
       )
-      //  window.location.href = '/form-builder';
+       window.location.href = '/form-builder';
     }
   }, [userId]);
 
