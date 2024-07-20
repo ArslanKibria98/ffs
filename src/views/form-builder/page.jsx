@@ -92,6 +92,27 @@ export default function FormBuilder() {
     }
   }, [])
 
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const handlePageChange = (event, newPage) => {
+      setPage(newPage);
+  };
+
+  
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    if (totalPages <= 3) {
+      for (let i = 0; i < totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (page > 0) pageNumbers.push(page - 1);
+      pageNumbers.push(page);
+      if (page < totalPages - 1) pageNumbers.push(page + 1);
+    }
+    return pageNumbers;
+  };
+
   const handleCreateForm = async () => {
     try {
       const response = await fetch(
@@ -279,6 +300,32 @@ export default function FormBuilder() {
             </TableCaption>
           ) : ""}
         </Table>
+        <div className="flex justify-end items-center mt-4">
+          <button
+            onClick={() => handlePageChange(null, page - 1)}
+            disabled={page === 0}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`<`}
+          </button>
+          {generatePageNumbers().map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => handlePageChange(null, pageNumber)}
+              className={`px-4 py-2 mx-1 ${page === pageNumber ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"} rounded`}
+            >
+              
+              {pageNumber + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(null, page + 1)}
+            disabled={page >= totalPages - 1}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`>`}
+          </button>
+        </div>
       </div>
       {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}
     </div>
