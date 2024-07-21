@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
+  const token = useSelector((state) => state?.authStore?.token);
   const [defaultTabValue, setDefaultTabVal] = useState("");
   const [loader, setLoader] = useState(false);
   const params = useParams();
@@ -43,6 +44,8 @@ export default function FormRender() {
           headers: {
             "Content-Type": "application/json",
             "Request-Id": "eef836f0-1a0d-43e5-8200-b02fe4730ce4",
+            'Authorization':`Bearer ${token}`
+
           },
         }
       );

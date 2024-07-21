@@ -3,7 +3,7 @@ import React from "react";
 import { Input } from "../ui/input";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
-import { deleteApi } from "@/lib/utils";
+import { deleteApi } from "@/lib/apiRequests";
 
 import {
   Dialog,
@@ -37,7 +37,7 @@ function FieldInfo({ field, resetForm, updateModalData }) {
         </div>
 
         <div className="w-full">
-          <span className="text-[12px]">{field?.name || "Field Name"}</span>
+          <span className="text-[12px]">{field?.name ||field?.question|| "Field Name"}</span>
           <div className="flex justify-between w-full gap-3">
             <Input
               className="w-[82%]"

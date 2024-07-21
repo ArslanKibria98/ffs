@@ -279,4 +279,26 @@ export function GetRelevantField(control) {
       </div>
     )
   }
+  if (field?.controlType == 8) {  //  rating
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        {/* <div className="flex justify-between w-full gap-3">
+          <Input
+            className="border-gray-400 mt-2"
+            type="text"
+            name="input"
+            placeholder={field?.phone_Number}
+          />
+        </div> */}
+      </div>
+    )
+  }
 }

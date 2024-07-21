@@ -61,26 +61,3 @@ function colorDistance(lab1, lab2) {
   const deltaB = lab1[2] - lab2[2];
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
-
-export async function deleteApi(id, resetForm, forTab) {
-  const apiString = forTab ? `http://135.181.57.251:3048/api/Controls/DeleteContainer?ContainerId=${id}` :
-  `http://135.181.57.251:3048/api/Controls/DeleteControl?controlId=${id}`
-  try {
-    let data = false;
-      const response = await fetch(apiString, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      data = await response.json();
-      toast.success("Operation Successful");
-      resetForm();
-    }
-   catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-    toast.error("Unable to perform task");
-    resetForm();
-  }
-}

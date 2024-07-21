@@ -243,7 +243,7 @@ export default function BuilderPage() {
     {
       icon: '/control-icons/addRating.svg',
       title: 'Rating',
-      // controlType: 0,
+      controlType: 8,
       data: <Rating getter={usRating} setter={setRating} formDataApi={formDataApi} resetForm={fetchForms} />
     },
     {

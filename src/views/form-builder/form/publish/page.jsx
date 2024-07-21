@@ -35,6 +35,7 @@ export default function FormPublishPage() {
               <a
                 className="underline text-blue-400"
                 href={`${location}/render-form/${version_id}`}
+                target="_blank"
               >
                 {`${location}/render-form/${version_id}`}
               </a>
