@@ -261,3 +261,6 @@
 .formBuilderTablist:last-child {
   border-radius: 0 0 0 10px;
 }
+.style-module_emptyIcons__Bg-FZ {
+  display: flex!important;
+}

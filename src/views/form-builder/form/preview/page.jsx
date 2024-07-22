@@ -23,7 +23,7 @@ import {
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
-
+import { Rating } from 'react-simple-star-rating'
 // import { Link } from "react-router-dom"
 
 export default function FormPreviewPage() {
@@ -279,6 +279,9 @@ export function GetRelevantField(control) {
       </div>
     )
   }
+  const onPointerEnter = () => console.log('Enter')
+  const onPointerLeave = () => console.log('Leave')
+  const onPointerMove = (value, index) => console.log(value, index)
   if (field?.controlType == 8) {  //  rating
     return (
       <div>
@@ -290,14 +293,15 @@ export function GetRelevantField(control) {
             ''
           )}
         </p>
-        {/* <div className="flex justify-between w-full gap-3">
-          <Input
-            className="border-gray-400 mt-2"
-            type="text"
-            name="input"
-            placeholder={field?.phone_Number}
-          />
-        </div> */}
+        
+        <Rating
+        // onClick={handleRating}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        onPointerMove={onPointerMove}
+        /* Available Props */
+      />
+        
       </div>
     )
   }

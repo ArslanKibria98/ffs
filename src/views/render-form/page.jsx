@@ -13,7 +13,7 @@ import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { Rating } from 'react-simple-star-rating'
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
@@ -115,6 +115,22 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           phoneNumber: values[key],
           phoneType: "any",
+        }));
+        const rating = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 8
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          value: values[key],
+       
         }));
       // const controlFileInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 3))).map(key => ({
       //   "controlId": key.toLowerCase(),
@@ -336,6 +352,35 @@ function GetRelevantField({ control, formik }) {
             onChange={formik.handleChange}
             value={formik.values[field.controlId] || ""}
           />
+        </div>
+      </div>
+    );
+  }
+  const handleRating = (rate) => {
+   console.log(rate)
+
+    // other logic
+  }
+  // Optinal callback functions
+  const onPointerEnter = () => console.log('Enter')
+  const onPointerLeave = () => console.log('Leave')
+  const onPointerMove = (value, index) => console.log(value, index)
+  if (field?.controlType === 8) {
+    //  PhoneNumber
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+        </p>
+        <div className="flex w-full gap-3">
+        <Rating
+        onClick={handleRating}
+        onPointerEnter={onPointerEnter}
+        onPointerLeave={onPointerLeave}
+        onPointerMove={onPointerMove}
+        
+      />
         </div>
       </div>
     );
