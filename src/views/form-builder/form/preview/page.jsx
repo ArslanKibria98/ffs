@@ -119,16 +119,18 @@ export default function FormPreviewPage() {
         <Tabs defaultValue={formDataApi[0]?.containerName}>
           <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
             {formDataApi.map((tab, index) => (
-            <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
-              <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
-            </TabsTrigger>
+              <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
+                <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
+              </TabsTrigger>
             ))}
           </TabsList>
           {formDataApi.map((tab, index) => (
-            <TabsContent key={index} value={tab?.containerName} className="border grid grid-cols-2 gap-3 bg-white p-4 rounded-xl w-full min-h-[400px]">
+            <TabsContent key={index} value={tab?.containerName} className="border bg-white p-4 rounded-xl w-full min-h-[400px]">
+              <div className='h-full grid grid-cols-2 gap-3'>
                 {tab?.controls?.map((field, fieldIndex) => (
                   <GetRelevantField key={fieldIndex} control={field} />
                 ))}
+              </div>
             </TabsContent>
           ))}
         </Tabs>
