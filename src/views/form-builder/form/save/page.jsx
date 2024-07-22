@@ -28,7 +28,7 @@ console.log(form_Id,"123")
     }
     try {
       const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/UpdateFormName',
+        'http://135.181.57.251:3048/api/Form/SetFormName',
         {
           method: 'POST',
           headers: {
