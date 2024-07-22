@@ -13,10 +13,11 @@ import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Rating } from 'react-simple-star-rating'
+import { Rating } from "react-simple-star-rating";
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
+  const loading = useSelector((state) => state?.loadingStore.value);
   const [defaultTabValue, setDefaultTabVal] = useState("");
   const [loader, setLoader] = useState(false);
   const params = useParams();
@@ -44,8 +45,7 @@ export default function FormRender() {
           headers: {
             "Content-Type": "application/json",
             "Request-Id": "eef836f0-1a0d-43e5-8200-b02fe4730ce4",
-            'Authorization':`Bearer ${token}`
-
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -116,7 +116,7 @@ export default function FormRender() {
           phoneNumber: values[key],
           phoneType: "any",
         }));
-        const rating = Object.keys(values)
+      const rating = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -130,7 +130,6 @@ export default function FormRender() {
         .map((key) => ({
           controlId: key.toLowerCase(),
           value: values[key],
-       
         }));
       // const controlFileInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 3))).map(key => ({
       //   "controlId": key.toLowerCase(),
@@ -183,40 +182,55 @@ export default function FormRender() {
   return (
     <div className="max-w-[1000px] h-[83vh] mx-auto p-14">
       <form onSubmit={formik.handleSubmit}>
-        <Tabs defaultValue={defaultTabValue}>
-          <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
-            {formDataApi.map((tab, index) => (
-              <TabsTrigger
+        {formDataApi.length > 0 && (
+          <Tabs defaultValue={formDataApi[0].containerName}>
+            <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
+              {formDataApi.map((tab, index) => (
+                <TabsTrigger
+                  key={index}
+                  value={tab?.containerName}
+                  className="rounded p-0 px-3 h-8 w-fit"
+                >
+                  <h5 className="text-sm">
+                    {tab?.containerName || "Tab Name"}
+                  </h5>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {formDataApi?.map((tab, index) => (
+              <TabsContent
                 key={index}
                 value={tab?.containerName}
-                className="rounded p-0 px-3 h-8 w-fit"
+                className="border bg-white p-4 rounded-xl w-full min-h-[400px]"
               >
-                <h5 className="text-sm">{tab?.containerName || "Tab Name"}</h5>
-              </TabsTrigger>
+                {tab?.controls?.map((field, index) => (
+                  <GetRelevantField
+                    key={index}
+                    control={field}
+                    formik={formik}
+                  />
+                ))}
+              </TabsContent>
             ))}
-          </TabsList>
-          {formDataApi?.map((tab, index) => (
-            <TabsContent
-              key={index}
-              value={tab?.containerName}
-              className="border bg-white p-4 rounded-xl w-full min-h-[400px]"
-            >
-              {tab?.controls?.map((field, index) => (
-                <GetRelevantField key={index} control={field} formik={formik} />
-              ))}
-            </TabsContent>
-          ))}
-        </Tabs>
+          </Tabs>
+        )}
         {!loader && formDataApi?.length < 1 ? (
-          <span>No fields in form!</span>
+          <div className="p-8 text-center bg-white rounded-lg border text-black">
+            <span>No fields in form!</span>
+          </div>
         ) : (
           ""
         )}
-        {loader && <BoxLoader />}
+        {loader && formDataApi?.length < 1 && (
+          <div className="p-8 text-center bg-white rounded-lg border">
+            <BoxLoader />
+          </div>
+        )}
         <div className="flex flex-row-reverse gap-4 py-4 my-4">
           <Button
             type="submit"
             className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
+            disabled={loader}
           >
             Submit
           </Button>
@@ -357,14 +371,14 @@ function GetRelevantField({ control, formik }) {
     );
   }
   const handleRating = (rate) => {
-   console.log(rate)
+    console.log(rate);
 
     // other logic
-  }
+  };
   // Optinal callback functions
-  const onPointerEnter = () => console.log('Enter')
-  const onPointerLeave = () => console.log('Leave')
-  const onPointerMove = (value, index) => console.log(value, index)
+  const onPointerEnter = () => console.log("Enter");
+  const onPointerLeave = () => console.log("Leave");
+  const onPointerMove = (value, index) => console.log(value, index);
   if (field?.controlType === 8) {
     //  PhoneNumber
     return (
@@ -374,13 +388,12 @@ function GetRelevantField({ control, formik }) {
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex w-full gap-3">
-        <Rating
-        onClick={handleRating}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
-        onPointerMove={onPointerMove}
-        
-      />
+          <Rating
+            onClick={handleRating}
+            onPointerEnter={onPointerEnter}
+            onPointerLeave={onPointerLeave}
+            onPointerMove={onPointerMove}
+          />
         </div>
       </div>
     );

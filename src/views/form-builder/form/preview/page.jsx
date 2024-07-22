@@ -109,33 +109,43 @@ export default function FormPreviewPage() {
 }));
 
   // console.log(formDataApi[0]?.containerName?.toString())
-  var defaultTabValue = formDataApi[0]?.containerName?.toString() + "";
+  // var defaultTabValue = formDataApi[0]?.containerName?.toString() + "";
 
   return (
     <div className="max-w-[1000px] mx-auto p-14">
       <h3 className="font-semibold text-xl mb-4">Form Fields</h3>
-      {/* {defaultTabValue} */}
-      <Tabs defaultValue={defaultTabValue}>
-         <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
+
+      {formDataApi.length > 0 && (
+        <Tabs defaultValue={formDataApi[0]?.containerName}>
+          <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
+            {formDataApi.map((tab, index) => (
+            <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
+              <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
+            </TabsTrigger>
+            ))}
+          </TabsList>
           {formDataApi.map((tab, index) => (
-           <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
-             <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
-             {/* <h5 className='text-sm'>{`${index + 1} - ${tab?.containerName ? tab?.containerName : 'Tab Name'}`}</h5> */}
-           </TabsTrigger>
+            <TabsContent key={index} value={tab?.containerName} className="border grid grid-cols-2 gap-3 bg-white p-4 rounded-xl w-full min-h-[400px]">
+                {tab?.controls?.map((field, fieldIndex) => (
+                  <GetRelevantField key={fieldIndex} control={field} />
+                ))}
+            </TabsContent>
           ))}
-         </TabsList>
-         {formDataApi.map((tab, index) => (
-          <TabsContent key={index} value={tab?.containerName} className="border grid grid-cols-2 gap-3 bg-white p-4 rounded-xl w-full min-h-[400px]">
-              {tab?.controls?.map((field, fieldIndex) => (
-                <GetRelevantField key={fieldIndex} control={field} />
-              ))}
-          </TabsContent>
-         ))}
-       </Tabs>
+        </Tabs>
+      )}
+
       {!loader && formDataApi?.length < 1 ? (
-        <span>No fields in form!</span>
+        <div className="bg-white border text-center px-10 py-20 text-gray-700 text-sm">
+          No Fields in this Form!
+        </div>
       ) : ""}
-      {loader&&<BoxLoader />}
+
+      {loader && formDataApi?.length < 1 && (
+        <div className="text-center bg-white rounded-lg border">
+          <BoxLoader />
+        </div>
+      )}
+
       <div className="flex flex-row-reverse gap-4 py-4 my-4">
         <a href={`/form-builder/form/save`}>
           <Button

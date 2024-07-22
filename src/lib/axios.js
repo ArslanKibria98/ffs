@@ -28,36 +28,19 @@ axios.interceptors.request.use((reqConfig) => {
   return config;
 });
 
-// axios.interceptors.response.use(
-//   function (response) {
-//     return response;
-//   },
+axios.interceptors.response.use(
+  function (response) {
+    console.log("Returing respone")
+    return response;
+  },
 
-//   async function (error) {
-//     // console.log(error?.request?.responseURL.includes("/auth/"))
-
-//     //     "/login",
-//     //     "/signup",
-//     //     "/tutor-register",
-//     //     "/become-tutor/
-
-//     if (error?.request?.responseURL.includes("/auth/")) {
-//       console.log("Returning ERROR");
-//       // return error;
-//     }
-//     if (error?.response?.status === 401) {
-//       await refreshAccessToken();
-//       // return await axios(error);
-//       // return error;
-//     }
-//     if (error.name === "AxiosError") {
-//       // toast.error(error.message);
-//       // console.log(error.message);
-//     }
-//     // return Promise.reject(error);
-//     return error;
-//   },
-// );
+  async function (error) {
+    console.log(error)
+    if (error?.response?.status === 401) {
+      console.log("Returing error")
+    }
+  },
+);
 
 // const refreshAccessToken = async () => {
 //   const refreshToken = Cookies.get("refreshToken");
