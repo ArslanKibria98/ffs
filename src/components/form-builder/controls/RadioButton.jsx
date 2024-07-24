@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,8 @@ import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { toast } from "react-hot-toast";
+import axios from "@/lib/axios";
 
 export default function RadioButton({
   getter,
@@ -21,11 +23,12 @@ export default function RadioButton({
 
   async function inflateOptions() {
     try {
-      const response = await axios.get(endpoint);
+      const response = await fetch(endpoint);
   
       if (response.ok) {
+        // console.log(await response.json())
         const responseOptions = await response.json();
-        setRadioOptions(responseOptions?.data)
+        setRadioOptions(responseOptions)
       }
     } catch (e) {
       toast.error(e?.message);
@@ -34,11 +37,9 @@ export default function RadioButton({
   }
 
   function removedArray(array, index) {
-    let editableArray = array;
-    editableArray.splice(index, 1);
-    return editableArray;
+    const newArray = array.filter((_, i) => i !== index);
+    setRadioOptions(newArray)
   }
-  
 
   return (
     <div>
@@ -55,11 +56,11 @@ export default function RadioButton({
             id="manual"
             className="border-red-500"
           />
-          <Label htmlFor="manual">Manual Input</Label>
+          <Label htmlFor="manual" className="cursor-pointer">Manual Input</Label>
         </div>
         <div className="flex items-center space-x-2 cursor-pointer">
           <RadioGroupItem value="api" id="api" className="border-red-500" />
-          <Label htmlFor="api">Fetch List using API</Label>
+          <Label htmlFor="api" className="cursor-pointer">Fetch List using API</Label>
         </div>
       </RadioGroup>
       <br />
@@ -131,7 +132,7 @@ export default function RadioButton({
                 placeholder="Paste API endpoint URL"
                 className="p-4 h-[48px]"
                 value={endpoint}
-                onValueChange={(e)=>setEndpoint(e?.target?.value)}
+                onChange={(e)=>setEndpoint(e?.target?.value)}
               />
             </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
@@ -147,29 +148,32 @@ export default function RadioButton({
               Choices
             </label>
 
-            {radioOptions.length > 0 && radioOptions.map((option, index) => (
-              <div key={index} className="col-span-2 grid grid-cols-7 gap-8 gap-y-3">
+            {radioOptions && radioOptions?.length > 0 && radioOptions?.map((option, index) => (
+              <div key={index} className="col-span-2 grid grid-cols-7 gap-4 gap-y-1 items-center">
                 <div className="col-span-3">
                   <label htmlFor="minLen" className="text-xs font-semibold">
                     Label
                   </label>
-                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readonly/>
+                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readOnly/> 
                 </div>
                 <div className="col-span-3">
                   <label htmlFor="maxLen" className="text-xs font-semibold">
                     Value
                   </label>
-                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readonly/>
+                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readOnly/>
                 </div>
-                <Button variant="destructive" onClick={()=>{setRadioOptions(removedArray(radioOptions, index))}} className="">❌</Button>
+                <Button className="mt-5" variant="destructive" onClick={()=>{removedArray(radioOptions, index)}}>-</Button>
               </div>
             ))}
             </div>
-            {radioOptions.length < 1 && (
-            <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
-              <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
-                Get List
-              </Button>
+            {radioOptions && radioOptions?.length < 1 && (
+            <div>
+              <p className="text-center text-xs text-neutral-600">No options added!</p>
+              <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+                <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+                  Get List
+                </Button>
+              </div>
             </div>
           )}
         </>

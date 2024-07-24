@@ -23,11 +23,11 @@ export default function DropDown({
 
   async function inflateOptions() {
     try {
-      const response = await axios.get(endpoint);
+      const response = await fetch(endpoint);
   
       if (response.ok) {
         const responseOptions = await response.json();
-        setDropdownOptions(responseOptions?.data)
+        setDropdownOptions(responseOptions)
       }
     } catch (e) {
       toast.error(e?.message);
@@ -36,9 +36,8 @@ export default function DropDown({
   }
 
   function removedArray(array, index) {
-    let editableArray = array;
-    editableArray.splice(index, 1);
-    return editableArray;
+    const newArray = array.filter((_, i) => i !== index);
+    setDropdownOptions(newArray)
   }
 
   return (
@@ -56,11 +55,11 @@ export default function DropDown({
             id="manual"
             className="border-red-500"
           />
-          <Label htmlFor="manual">Manual Input</Label>
+          <Label htmlFor="manual" className="cursor-pointer">Manual Input</Label>
         </div>
         <div className="flex items-center space-x-2 cursor-pointer">
           <RadioGroupItem value="api" id="api" className="border-red-500" />
-          <Label htmlFor="api">Fetch List using API</Label>
+          <Label htmlFor="api" className="cursor-pointer">Fetch List using API</Label>
         </div>
       </RadioGroup>
       <br />
@@ -131,7 +130,7 @@ export default function DropDown({
                 placeholder="Paste API endpoint URL"
                 className="p-4 h-[48px]"
                 value={endpoint}
-                onValueChange={(e)=>setEndpoint(e?.target?.value)}
+                onChange={(e)=>setEndpoint(e?.target?.value)}
               />
             </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
@@ -148,29 +147,32 @@ export default function DropDown({
               Choices
             </label>
 
-            {dropdownOptions.length > 0 && dropdownOptions.map((option, index) => (
-              <div key={index} className="col-span-2 grid grid-cols-7 gap-8 gap-y-3">
+            {dropdownOptions && dropdownOptions.length > 0 && dropdownOptions.map((option, index) => (
+              <div key={index} className="col-span-2 grid grid-cols-7 gap-8 gap-y-3 items-center">
                 <div className="col-span-3">
                   <label htmlFor="minLen" className="text-xs font-semibold">
                     Label
                   </label>
-                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readonly/>
+                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readOnly/>
                 </div>
                 <div className="col-span-3">
                   <label htmlFor="maxLen" className="text-xs font-semibold">
                     Value
                   </label>
-                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readonly/>
+                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readOnly/>
                 </div>
-                <Button variant="destructive" onClick={()=>{setDropdownOptions(removedArray(dropdownOptions, index))}} className="">❌</Button>
+                <Button variant="destructive" onClick={()=>{removedArray(dropdownOptions, index)}} className="mt-5">-</Button>
               </div>
             ))}
           </div>
-          {dropdownOptions.length < 1 && (
-            <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
-              <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
-                Get List
-              </Button>
+          {dropdownOptions && dropdownOptions?.length < 1 && (
+            <div>
+              <p className="text-center text-xs text-neutral-600">No options added!</p>
+              <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+                <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+                  Get List
+                </Button>
+              </div>
             </div>
           )}
         </>
