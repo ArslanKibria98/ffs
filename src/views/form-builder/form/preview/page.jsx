@@ -24,6 +24,8 @@ import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
 import { Rating } from 'react-simple-star-rating'
+
+// import StarRatings from './react-star-ratings';
 // import { Link } from "react-router-dom"
 
 export default function FormPreviewPage() {
@@ -291,9 +293,24 @@ export function GetRelevantField(control) {
       </div>
     )
   }
+
+  // changeRating( newRating, name ) {
+  //   this.setState({
+  //     rating: newRating
+  //   });
+  // }
+  const [rating, setRating] = useState(0)
+
+  // Catch Rating value
+  const handleRating = (rate) => {
+    setRating(rate)
+
+    // other logic
+  }
   const onPointerEnter = () => console.log('Enter')
   const onPointerLeave = () => console.log('Leave')
   const onPointerMove = (value, index) => console.log(value, index)
+
   if (field?.controlType == 8) {  //  rating
     return (
       <div>
@@ -307,12 +324,18 @@ export function GetRelevantField(control) {
         </p>
         
         <Rating
-        // onClick={handleRating}
-        onPointerEnter={onPointerEnter}
-        onPointerLeave={onPointerLeave}
-        onPointerMove={onPointerMove}
-        /* Available Props */
-      />
+          onClick={handleRating}
+          onPointerEnter={onPointerEnter}
+          onPointerLeave={onPointerLeave}
+          onPointerMove={onPointerMove}
+          />
+        {/* <StarRatings
+          rating={this.state.rating}
+          starRatedColor="blue"
+          changeRating={this.changeRating}
+          numberOfStars={6}
+          name='rating'
+        /> */}
         
       </div>
     )

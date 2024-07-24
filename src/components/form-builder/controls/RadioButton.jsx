@@ -16,6 +16,29 @@ export default function RadioButton({
   updateFieldData = null,
 }) {
   const [radiosType, setRadiosType] = useState("manual");
+  const [endpoint, setEndpoint] = useState("");
+  const [radioOptions, setRadioOptions] = useState([]);
+
+  async function inflateOptions() {
+    try {
+      const response = await axios.get(endpoint);
+  
+      if (response.ok) {
+        const responseOptions = await response.json();
+        setRadioOptions(responseOptions?.data)
+      }
+    } catch (e) {
+      toast.error(e?.message);
+      console.log(e)
+    }
+  }
+
+  function removedArray(array, index) {
+    let editableArray = array;
+    editableArray.splice(index, 1);
+    return editableArray;
+  }
+  
 
   return (
     <div>
@@ -91,12 +114,24 @@ export default function RadioButton({
           <div className="grid grid-cols-2 gap-8 gap-y-3">
             <div className="col-span-2">
               <label htmlFor="tabName" className="text-[16px] font-semibold">
-                Caption
+                Question
+              </label>
+              <Input
+                name="tabName"
+                placeholder="Type Here"
+                className="p-4 h-[48px]"
+              />
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="tabName" className="text-[16px] font-semibold">
+                API Endpoint
               </label>
               <Input
                 name="tabName"
                 placeholder="Paste API endpoint URL"
                 className="p-4 h-[48px]"
+                value={endpoint}
+                onValueChange={(e)=>setEndpoint(e?.target?.value)}
               />
             </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
@@ -108,12 +143,35 @@ export default function RadioButton({
                 Required?
               </label>
             </div>
-          </div>
-          <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
-            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
-              Get List
-            </Button>
-          </div>
+            <label className="text-[16px] font-semibold col-span-2">
+              Choices
+            </label>
+
+            {radioOptions.length > 0 && radioOptions.map((option, index) => (
+              <div key={index} className="col-span-2 grid grid-cols-7 gap-8 gap-y-3">
+                <div className="col-span-3">
+                  <label htmlFor="minLen" className="text-xs font-semibold">
+                    Label
+                  </label>
+                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readonly/>
+                </div>
+                <div className="col-span-3">
+                  <label htmlFor="maxLen" className="text-xs font-semibold">
+                    Value
+                  </label>
+                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readonly/>
+                </div>
+                <Button variant="destructive" onClick={()=>{setRadioOptions(removedArray(radioOptions, index))}} className="">❌</Button>
+              </div>
+            ))}
+            </div>
+            {radioOptions.length < 1 && (
+            <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+              <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+                Get List
+              </Button>
+            </div>
+          )}
         </>
       )}
 

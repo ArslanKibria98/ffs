@@ -6,6 +6,8 @@ import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import axios from "@/lib/axios";
+import toast from "react-hot-toast";
 
 export default function DropDown({
   getter,
@@ -16,6 +18,28 @@ export default function DropDown({
   updateFieldData = null,
 }) {
   const [radiosType, setRadiosType] = useState("manual");
+  const [endpoint, setEndpoint] = useState("");
+  const [dropdownOptions, setDropdownOptions] = useState([]);
+
+  async function inflateOptions() {
+    try {
+      const response = await axios.get(endpoint);
+  
+      if (response.ok) {
+        const responseOptions = await response.json();
+        setDropdownOptions(responseOptions?.data)
+      }
+    } catch (e) {
+      toast.error(e?.message);
+      console.log(e)
+    }
+  }
+
+  function removedArray(array, index) {
+    let editableArray = array;
+    editableArray.splice(index, 1);
+    return editableArray;
+  }
 
   return (
     <div>
@@ -68,15 +92,15 @@ export default function DropDown({
             </label>
             <div>
               <label htmlFor="minLen" className="text-xs font-semibold">
-                Choice A
+                Label
               </label>
-              <Input name="minLen" placeholder="0" className="p-4 h-[48px]" />
+              <Input name="minLen" placeholder="Enter Label" className="p-4 h-[48px]" />
             </div>
             <div>
               <label htmlFor="maxLen" className="text-xs font-semibold">
-                Choice B
+                Value
               </label>
-              <Input name="maxLen" placeholder="0" className="p-4 h-[48px]" />
+              <Input name="maxLen" placeholder="Enter Value" className="p-4 h-[48px]" />
             </div>
           </div>
           <div className="flex flex-row-reverse gap-4 py-1 my-4">
@@ -98,6 +122,18 @@ export default function DropDown({
                 className="p-4 h-[48px]"
               />
             </div>
+            <div className="col-span-2">
+              <label htmlFor="tabName" className="text-[16px] font-semibold">
+                API Endpoint
+              </label>
+              <Input
+                name="tabName"
+                placeholder="Paste API endpoint URL"
+                className="p-4 h-[48px]"
+                value={endpoint}
+                onValueChange={(e)=>setEndpoint(e?.target?.value)}
+              />
+            </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
               <Checkbox2 />
               <label
@@ -111,24 +147,32 @@ export default function DropDown({
             <label className="text-[16px] font-semibold col-span-2">
               Choices
             </label>
-            <div>
-              <label htmlFor="minLen" className="text-xs font-semibold">
-                Choice A
-              </label>
-              <Input name="minLen" placeholder="0" className="p-4 h-[48px]" />
-            </div>
-            <div>
-              <label htmlFor="maxLen" className="text-xs font-semibold">
-                Choice B
-              </label>
-              <Input name="maxLen" placeholder="0" className="p-4 h-[48px]" />
-            </div>
+
+            {dropdownOptions.length > 0 && dropdownOptions.map((option, index) => (
+              <div key={index} className="col-span-2 grid grid-cols-7 gap-8 gap-y-3">
+                <div className="col-span-3">
+                  <label htmlFor="minLen" className="text-xs font-semibold">
+                    Label
+                  </label>
+                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readonly/>
+                </div>
+                <div className="col-span-3">
+                  <label htmlFor="maxLen" className="text-xs font-semibold">
+                    Value
+                  </label>
+                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readonly/>
+                </div>
+                <Button variant="destructive" onClick={()=>{setDropdownOptions(removedArray(dropdownOptions, index))}} className="">❌</Button>
+              </div>
+            ))}
           </div>
-          <div className="flex flex-row-reverse gap-4 py-1 my-4">
-            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
-              + Add
-            </Button>
-          </div>
+          {dropdownOptions.length < 1 && (
+            <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+              <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+                Get List
+              </Button>
+            </div>
+          )}
         </>
       )}
 
