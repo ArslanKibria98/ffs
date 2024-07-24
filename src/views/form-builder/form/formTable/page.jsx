@@ -130,18 +130,13 @@ export default function FormTable() {
 
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
-      <div className="w-full flex justify-between items-center my-3">
-     
-    
-        <div className="flex justify-evenly gap-2 items-center">
-      
-     
+        <div className="flex justify-end w-full">
           <Button onClick={handleCreateForm} className="bg-[#e2252e] hover:bg-[#e2252eec] font-normal text-[16px] h-[45px]">
             + {"Create New Form"}
           </Button>
       
         </div>
-      </div>
+     
       <div className="w-full rounded-xl bg-white overflow-hidden">
         <Table className="rounded-lg border bg-white overflow-x-scroll">
           <TableHeader>

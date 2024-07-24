@@ -13,6 +13,7 @@ import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import toast from 'react-hot-toast'
 import { useSelector, useDispatch } from 'react-redux'
 import { setIsLoading } from '@/redux/store/loading'
+import axios from '@/lib/axios'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch();
@@ -42,18 +43,12 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
     }
 
     try {
-      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateContainer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-      })
+      const response = await axios.post('/Controls/CreateContainer', JSON.stringify(data))
 
-      if (response.ok) {
+      if (response.data) {
         // Handle success (e.g., show a success message, close the dialog, etc.)
         console.log('Tab saved successfully')
-        let responseData=await response.json()
+        let responseData=response.data
         setter(!getter);
         toast.success(responseData.notificationMessage)
         dispatch(setIsLoading(false))

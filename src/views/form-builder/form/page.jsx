@@ -250,7 +250,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addCheckbox.svg",
       title: "Checkbox",
-      // controlType: 0,
+      controlType: 9,
       data: (
         <Checkbox
           getter={usCheckbox}

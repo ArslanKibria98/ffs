@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 // import { CalendarIcon } from 'lucide-react'
 import { Slider } from "@/components/ui/slider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
+import { Checkbox2 } from "@/components/ui/checkbox";
 import {
   InputOTP,
   InputOTPGroup,
@@ -314,6 +314,37 @@ export function GetRelevantField(control) {
         /* Available Props */
       />
         
+      </div>
+    )
+  }
+  if (field?.controlType == 9) {  //  checkBox
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <div className="my-4 grid grid-cols-3 items-center">
+        {field.choices?.map((choice, index) => (
+                     <>
+                     <div className='w-100 flex gap-2 pb-3'>
+                     <Checkbox2 />
+                     <label
+                       htmlFor="terms"
+                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                     >
+                       {choice.choiceName}
+                     </label>
+                     </div>
+                   
+                     </>
+                 
+                ))}
+          </div>
       </div>
     )
   }

@@ -8,18 +8,21 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Checkbox2 } from "@/components/ui/checkbox";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Rating } from "react-simple-star-rating";
+let checkBoxValue=[]
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
   const loading = useSelector((state) => state?.loadingStore.value);
   const [defaultTabValue, setDefaultTabVal] = useState("");
   const [loader, setLoader] = useState(false);
+  const [selectedChoices, setSelectedChoices] = useState([]);
   const params = useParams();
   console.log(params.id);
   const [formDataApi, setFormDataApi] = useState([
@@ -116,7 +119,21 @@ export default function FormRender() {
           phoneNumber: values[key],
           phoneType: "any",
         }));
-      const rating = Object.keys(values)
+      const checkBox = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === 9 && control.controlType === 9
+              )
+            )
+        )
+        .map((key) => ({
+          value: checkBoxValue,
+        }));
+        const rating = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -137,7 +154,7 @@ export default function FormRender() {
       //   "phoneType": "any",
 
       // }));
-      console.log("Formatted Data:", { textBoxInput, otpInput });
+      console.log("ata:", values);
       // toast.success('Form submitted successfully!');
       try {
         setLoader(true);
@@ -241,8 +258,8 @@ export default function FormRender() {
 }
 
 function GetRelevantField({ control, formik }) {
+  const [selectedChoices, setSelectedChoices] = useState([]);
   let field = control;
-
   if (field?.controlType === 0) {
     //  TextBox
     return (
@@ -394,6 +411,44 @@ function GetRelevantField({ control, formik }) {
             onPointerLeave={onPointerLeave}
             onPointerMove={onPointerMove}
           />
+        </div>
+      </div>
+    );
+  }
+  
+  const handleCheckboxChange = (choiceName) => {
+    setSelectedChoices((prevSelected) =>
+      prevSelected.includes(choiceName)
+        ? prevSelected.filter((name) => name !== choiceName)
+        : [...prevSelected, choiceName]
+    );
+  };
+  checkBoxValue=selectedChoices
+  console.log(checkBoxValue,"-==--")
+  if (field?.controlType === 9) {
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+        </p>
+        <div className="my-4 grid grid-cols-3 items-center">
+          {field.choices?.map((choice, index) => (
+            <div key={index} className="w-100 flex gap-2 pb-3">
+              <input
+                type="checkbox"
+                id={`checkbox-${index}`}
+                checked={selectedChoices.includes(choice.choiceName)}
+                onChange={() => handleCheckboxChange(choice.choiceName)}
+              />
+              <label
+                htmlFor={`checkbox-${index}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {choice.choiceName}
+              </label>
+            </div>
+          ))}
         </div>
       </div>
     );

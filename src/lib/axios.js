@@ -10,7 +10,8 @@ const axios = Axios.create({
 axios.interceptors.request.use((reqConfig) => {
   const config = { ...reqConfig };
 
-  if (!config.headers["Authorization"]) {
+  // console.log("Trying to add token")
+  // if (!config.headers["Authorization"]) {
     const accessToken = Cookies.get("token");
 
     // console.log(accessToken);
@@ -18,13 +19,15 @@ axios.interceptors.request.use((reqConfig) => {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
       config.headers["Content-Type"] = "application/json";
       config.headers["Request-Id"] = uuidv4();
+
+      // console.log("Adding token", accessToken)
     //   headers: {
     //     "Content-Type": "application/json",
     //     "Request-Id": "eef836f0-1a0d-43e5-8200-b02fe4730ce4",
     //   },
       // config.headers.authorization = accessToken;
     // }
-  }
+  // }
   return config;
 });
 

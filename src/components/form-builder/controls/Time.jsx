@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-
+import { useSelector, useDispatch } from "react-redux";
 export default function Time({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const timeFormats = [
     "5/04/2003 (mm/dd/yyyy)",
@@ -21,25 +21,118 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
     "9/04/2003 (mm/dd/yyyy)",
     "10/04/2003 (mm/dd/yyyy)",
   ];
+  const version_id = useSelector((state) => state?.formStore.version_id);
+  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
   const [timeFormat, setTimeFormat] = useState("Black");
+  const handleSave = async () => {
+    setLocalLoading(true);
+    const payload = {
+      formVersionId: version_id,
+      containerId: id,
+      regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
+      question: question,
+      is_Required: isRequired,
+      choices: choices,
+    };
 
+    try {
+      const response = await axios.post("/Controls/CreateCheckBox", JSON.stringify(payload));
+
+      if (response?.data?.success) {
+        // Handle success
+        let responseData = response.data;
+        setter(!getter);
+        toast.success(responseData.notificationMessage);
+        resetForm();
+        setLocalLoading(false);
+      } else {
+        // Handle error
+        console.log("Failed to save");
+        toast.error("Failed to save");
+        setLocalLoading(false);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong!");
+      setLocalLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    const formUpdateData = {
+      controlId: updateFieldData.controlId,
+      question: question,
+      is_Required: isRequired,
+      choices: choices,
+    };
+
+    try {
+      const response = await axios.post("/Controls/UpdateCheckBox", JSON.stringify(formUpdateData));
+
+      if (response.data.success) {
+        let responseData =response.data;
+        if (!responseData.success) {
+          toast.error(responseData?.notificationMessage);
+          return;
+        }
+        toast.success(responseData?.notificationMessage);
+        resetForm();
+        document.getElementById("CheckDialogClose").click();
+      } else {
+        console.error("Failed to edit Slider field!");
+        toast.error("Unable to edit!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+     
+    }
+  };
+  console.log(timeFormat,"timeFormat")
   return (
     <div>
       <DialogTitle>Add Time</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
+      {isUpdate ? "" : (
+          <div className="col-span-2">
+            <Select
+              className="w-full"
+              onValueChange={(e) => {
+                setId(e);
+              }}
+              // defaultValue={formDataApi[0]?.containerName}
+            >
+              <label htmlFor="minLen" className="text-xs font-semibold">
+                Tab Name
+              </label>
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {formDataApi?.map((style, index) => (
+                  <SelectItem key={index} value={style?.id}>
+                    {style?.containerName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-            Question
+            Caption
           </label>
           <Input
             name="tabName"
             placeholder="Type Here"
             className="p-4 h-[48px]"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
           />
         </div>
         <div className="my-4 col-span-2 flex items-center space-x-2">
-          <Checkbox2 />
+          <Checkbox2 checked={isRequired} onCheckedChange={setIsRequired} />
           <label
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
