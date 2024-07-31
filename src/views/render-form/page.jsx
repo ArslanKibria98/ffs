@@ -8,19 +8,31 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Checkbox2 } from "@/components/ui/checkbox";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import StarRating from "@/components/ui/StarRating"
 import { Rating } from "react-simple-star-rating";
+import axios from "@/lib/axios";
+import DateTimePicker from 'react-datetime-picker';
+// import StarRatings from './react-star-ratings';
+// import { Link } from "react-router-dom"
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
+let checkBoxValue=[]
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
   const loading = useSelector((state) => state?.loadingStore.value);
   const [defaultTabValue, setDefaultTabVal] = useState("");
   const [loader, setLoader] = useState(false);
+  const [selectedChoices, setSelectedChoices] = useState([]);
   const params = useParams();
+  
   console.log(params.id);
   const [formDataApi, setFormDataApi] = useState([
     //   {
@@ -100,6 +112,22 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           otpInput: values[key],
         }));
+        const ratingInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 8
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          ratingValue: values[key].toString(),
+          ratingComment:"abc"
+        }));
       const phoneNumberInstanceInput = Object.keys(values)
         .filter(
           (key) =>
@@ -116,20 +144,50 @@ export default function FormRender() {
           phoneNumber: values[key],
           phoneType: "any",
         }));
-      const rating = Object.keys(values)
+        const checkBoxInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
             formDataApi.some((tab) =>
               tab.controls.some(
                 (control) =>
-                  control.controlId === key && control.controlType === 8
+                  control.controlId === key && control.controlType === 9
               )
             )
         )
         .map((key) => ({
           controlId: key.toLowerCase(),
-          value: values[key],
+          checkBoxInput: values[key].toString(),
+        }));
+        const timeInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 10
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          timeInput: values[key].toString(),
+        }));
+        const sliderInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 2
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          sliderInput: values[key].toString(),
         }));
       // const controlFileInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 3))).map(key => ({
       //   "controlId": key.toLowerCase(),
@@ -137,7 +195,7 @@ export default function FormRender() {
       //   "phoneType": "any",
 
       // }));
-      console.log("Formatted Data:", { textBoxInput, otpInput });
+      console.log("ata:", sliderInput);
       // toast.success('Form submitted successfully!');
       try {
         setLoader(true);
@@ -146,19 +204,21 @@ export default function FormRender() {
           textBoxInput,
           phoneNumberInstanceInput,
           otpInput,
+          ratingInput,checkBoxInput,timeInput
         };
-        const response = await fetch(
-          "http://135.181.57.251:3048/api/FormInstance/CreateFormInstance",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Request-Id": "b561073e-d25b-4057-a1d3-7299129ff0f2",
-            },
-            body: JSON.stringify(data),
-          }
-        );
-        const dataRes = await response.json();
+        // const response = await fetch(
+        //   "http://135.181.57.251:3048/api/FormInstance/CreateFormInstance",
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       "Request-Id": "b561073e-d25b-4057-a1d3-7299129ff0f2",
+        //     },
+        //     body: JSON.stringify(data),
+        //   }
+        // );
+        const response = await axios.post("/FormInstance/CreateFormInstance", JSON.stringify(data));
+        const dataRes = response.data;
         console.log(dataRes, "data");
         setLoader(false);
         toast.success(dataRes?.notificationMessage);
@@ -192,6 +252,7 @@ export default function FormRender() {
                   className="rounded p-0 px-3 h-8 w-fit"
                 >
                   <h5 className="text-sm">
+                    {console.log(tab.containerName,"123")}
                     {tab?.containerName || "Tab Name"}
                   </h5>
                 </TabsTrigger>
@@ -226,6 +287,9 @@ export default function FormRender() {
             <BoxLoader />
           </div>
         )}
+        {/* {
+          formDataApi.length==formDataApi.length&&
+        } */}
         <div className="flex flex-row-reverse gap-4 py-4 my-4">
           <Button
             type="submit"
@@ -241,8 +305,8 @@ export default function FormRender() {
 }
 
 function GetRelevantField({ control, formik }) {
+  const [selectedChoices, setSelectedChoices] = useState([]);
   let field = control;
-
   if (field?.controlType === 0) {
     //  TextBox
     return (
@@ -283,7 +347,12 @@ function GetRelevantField({ control, formik }) {
   }
 
   if (field?.controlType === 2) {
-    //  Slider
+    // Slider
+    const handleSliderChange = (value) => {
+      console.log(value,field.name,"12345")
+      formik.setFieldValue(field.name, value[0]);
+    };
+
     return (
       <div className="col-span-2 flex flex-col gap-y-2">
         <p className="text-[12px]">
@@ -292,10 +361,10 @@ function GetRelevantField({ control, formik }) {
         </p>
         <div className="flex justify-between w-full gap-3">
           <Slider
-            defaultValue={[33]}
             max={100}
             step={1}
-            onChange={(value) => formik.setFieldValue(field.name, value)}
+            value={[formik.values[field.name] || 0]}
+            onValueChange={handleSliderChange}
           />
         </div>
       </div>
@@ -380,7 +449,8 @@ function GetRelevantField({ control, formik }) {
   const onPointerLeave = () => console.log("Leave");
   const onPointerMove = (value, index) => console.log(value, index);
   if (field?.controlType === 8) {
-    //  PhoneNumber
+    const totalStars=5;
+    //  rating
     return (
       <div>
         <p className="text-[12px]">
@@ -388,13 +458,85 @@ function GetRelevantField({ control, formik }) {
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex w-full gap-3">
-          <Rating
-            onClick={handleRating}
-            onPointerEnter={onPointerEnter}
-            onPointerLeave={onPointerLeave}
-            onPointerMove={onPointerMove}
-          />
+        <StarRating
+            totalStars={5}
+            fieldName={field.controlId}
+            setFieldValue={formik.setFieldValue}
+            value={formik.values[field.controlId] || 0}
+          /> 
         </div>
+      </div>
+    );
+  }
+  
+  const handleCheckboxChange = (choiceName) => {
+    setSelectedChoices((prevSelected) =>
+      prevSelected.includes(choiceName)
+        ? prevSelected.filter((name) => name !== choiceName)
+        : [...prevSelected, choiceName]
+    );
+  };
+  checkBoxValue=selectedChoices
+  console.log(checkBoxValue,"-==--")
+  if (field?.controlType === 9) {
+    const handleCheckboxChange = (choiceName) => {
+      const currentChoices = formik.values[field.controlId] || [];
+      const updatedChoices = currentChoices.includes(choiceName)
+        ? currentChoices.filter((name) => name !== choiceName)
+        : [...currentChoices, choiceName];
+  
+      formik.setFieldValue(field.controlId, updatedChoices);
+    };
+  
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+        </p>
+        <div className="my-4 grid grid-cols-3 items-center">
+          {field.choices?.map((choice, index) => (
+            <div key={index} className="w-100 flex gap-2 pb-3">
+              <input
+                type="checkbox"
+                id={`checkbox-${index}`}
+                checked={(formik.values[field.controlId] || []).includes(choice.choiceName)}
+                onChange={() => handleCheckboxChange(choice.choiceName)}
+              />
+              <label
+                htmlFor={`checkbox-${index}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {choice.choiceName}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  if (control?.controlType == 10) {
+    // Time Picker
+    const handleTimeChange = (value) => {
+      formik.setFieldValue(control.controlId, value);
+    };
+
+    return (
+      <div>
+        <p className="text-[12px]">
+          {control.question}
+          {control.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <DateTimePicker
+          onChange={handleTimeChange}
+          value={formik.values[control.controlId] || null}
+          disableCalendar={true}
+          format={control.timeFormat == 0 ? 'hh:mm a' : 'HH:mm'}
+        />
       </div>
     );
   }

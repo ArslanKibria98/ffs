@@ -30,8 +30,8 @@ export default function App() {
           <Route index element={<AuthHandover />} />
           <Route path=":token" element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
-          <Route path="form-version-table" element={<FormTable />} />
-          <Route path="form-versions" element={<FormVersionPage />} />
+          <Route path="form-version-table/:id" element={<FormTable />} />
+          <Route path="form-versions/:id" element={<FormVersionPage />} />
           <Route path="render-form/:id" element={<FormRender />} />
           <Route path="form-builder/form" element={<BuilderLayout />}>
             <Route index element={<BuilderPage />} />

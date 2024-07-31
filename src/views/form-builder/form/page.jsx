@@ -250,7 +250,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addCheckbox.svg",
       title: "Checkbox",
-      // controlType: 0,
+      controlType: 9,
       data: (
         <Checkbox
           getter={usCheckbox}
@@ -263,7 +263,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addTime.svg",
       title: "Time",
-      // controlType: 0,
+      controlType: 10,
       data: (
         <Time
           getter={usTime}
@@ -607,13 +607,18 @@ export default function BuilderPage() {
             <TabsList className="formBuilderTablist">
               {!loading &&
                 formDataApi?.map((tab, index) => (
+                  <>
+                  {tab?.containerName!=null&&
                   <TabsTrigger
                     value={tab?.containerName}
                     key={index}
                     className="px-5 h-10 mb-0 mr-1"
                   >
+                  
                     {tab?.containerName}
                   </TabsTrigger>
+                  }
+                  </>
                 ))}
             </TabsList>
             {!loading &&

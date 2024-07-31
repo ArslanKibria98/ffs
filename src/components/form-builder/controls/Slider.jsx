@@ -17,8 +17,10 @@ import toast from "react-hot-toast";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
+import axios from "@/lib/axios";
 
 export default function Slider({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const [localLoading, setLocalLoading] = useState(false);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.min_Value);
@@ -27,6 +29,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
   const version_id = useSelector((state) => state?.formStore.version_id);
   
   const handleSave = async () => {
+    setLocalLoading(true)
     const payload = {
       formVersionId: version_id,
       containerId: id,
@@ -39,33 +42,27 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateSlider",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (response.ok) {
+      const response = await axios.post("/Controls/CreateSlider", JSON.stringify(payload));
+      
+      if (response?.data?.success) {
         // Handle success
-        let responseData = await response.json();
+        let responseData = response.data;
         setter(!getter);
         toast.success(responseData.notificationMessage);
         resetForm();
+        setLocalLoading(false);
       } else {
         // Handle error
         // setter(!getter);
         console.log("Failed to save");
         toast.error("Failed to save");
+        setLocalLoading(false);
       }
     } catch (error) {
       // setter(!getter);
       console.error("Error:", error);
       toast.error("Something went wrong!");
+      setLocalLoading(false);
     }
   };
 
@@ -79,16 +76,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/UpdateSlider",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formUpdateData),
-        }
-      );
+      const response = await axios.post("/Controls/UpdateSlider", JSON.stringify(formUpdateData));
 
       if (response.ok) {
         let responseData = await response.json();
@@ -198,11 +186,12 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSave : handleUpdate}
+          disabled={localLoading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>
 
-        <DialogClose id="SliDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+        <DialogClose id="SliDialogClose" disabled={localLoading} className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
         </DialogClose>
       </div>
