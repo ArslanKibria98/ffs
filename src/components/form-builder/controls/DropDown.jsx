@@ -28,6 +28,8 @@ export default function DropDown({
   const [endpoint, setEndpoint] = useState("");
   const [dropdownOptions, setDropdownOptions] = useState([]);
   const [localLoading, setLocalLoading] = useState(false);
+  const [radioParams, setRadioParams] = useState([{ key: "", value: "" }]);
+  const [radioHeaders, setRadioHeaders] = useState([{ key: "", value: "" }]);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
   const [choices, setChoices] = useState(
@@ -132,6 +134,45 @@ export default function DropDown({
      
     }
   };
+
+
+  function updateParamIndex(key, newVal, index) {
+    console.log(key, newVal, index);
+    setRadioParams(
+      radioParams.map((item, i) =>
+        i === index ? { ...item, [key]: newVal } : item
+      )
+    );
+  }
+  function handleDeleteParam(index) {
+    if (index < radioParams.length - 1) {
+      setRadioParams((prevParams) => [
+        ...prevParams.slice(0, index),
+        ...prevParams.slice(index + 1),
+      ]);
+    } else {
+      toast.error("Cannot delete default empty param");
+      return;
+    }
+  }
+  function updateHeadersIndex(key, newVal, index) {
+    setRadioHeaders(
+      radioHeaders.map((item, i) =>
+        i === index ? { ...item, [key]: newVal } : item
+      )
+    );
+  }
+  function handleDeleteHeader(index) {
+    if (index < radioHeaders.length - 1) {
+      setRadioHeaders((prevHeaders) => [
+        ...prevHeaders.slice(0, index),
+        ...prevHeaders.slice(index + 1),
+      ]);
+    } else {
+      toast.error("Cannot delete default empty param");
+      return;
+    }
+  }
   return (
     <div>
       <DialogTitle>Add Dropdown</DialogTitle>
@@ -254,6 +295,98 @@ export default function DropDown({
                 value={endpoint}
                 onChange={(e)=>setEndpoint(e?.target?.value)}
               />
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="radioParams" className="text-xs font-semibold">
+                Params
+              </label>
+              <div className="flex flex-col gap-2">
+                {radioParams?.map((param, index) => (
+                  <div key={index} className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      <Input
+                        name="radioParams"
+                        placeholder="Param Key"
+                        className="p-4 h-[48px]"
+                        value={param.key}
+                        onChange={(e) =>
+                          updateParamIndex("key", e?.target?.value, index)
+                        }
+                      />
+                      <Input
+                        name="radioParams"
+                        placeholder="Param Value"
+                        className="p-4 h-[48px]"
+                        value={param.value}
+                        onChange={(e) =>
+                          updateParamIndex("value", e?.target?.value, index)
+                        }
+                      />
+                    </div>
+                    <Button
+                      variant="destructive"
+                      className="h-[48px]"
+                      onClick={() => {
+                        if (index < radioParams.length - 1)
+                          handleDeleteParam(index);
+                        else
+                          setRadioParams([
+                            { key: "", value: "" },
+                            ...radioParams,
+                          ]);
+                      }}
+                    >
+                      {index < radioParams.length - 1 ? "−" : "+"}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="radioHeaders" className="text-xs font-semibold">
+                Headers
+              </label>
+              <div className="flex flex-col gap-2">
+                {radioHeaders?.map((param, index) => (
+                  <div key={index} className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      <Input
+                        name="radioHeaders"
+                        placeholder="Header Key"
+                        className="p-4 h-[48px]"
+                        value={param.key}
+                        onChange={(e) =>
+                          updateHeadersIndex("key", e?.target?.value, index)
+                        }
+                      />
+                      <Input
+                        name="radioHeaders"
+                        placeholder="Header Value"
+                        className="p-4 h-[48px]"
+                        value={param.value}
+                        onChange={(e) =>
+                          updateHeadersIndex("value", e?.target?.value, index)
+                        }
+                      />
+                    </div>
+                    <Button
+                      variant="destructive"
+                      className="h-[48px]"
+                      onClick={() => {
+                        if (index < radioHeaders.length - 1)
+                          handleDeleteHeader(index);
+                        else
+                          setRadioHeaders([
+                            { key: "", value: "" },
+                            ...radioHeaders,
+                          ]);
+                      }}
+                    >
+                      {index < radioHeaders.length - 1 ? "−" : "+"}
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
               <Checkbox2 />
