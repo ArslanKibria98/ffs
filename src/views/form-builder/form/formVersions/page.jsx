@@ -66,7 +66,7 @@ export default function FormVersionPage() {
         </div>
         <div className="col-span-5 ">
           <div className="p-6 gap-2 flex">
-          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table${id.id}`)}}>
+          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table/${id.id}`)}}>
           Form Report
             </Button>
             <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg">

@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
-
+import axios from "@/lib/axios";
 export default function FileUpload({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState("");
@@ -23,18 +23,54 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
   const [id, setId] = useState("");
   const [selectedFormat, setSelectedFormat] = useState([]);
   const availableFormat = [
-    "JPEG",
-    "PNG",
-    "SVG",
-    "GIF",
-    "TIFF",
-    "PDF",
-    "DOC",
-    "XLS",
-    "PPT",
-    "ODP",
-    "TXT",
-    "All Files",
+    {
+      label: "JPEG",
+      value:0
+    },
+    {
+      label: "PNG",
+      value:1
+    },
+    {
+      label: "SVG",
+      value:2
+    },
+    {
+      label: "GIF",
+      value:3
+    },
+    {
+      label: "TIFF",
+      value:4
+    },
+    {
+      label: "PDF",
+      value:5
+    },
+    {
+      label: "DOC",
+      value:6
+    },
+    {
+      label: "XLS",
+      value:7
+    },
+    {
+      label: "PPT",
+      value:8
+    },
+    {
+      label: "ODP",
+      value:9
+    },
+    {
+      label: "TXT",
+      value:10
+    },
+    {
+      label: "All Files",
+      value:11
+    }
   ];
   const handleSubmit = async () => {
     const postData = {
@@ -48,19 +84,9 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateFile",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
-
-      if (response.ok) {
-        let responseData = await response.json();
+      const response = await axios.post("/Controls/CreateFile", JSON.stringify(postData));
+      if (response?.data?.success) {
+        let responseData =response.data;
         setter(!getter);
         toast.success(responseData?.notificationMessage);
         resetForm();
@@ -74,14 +100,14 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
     }
   };
 
-  const handleCountryChange = (country) => {
-    setSelectedFormat((prev) =>
-      prev.includes(country)
-        ? prev.filter((c) => c !== country)
-        : [...prev, country]
+  const handleFormatChange = (format) => {
+    setSelectedFormat((prevSelectedFormats) =>
+      prevSelectedFormats.includes(format.label)
+        ? prevSelectedFormats.filter((item) => item !== format.label)
+        : [...prevSelectedFormats, format.label]
     );
   };
-
+console.log(selectedFormat)
   return (
     <div>
       <DialogTitle>Add File</DialogTitle>
@@ -140,17 +166,17 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
           </label>
         </div>
         <div className="col-span-2 grid grid-cols-4 gap-4">
-          {availableFormat.map((country, index) => (
-            <div key={index} className="col-span-1 flex items-center space-x-2">
-              <Checkbox2
-                checked={selectedFormat.includes(country)}
-                onCheckedChange={() => handleCountryChange(country)}
-              />
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {country}
-              </label>
-            </div>
-          ))}
+        {availableFormat.map((format, index) => (
+        <div key={index} className="col-span-1 flex items-center space-x-2">
+          <Checkbox2
+            checked={selectedFormat.includes(format.label)}
+            onCheckedChange={() => handleFormatChange(format)}
+          />
+          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            {format.label}
+          </label>
+        </div>
+      ))}
         </div>
       </div>
 

@@ -37,7 +37,6 @@ import { QrCode } from 'lucide-react';
 import toast from "react-hot-toast"
 
 import localisationData from "../../localisation.json"
-
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "../../redux/store/loading";
 import { SET_FORM_INFO,SET_DEFAULT_CONTAINER_ID } from "../../redux/store/form";
@@ -60,6 +59,8 @@ export default function FormBuilder() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handlePageChange =async (event, newPage) => {
     setPage(newPage)
+    setLocalLoading(true);
+
     try {
       const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=15`,{
         method: 'GET',
@@ -74,6 +75,7 @@ export default function FormBuilder() {
       if (data?.data?.length > 0) {
         // console.log(data.data)
         setForms(data.data)
+        setLocalLoading(false);
         setTotalPages(Math.ceil(data.data.length / rowsPerPage))
         setTimeout(()=>{
           dispatch(setIsLoading(false));
@@ -168,7 +170,7 @@ export default function FormBuilder() {
   } else if (language == "ar") {
     locData = localisationData.home.ar;
   }
-
+console.log(forms.length)
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
@@ -325,7 +327,7 @@ export default function FormBuilder() {
        
           <button
             onClick={() => handlePageChange(null, page + 1)}
-            // disabled={page >= totalPages - 1}
+            disabled={forms.length<15}
             className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
           >
             {`>`}

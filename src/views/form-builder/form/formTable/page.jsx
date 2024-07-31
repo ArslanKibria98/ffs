@@ -86,19 +86,26 @@ export default function FormTable() {
     <Table className="rounded-lg border bg-white overflow-x-scroll">
       <TableHeader>
         <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
+          {instance.containerName!=null &&
           <TableHead colSpan={Object.keys(instance?.controlsAndInstances).length + 2} className="text-white text-center">
-            {instance.containerName}
+            {instance.containerName===null?"-":instance.containerName}
           </TableHead>
+}
         </TableRow>
         <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
           {/* <TableHead className="min-w-[100px] text-white">ID</TableHead> */}
+          {instance.containerName!=null &&
+          <>
           {Object.keys(instance?.controlsAndInstances).map((key) => (
             <TableHead key={key} className="min-w-[100px] text-white">{key}</TableHead>
           ))}
+</>}
           {/* <TableHead className="min-w-[100px] text-white">Action</TableHead> */}
         </TableRow>
       </TableHeader>
       <TableBody>
+      {instance.containerName!=null &&
+      <>
         {instance.controlsAndInstances[Object.keys(instance.controlsAndInstances)[0]].map((_, rowIndex) => (
           <TableRow key={rowIndex}>
             {/* <TableCell>{rowIndex + 1}</TableCell> */}
@@ -114,6 +121,7 @@ export default function FormTable() {
             </TableCell> */}
           </TableRow>
         ))}
+         </> }
       </TableBody>
     </Table>
     

@@ -17,7 +17,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StarRating from "@/components/ui/StarRating"
 import { Rating } from "react-simple-star-rating";
 import axios from "@/lib/axios";
+import { Label } from "@/components/ui/label";
 import DateTimePicker from 'react-datetime-picker';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 // import StarRatings from './react-star-ratings';
 // import { Link } from "react-router-dom"
 import 'react-datetime-picker/dist/DateTimePicker.css';
@@ -159,6 +168,21 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           checkBoxInput: values[key].toString(),
         }));
+        const radioButtonInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 6
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          radioButtonInput: values[key].toString(),
+        }));
         const timeInput = Object.keys(values)
         .filter(
           (key) =>
@@ -170,6 +194,22 @@ export default function FormRender() {
               )
             )
         )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          timeInput: values[key].toString(),
+        }));
+        const dropdown = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 7
+              )
+            )
+        )
+    
         .map((key) => ({
           controlId: key.toLowerCase(),
           timeInput: values[key].toString(),
@@ -195,7 +235,7 @@ export default function FormRender() {
       //   "phoneType": "any",
 
       // }));
-      console.log("ata:", sliderInput);
+      console.log("ata:", dropdown);
       // toast.success('Form submitted successfully!');
       try {
         setLoader(true);
@@ -204,7 +244,7 @@ export default function FormRender() {
           textBoxInput,
           phoneNumberInstanceInput,
           otpInput,
-          ratingInput,checkBoxInput,timeInput
+          ratingInput,checkBoxInput,timeInput,radioButtonInput
         };
         // const response = await fetch(
         //   "http://135.181.57.251:3048/api/FormInstance/CreateFormInstance",
@@ -245,32 +285,31 @@ export default function FormRender() {
         {formDataApi.length > 0 && (
           <Tabs defaultValue={formDataApi[0].containerName}>
             <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
-              {formDataApi.map((tab, index) => (
-                <TabsTrigger
-                  key={index}
-                  value={tab?.containerName}
-                  className="rounded p-0 px-3 h-8 w-fit"
-                >
-                  <h5 className="text-sm">
-                    {console.log(tab.containerName,"123")}
-                    {tab?.containerName || "Tab Name"}
-                  </h5>
-                </TabsTrigger>
-              ))}
+            {formDataApi.map((tab, index) => (
+              <>
+               {tab.containerName!=null&&
+              <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
+                <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
+              </TabsTrigger>
+               }
+               </>
+            ))}
             </TabsList>
             {formDataApi?.map((tab, index) => (
               <TabsContent
                 key={index}
                 value={tab?.containerName}
-                className="border bg-white p-4 rounded-xl w-full min-h-[400px]"
+                className="border bg-white p-4 rounded-xl w-full"
               >
-                {tab?.controls?.map((field, index) => (
-                  <GetRelevantField
-                    key={index}
-                    control={field}
-                    formik={formik}
-                  />
-                ))}
+                <div className=" grid grid-cols-2 gap-2 gap-y-4">
+                  {tab?.controls?.map((field, index) => (
+                    <GetRelevantField
+                      key={index}
+                      control={field}
+                      formik={formik}
+                    />
+                  ))}
+                </div>
               </TabsContent>
             ))}
           </Tabs>
@@ -310,7 +349,7 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 0) {
     //  TextBox
     return (
-      <div>
+      <div className="h-fit col-span-1 row-span-1">
         <p className="text-[12px]">
           {field?.name}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -332,7 +371,7 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 1) {
     //  Button
     return (
-      <div>
+      <div className="h-fit">
         <p className="text-[12px]">
           {field.name}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -354,7 +393,7 @@ function GetRelevantField({ control, formik }) {
     };
 
     return (
-      <div className="col-span-2 flex flex-col gap-y-2">
+      <div className="col-span-1 flex flex-col gap-y-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -374,7 +413,7 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 3) {
     //  File
     return (
-      <div>
+      <div className=" h-fit">
         <p className="text-[12px]">
           {field?.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -396,7 +435,7 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 4) {
     //  Otp
     return (
-      <div>
+      <div className=" h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -421,7 +460,7 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 5) {
     //  PhoneNumber
     return (
-      <div>
+      <div className=" h-fit col-span-1 row-span-1">
         <p className="text-[12px]">
           {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -439,20 +478,84 @@ function GetRelevantField({ control, formik }) {
       </div>
     );
   }
-  const handleRating = (rate) => {
-    console.log(rate);
+  if (field?.controlType == 6) {
+    // RadioButton
+    const handleRadioChange = (value) => {
+      formik.setFieldValue(field.controlId, value);
+    };
 
-    // other logic
-  };
-  // Optinal callback functions
-  const onPointerEnter = () => console.log("Enter");
-  const onPointerLeave = () => console.log("Leave");
-  const onPointerMove = (value, index) => console.log(value, index);
-  if (field?.controlType === 8) {
+    return (
+      <div className=" h-fit">
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+        </p>
+        <div className="my-4 grid grid-cols-3 items-center">
+          <RadioGroup
+            className="flex gap-4"
+            onValueChange={handleRadioChange}
+            value={formik.values[field.controlId] || ''}
+          >
+            {field.choices?.map((choice, index) => (
+              <div key={index} className="flex items-center space-x-2 cursor-pointer">
+                <RadioGroupItem
+                  value={choice.choiceName}
+                  id={`radio-${index}`}
+                  className="border-red-500"
+                />
+                <Label htmlFor={`radio-${index}`} className="cursor-pointer">
+                  {choice.choiceName}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    );
+  }
+  if (field?.controlType === 7) {// Dropdown
+    const handleRadioChange = (value) => {
+      formik.setFieldValue(field.controlId, value);
+    };
+  return (
+    <div className=" h-fit">
+    <p className="text-[12px]">
+      {field.question}
+      {field.is_Required ? (
+        <span className="text-red-500"> *</span>
+      ) : (
+        ''
+      )}
+    </p>
+    <div className="my-3 items-center">
+      <Select
+        className="w-full"
+        value={formik.selectedChoice}
+        onChange={handleRadioChange}
+      >
+        <SelectTrigger className="w-full h-[48px]">
+          <SelectValue placeholder="Select Tab" />
+        </SelectTrigger>
+        <SelectContent>
+          {field.choices?.map((style, index) => (
+            <SelectItem key={index} value={style?.id}>
+              {style?.choiceName}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      {formik.touched.selectedChoice && formik.errors.selectedChoice ? (
+        <div className="text-red-500 text-sm">{formik.errors.selectedChoice}</div>
+      ) : null}
+    </div>
+  </div>
+    );
+  }
+  if (field?.controlType === 8) { // rating
     const totalStars=5;
     //  rating
     return (
-      <div>
+      <div className=" h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ""}
@@ -469,15 +572,6 @@ function GetRelevantField({ control, formik }) {
     );
   }
   
-  const handleCheckboxChange = (choiceName) => {
-    setSelectedChoices((prevSelected) =>
-      prevSelected.includes(choiceName)
-        ? prevSelected.filter((name) => name !== choiceName)
-        : [...prevSelected, choiceName]
-    );
-  };
-  checkBoxValue=selectedChoices
-  console.log(checkBoxValue,"-==--")
   if (field?.controlType === 9) {
     const handleCheckboxChange = (choiceName) => {
       const currentChoices = formik.values[field.controlId] || [];
@@ -490,7 +584,7 @@ function GetRelevantField({ control, formik }) {
   
     return (
       <div>
-        <p className="text-[12px]">
+        <p className="text-[12px] pb-1">
           {field.question}
           {field.is_Required ? <span className="text-red-500"> *</span> : ''}
         </p>
@@ -503,12 +597,12 @@ function GetRelevantField({ control, formik }) {
                 checked={(formik.values[field.controlId] || []).includes(choice.choiceName)}
                 onChange={() => handleCheckboxChange(choice.choiceName)}
               />
-              <label
+              <Label
                 htmlFor={`checkbox-${index}`}
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {choice.choiceName}
-              </label>
+              </Label>
             </div>
           ))}
         </div>
@@ -523,7 +617,7 @@ function GetRelevantField({ control, formik }) {
 
     return (
       <div>
-        <p className="text-[12px]">
+        <p className="text-[12px] pb-1">
           {control.question}
           {control.is_Required ? (
             <span className="text-red-500"> *</span>

@@ -10,8 +10,10 @@ import { Input } from '@/components/ui/input'
 // import { Calendar } from '@/components/ui/calendar'
 // import { CalendarIcon } from 'lucide-react'
 import { Slider } from "@/components/ui/slider"
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox2 } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   InputOTP,
   InputOTPGroup,
@@ -25,6 +27,13 @@ import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
 import { Rating } from 'react-simple-star-rating'
 import DateTimePicker from 'react-datetime-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 // import StarRatings from './react-star-ratings';
 // import { Link } from "react-router-dom"
 import 'react-datetime-picker/dist/DateTimePicker.css';
@@ -129,9 +138,13 @@ export default function FormPreviewPage() {
         <Tabs defaultValue={formDataApi[0]?.containerName}>
           <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
             {formDataApi.map((tab, index) => (
+              <>
+               {tab.containerName!=null&&
               <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
                 <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
               </TabsTrigger>
+               }
+               </>
             ))}
           </TabsList>
           {formDataApi.map((tab, index) => (
@@ -322,7 +335,7 @@ export function GetRelevantField(control) {
   if (field?.controlType == 8) {  //  rating
     return (
       <div>
-        <p className="text-[12px]">
+        <p className="text-[12px] pb-1">
           {field.question}
           {field.is_Required ? (
             <span className="text-red-500"> *</span>
@@ -333,6 +346,44 @@ export function GetRelevantField(control) {
         
         <StarRating totalStars={5} />
         
+      </div>
+    )
+  }
+  if (field?.controlType == 6) {  //  radiobutton
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <div className="my-4 grid grid-cols-3 items-center">
+        <RadioGroup
+        className="flex gap-4"
+        // onValueChange={setRadiosType}
+        // defaultValue={radiosType}
+      >  
+      {field.choices?.map((choice, index) => (
+        
+        <div className="flex items-center space-x-2 cursor-pointer">
+          
+          <RadioGroupItem
+            value="manual"
+            id="manual"
+            className="border-red-500"
+          />
+          <Label htmlFor="manual" className="cursor-pointer">{choice?.choiceName}</Label>
+        </div>
+            ))}
+        {/* <div className="flex items-center space-x-2 cursor-pointer">
+          <RadioGroupItem value="api" id="api" className="border-red-500" />
+          <Label htmlFor="api" className="cursor-pointer">Fetch List using API</Label>
+        </div> */}
+      </RadioGroup>
+          </div>
       </div>
     )
   }
@@ -352,6 +403,55 @@ export function GetRelevantField(control) {
                      <>
                      <div className='w-100 flex gap-2 pb-3'>
                      <Checkbox2 />
+                     <Label
+                       htmlFor="terms"
+                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                     >
+                       {choice.choiceName}
+                     </Label>
+                     </div>
+                   
+                     </>
+                 
+                ))}
+          </div>
+      </div>
+    )
+  }
+  if (field?.controlType == 7) {  //  dropdown
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <div className="my-3 items-center">
+        <Select
+              className="w-full"
+              onValueChange={(e) => {
+                // setId(e);
+              }}
+              // defaultValue={formDataApi[0]?.containerName}
+            >
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {field.choices?.map((style, index) => (
+                  <SelectItem key={index} value={style?.id}>
+                    {style?.choiceName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+        {/* {field.choices?.map((choice, index) => (
+                     <>
+                     <div className='w-100 flex gap-2 pb-3'>
+                     <Checkbox2 />
                      <label
                        htmlFor="terms"
                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -362,7 +462,7 @@ export function GetRelevantField(control) {
                    
                      </>
                  
-                ))}
+                ))} */}
           </div>
       </div>
     )
@@ -371,7 +471,7 @@ export function GetRelevantField(control) {
   if (field?.controlType == 10) {  //  time
     return (
       <div>
-        <p className="text-[12px]">
+        <p className="text-[12px] pb-1">
           {field.question}
           {field.is_Required ? (
             <span className="text-red-500"> *</span>
