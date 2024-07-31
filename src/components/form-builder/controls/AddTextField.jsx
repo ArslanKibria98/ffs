@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox2 } from '@/components/ui/checkbox'
 import { DialogTitle, DialogClose } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-
+import axios from "@/lib/axios";
 import toast from 'react-hot-toast'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -21,7 +21,7 @@ import { setIsLoading } from '../../../redux/store/loading'
 export default function AddTextField({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch()
   const version_id = useSelector((state) => state?.formStore.version_id)
-
+  const default_id = useSelector((state) => state?.formStore.default_id);
   // console.log(updateFieldData);
 
   const fieldTypes = ['Numeric', 'Text', 'Email', 'Password']
@@ -40,10 +40,10 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
   const handleSubmit = async () => {
     const formData = {
       formVersionId: version_id,
-      containerId: id,
+      containerId: id?id:default_id,
       regionId: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
       name: fieldName,
-      default_Value: '',
+      default_Value: 'abc',
       inputType: fieldType,
       fieldLabel,
       fieldName,
@@ -57,16 +57,10 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
     console.log(formData)
     // return;
     try {
-      const response = await fetch('http://135.181.57.251:3048/api/Controls/CreateTextbox', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      })
+      const response = await axios.post("/Controls/CreateTextbox", JSON.stringify(formData));
 
-      if (response.ok) {
-        let responseData=await response.json()
+      if (response?.data?.success) {
+        let responseData=response.data
         setter(!getter);
         toast.success(responseData?.notificationMessage)
         resetForm();
@@ -96,16 +90,9 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
     }
     
     try {
-      const response = await fetch('http://135.181.57.251:3048/api/Controls/UpdateTextbox', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formUpdateData)
-      })
-
-      if (response.ok) {
-        let responseData = await response.json()
+      const response = await axios.post("/Controls/UpdateTextbox", JSON.stringify(formUpdateData));
+      if (response?.data?.success) {
+        let responseData = response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;

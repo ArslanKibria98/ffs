@@ -17,7 +17,7 @@ import axios from '@/lib/axios'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch();
-
+  
   const isLoading = useSelector((state) => state?.loadingStore?.value)
   const version_id = useSelector((state) => state?.formStore.version_id)
 
@@ -29,7 +29,6 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
   const [fontSize, setFontSize] = useState(16)
   const [fontFamily, setFontFamily] = useState('Normal')
   const [fontColour, setFontColour] = useState('Black')
-
   const handleSubmit = async () => {
     dispatch(setIsLoading(true))
     const data = {

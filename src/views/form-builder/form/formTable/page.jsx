@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
-
+import axios from "@/lib/axios";
 import {
   Table,
   TableBody,
@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button";
+import { setIsLoading } from "../../../../redux/store/loading";
 import BoxLoader from "@/components/BoxLoader";
 import { ChevronDown, EyeOff, History, FolderClosed, Pencil, Trash2 } from "lucide-react"
 
@@ -49,149 +50,114 @@ export default function FormTable() {
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [localLoading, setLocalLoading] = useState(true);
   const [forms, setForms] = useState([])
-  useEffect(() => {
-    return async () => {
-      try {
-        const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}`,{
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${token}`
-          },
-         
-        }) 
-        const data = await response.json()
-        // console.log(data.data);
-        if (data?.data?.length > 0) {
-          // console.log(data.data)
-          setForms(data.data)
-          setTimeout(()=>{
-            dispatch(setIsLoading(false));
-            setLocalLoading(false);
-          }, 2000)
-        } else {
-          toast.error("No forms found for this user!");
-          setTimeout(()=>{
-            dispatch(setIsLoading(false));
-            setLocalLoading(false);
-          }, 2000)
-        }
-      } catch (error) {
-        toast.error("Server Unavailable!");
-        setTimeout(()=>{
-          dispatch(setIsLoading(false));
-          setLocalLoading(false);
-        }, 2000)
-      }
-    }
-  }, [])
-
-  const handleCreateForm = async () => {
+  const [tableData, setTableData] = useState({});
+  const id=useParams()
+  const fetchForms = async () => {
+    dispatch(setIsLoading(true));
     try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/InitiateForm',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${token}`
-          },
-          body: JSON.stringify({
-            tenantId: tenantId,
-            formName: '',
-            userId: userId,
-            repositoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-          })
-        }
-      )
-      if (response.ok) {
-        let responseData = await response.json()
-        // Fetch the updated forms list
-        // const updatedForms = await response.json()
-        console.log("after response")
-        console.log(responseData,"res123")
-        localStorage.setItem('formId',responseData.data.formId)
-
-        toast.success(responseData?.notificationMessage)
-        console.log("before dispatch")
-       
-        console.log("before navigate")
-        navigate("/form-builder/form");
-        console.log("before loading")
-        dispatch(setIsLoading(true));
-        setLocalLoading(true);
-      } else {
-        console.error('Failed to create form')
+      const response = await axios.get(`/FormInstance/GetFormInstanceListByFormVersionId?FormVersionId=${id.id}`);
+      // console.log(response)
+      if (response) {
+        const data =response.data.data;
+        console.log(data)
+        setTableData(data)
       }
+      dispatch(setIsLoading(false));
     } catch (error) {
-      console.error('Error creating form:', error)
+      console.error("Error fetching forms:", error);
+      toast.error("Unable to get Form");
+      dispatch(setIsLoading(false));
     }
-  }
+  };
+  useEffect(() => {
+    return () => {
+      dispatch(setIsLoading(true));
+      fetchForms();
+    };
+  }, []);
+
 
   return (
-    <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
-        <div className="flex justify-end w-full">
-          <Button onClick={handleCreateForm} className="bg-[#e2252e] hover:bg-[#e2252eec] font-normal text-[16px] h-[45px]">
-            + {"Create New Form"}
-          </Button>
-      
-        </div>
-     
-      <div className="w-full rounded-xl bg-white overflow-hidden">
-        <Table className="rounded-lg border bg-white overflow-x-scroll">
-          <TableHeader>
-            <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
-              <TableHead className="min-w-[100px] text-white">Form ID</TableHead>
-              <TableHead className="min-w-[110px] text-white"> First Name</TableHead>
-              <TableHead className="min-w-[160px] text-white">{ "Last Name"}</TableHead>
-              <TableHead className="min-w-[150px] text-white">{ "Email"}</TableHead>
-              <TableHead className="min-w-[150px] text-white">{ "Phone Number"}</TableHead>
-              <TableHead className="min-w-[130px] text-white">{ "Date of Birth"}</TableHead>
-              <TableHead className="min-w-[130px] text-white">{"Address"}</TableHead>
-              <TableHead className="min-w-[160px] text-white">{"Business Name"}</TableHead>
-              <TableHead className="min-w-[160px] text-white">{"Business Email"}</TableHead>
-              <TableHead className="text-white">{ "Version"}</TableHead>
-              <TableHead className="text-white">{"Status"}</TableHead>
-             
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {forms && forms?.map((form, index) => (
-              <TableRow key={index} className={index % 2 == 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
-                <TableCell>{form?.formVersionId?.substring(0, 8) || "N/A"}</TableCell>
-                <TableCell>{form?.formName || "N/A"}</TableCell>
-                <TableCell>{form?.repositoryName || "N/A"}</TableCell>
-                <TableCell>{form?.languages?.join(', ') || "N/A"}</TableCell>
-                <TableCell>{form?.countries?.join(', ') || "N/A"}</TableCell>
-                <TableCell>{form.createdBy || "N/A"}</TableCell>
-                <TableCell>{form.createdDate || "N/A"}</TableCell>
-                <TableCell>{form.lastModifiedBy || "N/A"}</TableCell>
-                <TableCell>{form.lastModifiedDate || "N/A"}</TableCell>
-                <TableCell>{form.versionNumber || "N/A"}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger className="bg-[#4e4e4e] flex justify-between gap-2 rounded font-thin text-white p-[2px] pl-2">
-                      Action
-                      <ChevronDown className="h-5 " />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="p-0">
-                    
-            
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
-                        <Trash2 className="h-4"/>&nbsp;&nbsp;
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+    <div className="max-w-[1000px] min-h-[83vh] mx-auto p-2">
+    <h3 className="pb-3 pt-8 text-[20px] font-[600]">Form Versions</h3>
+          <div class="grid grid-cols-2 border rounded-lg bg-[#ffffff]">
+          {tableData&&tableData?.formInstanceLists?.map((instance) => (
+            <div key={instance.containerId} className="mb-4">
+    <Table className="rounded-lg border bg-white overflow-x-scroll">
+      <TableHeader>
+        <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
+          <TableHead colSpan={Object.keys(instance?.controlsAndInstances).length + 2} className="text-white text-center">
+            {instance.containerName}
+          </TableHead>
+        </TableRow>
+        <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
+          {/* <TableHead className="min-w-[100px] text-white">ID</TableHead> */}
+          {Object.keys(instance?.controlsAndInstances).map((key) => (
+            <TableHead key={key} className="min-w-[100px] text-white">{key}</TableHead>
+          ))}
+          {/* <TableHead className="min-w-[100px] text-white">Action</TableHead> */}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {instance.controlsAndInstances[Object.keys(instance.controlsAndInstances)[0]].map((_, rowIndex) => (
+          <TableRow key={rowIndex}>
+            {/* <TableCell>{rowIndex + 1}</TableCell> */}
+            {Object.keys(instance.controlsAndInstances).map((key) => (
+              <TableCell key={key}>
+                {instance.controlsAndInstances[key][rowIndex] || "N/A"}
+              </TableCell>
             ))}
-            <TableRow><TableCell></TableCell></TableRow>
-          </TableBody>
-       
-        </Table>
-      </div>
-      {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}
-    </div>
+            {/* <TableCell>
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Action
+              </button>
+            </TableCell> */}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+    
+            </div>
+          ))}
+        
+            {/* <div className="col-span-7 grid grid-cols-3">
+              <div className="p-6">
+                <div className="text-[12px] font-[400] text-[#000000]">Form ID</div>
+                <div className="text-[16px] font-[500] text-[#000000]">
+                  F-123454
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="text-[12px] font-[400] text-[#000000]">
+                  Form Name
+                </div>
+                <div className="text-[16px] font-[500] text-[#000000]">
+                  User Sign Up
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="text-[12px] font-[400] text-[#000000]">
+                  Form Version
+                </div>
+                <div className="text-[16px] font-[500] text-[#000000]">
+                  F-123454
+                </div>
+              </div>
+            </div> */}
+            {/* <div className="col-span-5 ">
+              <div className="p-6 gap-2 flex">
+              <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate("/form-version-table")}}>
+              Form Report
+                </Button>
+                <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg">
+                Form Preview
+                </Button>
+                <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-[14px] font-[400] text-white rounded-lg">
+                Update
+                </Button>
+              </div>
+            </div> */}
+          </div>
+        </div>
   )
 }

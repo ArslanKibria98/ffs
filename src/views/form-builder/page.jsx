@@ -40,7 +40,7 @@ import localisationData from "../../localisation.json"
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "../../redux/store/loading";
-import { SET_FORM_INFO } from "../../redux/store/form";
+import { SET_FORM_INFO,SET_DEFAULT_CONTAINER_ID } from "../../redux/store/form";
 
 export default function FormBuilder() {
   // const params=useParams()
@@ -146,6 +146,7 @@ export default function FormBuilder() {
         toast.success(responseData?.notificationMessage)
         console.log("before dispatch")
         dispatch(SET_FORM_INFO(responseData?.data?.formId, responseData?.data?.formVersionId))
+        dispatch(SET_DEFAULT_CONTAINER_ID(responseData?.data?.defaultContainerId))
         console.log("before navigate")
         navigate("/form-builder/form");
         console.log("before loading")
@@ -264,7 +265,7 @@ export default function FormBuilder() {
                         Unpublish
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate("/form-versions")}}>
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate(`/form-versions/${form.formVersionId}`)}}>
                         <History className="h-4"/>&nbsp;&nbsp;
                         Versions
                       </DropdownMenuItem>

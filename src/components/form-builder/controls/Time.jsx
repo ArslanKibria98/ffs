@@ -12,19 +12,25 @@ import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
 import { useSelector, useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import axios from "@/lib/axios";
 export default function Time({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const timeFormats = [
-    "5/04/2003 (mm/dd/yyyy)",
-    "3/04/2003 (mm/dd/yyyy)",
-    "1/04/2003 (mm/dd/yyyy)",
-    "7/04/2003 (mm/dd/yyyy)",
-    "9/04/2003 (mm/dd/yyyy)",
-    "10/04/2003 (mm/dd/yyyy)",
+    {
+     label:"12",
+     value:0 
+    },
+    {
+      label:"24",
+      value:1
+     }
   ];
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
-  const [timeFormat, setTimeFormat] = useState("Black");
+  const [timeFormat, setTimeFormat] = useState(!isUpdate ? 0 : updateFieldData.timeFormat);
+  const [id, setId] = useState("");
+  const [localLoading, setLocalLoading] = useState(false);
   const handleSave = async () => {
     setLocalLoading(true);
     const payload = {
@@ -33,11 +39,11 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       question: question,
       is_Required: isRequired,
-      choices: choices,
+      timeFormat: timeFormat,
     };
 
     try {
-      const response = await axios.post("/Controls/CreateCheckBox", JSON.stringify(payload));
+      const response = await axios.post("/Controls/CreateTime", JSON.stringify(payload));
 
       if (response?.data?.success) {
         // Handle success
@@ -64,11 +70,11 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       controlId: updateFieldData.controlId,
       question: question,
       is_Required: isRequired,
-      choices: choices,
+      timeFormat: timeFormat,
     };
 
     try {
-      const response = await axios.post("/Controls/UpdateCheckBox", JSON.stringify(formUpdateData));
+      const response = await axios.post("/Controls/UpdateTime", JSON.stringify(formUpdateData));
 
       if (response.data.success) {
         let responseData =response.data;
@@ -157,8 +163,8 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
             </SelectTrigger>
             <SelectContent>
               {timeFormats.map((style, index) => (
-                <SelectItem key={index} value={style}>
-                  {style}
+                <SelectItem key={index} value={style.value}>
+                  {style?.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -167,7 +173,8 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       </div>
 
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
-        <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+        <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]" onClick={!isUpdate ? handleSave : handleUpdate}
+          disabled={localLoading}>
           Save
         </Button>
 

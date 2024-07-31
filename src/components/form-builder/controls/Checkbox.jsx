@@ -32,6 +32,8 @@ export default function Checkbox({
   const [choices, setChoices] = useState(
     !isUpdate ? ["", ""] : updateFieldData.choices.map(choice => choice.choiceName)
   );
+  const [endpoint, setEndpoint] = useState("");
+  const [radioOptions, setRadioOptions] = useState([]);
   const [id, setId] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
   const handleAddChoice = () => {
@@ -112,6 +114,33 @@ export default function Checkbox({
      
     }
   };
+  async function inflateOptions() {
+    try {
+      const response = await fetch(endpoint);
+  
+      if (response.ok) {
+        // console.log(await response.json())
+        const responseOptions = await response.json();
+        const keys = new Set();
+        console.log(responseOptions,"responseOptions")
+        responseOptions.data.forEach(item => {
+          Object.keys(item).forEach(key => {
+            keys.add(key);
+          });
+        });
+console.log(Array.from(keys),"--==--")    
+        setRadioOptions(Array.from(keys))
+      }
+    } catch (e) {
+      toast.error(e?.message);
+      console.log(e)
+    }
+  }
+
+  function removedArray(array, index) {
+    const newArray = array.filter((_, i) => i !== index);
+    setRadioOptions(newArray)
+  }
   return (
     <div>
       <DialogTitle>Add Check Box</DialogTitle>
@@ -204,21 +233,31 @@ export default function Checkbox({
         </>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-8 gap-y-3">
+             <div className="grid grid-cols-2 gap-8 gap-y-3">
             <div className="col-span-2">
               <label htmlFor="tabName" className="text-[16px] font-semibold">
                 Caption
               </label>
               <Input
                 name="tabName"
+                placeholder="Type Here"
+                className="p-4 h-[48px]"
+              />
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="tabName" className="text-[16px] font-semibold">
+                API Endpoint
+              </label>
+              <Input
+                name="tabName"
                 placeholder="Paste API endpoint URL"
                 className="p-4 h-[48px]"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                value={endpoint}
+                onChange={(e)=>setEndpoint(e?.target?.value)}
               />
             </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
-              <Checkbox2 checked={isRequired} onCheckedChange={setIsRequired} />
+              <Checkbox2 />
               <label
                 htmlFor="terms"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -226,12 +265,84 @@ export default function Checkbox({
                 Required?
               </label>
             </div>
+            <label className="text-[16px] font-semibold col-span-2">
+              Choices
+            </label>
+
+            {/* {radioOptions && radioOptions?.length > 0 && radioOptions?.map((option, index) => (
+              <div key={index} className="col-span-2 grid grid-cols-7 gap-4 gap-y-1 items-center">
+                <div className="col-span-3">
+                  <label htmlFor="minLen" className="text-xs font-semibold">
+                    Label
+                  </label>
+                  <Input name="minLen" value={option?.label} className="p-4 h-[48px]" readOnly/> 
+                </div>
+                <div className="col-span-3">
+                  <label htmlFor="maxLen" className="text-xs font-semibold">
+                    Value
+                  </label>
+                  <Input name="maxLen" value={option?.value} className="p-4 h-[48px]" readOnly/>
+                </div>
+                <Button className="mt-5" variant="destructive" onClick={()=>{removedArray(radioOptions, index)}}>-</Button>
+              </div>
+            ))} */}
+            <div className="col-span-1">
+            <Select
+              className="w-full"
+              onValueChange={(e) => {
+                setId(e);
+              }}
+              // defaultValue={formDataApi[0]?.containerName}
+            >
+              <label htmlFor="minLen" className="text-xs font-semibold">
+                Label
+              </label>
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {radioOptions&&radioOptions?.map((style, index) => (
+                  <SelectItem key={index} value={style}>
+                    {style}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
-            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
-              Get List
-            </Button>
+          <div className="col-span-1">
+            <Select
+              className="w-full"
+              onValueChange={(e) => {
+                setId(e);
+              }}
+              // defaultValue={formDataApi[0]?.containerName}
+            >
+              <label htmlFor="minLen" className="text-xs font-semibold">
+                Value
+              </label>
+              <SelectTrigger className="w-full h-[48px]">
+                <SelectValue placeholder="Select Tab" />
+              </SelectTrigger>
+              <SelectContent>
+                {radioOptions&&radioOptions?.map((style, index) => (
+                  <SelectItem key={index} value={style}>
+                    {style}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+            </div>
+            {radioOptions && radioOptions?.length < 1 && (
+            <div>
+              <p className="text-center text-xs text-neutral-600">No options added!</p>
+              <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+                <Button onClick={()=>inflateOptions()} className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]">
+                  Get List
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       )}
 

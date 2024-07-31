@@ -18,16 +18,18 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "@/components/ui/input-otp"
-
+import StarRating from "@/components/ui/StarRating"
 // import { cn } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
 import BoxLoader from '@/components/BoxLoader'
 import { Rating } from 'react-simple-star-rating'
-
+import DateTimePicker from 'react-datetime-picker';
 // import StarRatings from './react-star-ratings';
 // import { Link } from "react-router-dom"
-
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
 export default function FormPreviewPage() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
@@ -77,7 +79,13 @@ export default function FormPreviewPage() {
     //   ]
     // }
   ])
+  const [searchKey, setSearchKey] = useState('');
+  const [searchResult, setSearchResult] = useState(null);
 
+  const handleSearch = () => {
+    const result = data.find(item => item.formId === searchKey);
+    setSearchResult(result);
+  };
   const fetchForms = async () => {
     setLoader(true);
     try {
@@ -323,19 +331,7 @@ export function GetRelevantField(control) {
           )}
         </p>
         
-        <Rating
-          onClick={handleRating}
-          onPointerEnter={onPointerEnter}
-          onPointerLeave={onPointerLeave}
-          onPointerMove={onPointerMove}
-          />
-        {/* <StarRatings
-          rating={this.state.rating}
-          starRatedColor="blue"
-          changeRating={this.changeRating}
-          numberOfStars={6}
-          name='rating'
-        /> */}
+        <StarRating totalStars={5} />
         
       </div>
     )
@@ -368,6 +364,22 @@ export function GetRelevantField(control) {
                  
                 ))}
           </div>
+      </div>
+    )
+  }
+  const [value, onChange] = useState(new Date());
+  if (field?.controlType == 10) {  //  time
+    return (
+      <div>
+        <p className="text-[12px]">
+          {field.question}
+          {field.is_Required ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <DateTimePicker  onChange={onChange} value={value} disableCalendar={true} format={field.timeFormat==0?"hh:mm a":"HH:MM"} />
       </div>
     )
   }

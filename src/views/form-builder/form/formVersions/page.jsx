@@ -23,12 +23,13 @@ import {
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // import { Link } from "react-router-dom"
 
 export default function FormVersionPage() {
   const navigate=useNavigate();
+  const id=useParams()
   const version_id = useSelector((state) => state?.formStore.version_id);
   // const version_id = useSelector((state) => state?.formStore.version_id);
 
@@ -65,7 +66,7 @@ export default function FormVersionPage() {
         </div>
         <div className="col-span-5 ">
           <div className="p-6 gap-2 flex">
-          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate("/form-version-table")}}>
+          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table${id.id}`)}}>
           Form Report
             </Button>
             <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg">
