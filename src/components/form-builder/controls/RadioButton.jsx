@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "react-hot-toast";
 import axios from "@/lib/axios";
+import { capitalizeFirstLetter } from "@/lib/utils"
 import { useSelector, useDispatch } from "react-redux";
 import {
   Select,
@@ -16,6 +25,7 @@ import {
   SelectItem,
   SelectContent,
 } from "@/components/ui/select";
+
 export default function RadioButton({
   getter,
   setter,
@@ -27,14 +37,19 @@ export default function RadioButton({
   const [radiosType, setRadiosType] = useState("manual");
   const [endpoint, setEndpoint] = useState("");
   const [radioOptions, setRadioOptions] = useState([]);
+  const [radioParams, setRadioParams] = useState([{key: "", value: ""}]);
+  const [radioHeaders, setRadioHeaders] = useState([{key: "", value: ""}]);
   const [localLoading, setLocalLoading] = useState(false);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
   const [choices, setChoices] = useState(
     !isUpdate ? ["", ""] : updateFieldData.choices.map(choice => choice.choiceName)
   );
+  const [radioCols, setRadioCols] = useState(false)
+
   const [id, setId] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
+
   async function inflateOptions() {
     try {
       const response = await fetch(endpoint);
@@ -42,7 +57,12 @@ export default function RadioButton({
       if (response.ok) {
         // console.log(await response.json())
         const responseOptions = await response.json();
-        setRadioOptions(responseOptions)
+        setRadioOptions(responseOptions);
+        let arr = []
+        Object.keys(responseOptions?.data[0]).map((option, index) => {
+          arr[index] = option;
+        })
+        setRadioCols(arr)
       }
     } catch (e) {
       toast.error(e?.message);
@@ -131,6 +151,42 @@ export default function RadioButton({
      
     }
   };
+
+  function updateParamIndex(key, newVal, index) {
+    console.log(key, newVal, index);
+    setRadioParams(radioParams.map((item, i) =>
+      i === index ? { ...item, [key]: newVal } : item
+    ));    
+  }
+  function handleDeleteParam(index) {
+    if (index < radioParams.length-1) {
+      setRadioParams(prevParams => [
+        ...prevParams.slice(0, index),
+        ...prevParams.slice(index + 1)
+      ]);
+    } else {
+      toast.error("Cannot delete default empty param");
+      return
+    }
+  }
+
+  function updateHeadersIndex(key, newVal, index) {
+    setRadioHeaders(radioHeaders.map((item, i) =>
+      i === index ? { ...item, [key]: newVal } : item
+    ));    
+  }
+  function handleDeleteHeader(index) {
+    if (index < radioHeaders.length-1) {
+      setRadioHeaders(prevHeaders => [
+        ...prevHeaders.slice(0, index),
+        ...prevHeaders.slice(index + 1)
+      ]);
+    } else {
+      toast.error("Cannot delete default empty param");
+      return
+    }
+  }
+  
   return (
     <div>
       <DialogTitle>Add Radio Button</DialogTitle>
@@ -234,31 +290,95 @@ export default function RadioButton({
         <>
           <div className="grid grid-cols-2 gap-8 gap-y-3">
             <div className="col-span-2">
-              <label htmlFor="tabName" className="text-[16px] font-semibold">
+              <label htmlFor="radioCaption" className="text-[16px] font-semibold">
                 Caption
               </label>
               <Input
-                name="tabName"
+                name="radioCaption"
                 placeholder="Type Here"
                 className="p-4 h-[48px]"
               />
             </div>
             <div className="col-span-2">
-              <label htmlFor="tabName" className="text-[16px] font-semibold">
+              <label htmlFor="radioApi" className="text-[16px] font-semibold">
                 API Endpoint
               </label>
               <Input
-                name="tabName"
+                name="radioApi"
                 placeholder="Paste API endpoint URL"
                 className="p-4 h-[48px]"
                 value={endpoint}
                 onChange={(e)=>setEndpoint(e?.target?.value)}
               />
             </div>
+            <div className="col-span-2">
+              <label htmlFor="radioParams" className="text-xs font-semibold">
+                Params
+              </label>
+              <div className="flex flex-col gap-2">
+                {radioParams?.map((param, index) => (
+                  <div key={index} className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      <Input
+                        name="radioParams"
+                        placeholder="Param Key"
+                        className="p-4 h-[48px]"
+                        value={param.key}
+                        onChange={(e)=>updateParamIndex("key", e?.target?.value, index)}
+                      />
+                      <Input
+                        name="radioParams"
+                        placeholder="Param Value"
+                        className="p-4 h-[48px]"
+                        value={param.value}
+                        onChange={(e)=>updateParamIndex("value", e?.target?.value, index)}
+                      />
+                    </div>
+                    <Button variant="destructive" className="h-[48px]" onClick={()=>{
+                      if (index < radioParams.length-1)
+                        handleDeleteParam(index);
+                      else setRadioParams([{key: "", value: ""}, ...radioParams]);
+                    }}>{index < radioParams.length-1 ? "−" : "+"}</Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="col-span-2">
+              <label htmlFor="radioHeaders" className="text-xs font-semibold">
+                Headers
+              </label>
+              <div className="flex flex-col gap-2">
+                {radioHeaders?.map((param, index) => (
+                  <div key={index} className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      <Input
+                        name="radioHeaders"
+                        placeholder="Header Key"
+                        className="p-4 h-[48px]"
+                        value={param.key}
+                        onChange={(e)=>updateHeadersIndex("key", e?.target?.value, index)}
+                      />
+                      <Input
+                        name="radioHeaders"
+                        placeholder="Header Value"
+                        className="p-4 h-[48px]"
+                        value={param.value}
+                        onChange={(e)=>updateHeadersIndex("value", e?.target?.value, index)}
+                      />
+                    </div>
+                    <Button variant="destructive" className="h-[48px]" onClick={()=>{
+                      if (index < radioHeaders.length-1)
+                        handleDeleteHeader(index);
+                      else setRadioHeaders([{key: "", value: ""}, ...radioHeaders]);
+                    }}>{index < radioHeaders.length-1 ? "−" : "+"}</Button>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
               <Checkbox2 />
               <label
-                htmlFor="terms"
+                htmlFor="radioRequired"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Required?
@@ -267,6 +387,9 @@ export default function RadioButton({
             <label className="text-[16px] font-semibold col-span-2">
               Choices
             </label>
+            <div className="col-span-2">
+              Labels and values under here
+            </div>
 
             {radioOptions && radioOptions?.length > 0 && radioOptions?.map((option, index) => (
               <div key={index} className="col-span-2 grid grid-cols-7 gap-4 gap-y-1 items-center">

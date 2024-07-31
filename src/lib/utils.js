@@ -61,3 +61,10 @@ function colorDistance(lab1, lab2) {
   const deltaB = lab1[2] - lab2[2];
   return Math.sqrt(deltaL * deltaL + deltaA * deltaA + deltaB * deltaB);
 }
+
+export function capitalizeFirstLetter(str) {
+  if (typeof str !== 'string' || str.length === 0) {
+      return str; // Return the original string if it's empty or not a string
+  }
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

@@ -21,6 +21,8 @@ import FormSavePage from "./views/form-builder/form/save/page";
 import FormPublishPage from "./views/form-builder/form/publish/page";
 import FormTable from "./views/form-builder/form/formTable/page";
 
+import Unauthenticated from "./views/unauthenticated/page";
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -40,6 +42,7 @@ export default function App() {
             <Route path="save" element={<FormSavePage />} />
             <Route path="publish" element={<FormPublishPage />} />
           </Route>
+          <Route path="unauthenticated" element={<Unauthenticated />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
