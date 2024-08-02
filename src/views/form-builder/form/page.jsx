@@ -172,6 +172,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addRadioButton.svg",
       title: "Radio Button",
+      controlType: 6,
       data: (
         <RadioButton
           getter={usRadioButton}
@@ -181,11 +182,11 @@ export default function BuilderPage() {
         />
       ),
     },
-    // controlType: 0,
+  
     {
       icon: "/control-icons/addDropDown.svg",
       title: "Drop Down",
-      // controlType: 0,
+      controlType: 7,
       data: (
         <DropDown
           getter={usDropDown}
@@ -608,7 +609,7 @@ export default function BuilderPage() {
               {!loading &&
                 formDataApi?.map((tab, index) => (
                   <>
-                  {tab?.containerName!=null&&
+                  {/* {tab?.containerName!=null&& */}
                   <TabsTrigger
                     value={tab?.containerName}
                     key={index}
@@ -617,7 +618,7 @@ export default function BuilderPage() {
                   
                     {tab?.containerName}
                   </TabsTrigger>
-                  }
+                  {/* } */}
                   </>
                 ))}
             </TabsList>

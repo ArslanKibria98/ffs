@@ -49,7 +49,7 @@ function FieldInfo({ field, resetForm, updateModalData }) {
             <div className="flex justify-evenly gap-1 w-[18%] min-w-[160px]">
               <div className="h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]">
                 <span className="text-[10px]">Mandatory</span>
-                <Switch checked={field?.is_Required ? true : false} />
+                <Switch checked={field?.isRequired ? true : false} />
               </div>
               <Dialog>
                 <DialogTrigger>

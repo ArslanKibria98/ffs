@@ -37,7 +37,7 @@ export default function AddOtp({
     !isUpdate ? "" : updateFieldData?.question
   );
   const [isRequired, setIsRequired] = useState(
-    !isUpdate ? false : updateFieldData?.is_Required
+    !isUpdate ? false : updateFieldData?.isRequired
   );
   const [otpFormat, setOtpFormat] = useState(
     !isUpdate ? "4-digits" : (updateFieldData?.otp_Format == 0 ? "4-digits" : (
@@ -60,7 +60,7 @@ export default function AddOtp({
       controlType: 0,
 
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       otp_Format: otpFormatMapping[otpFormat],
     };
 
@@ -96,7 +96,7 @@ export default function AddOtp({
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       otpformat: otpFormatMapping[otpFormat],
     };
 

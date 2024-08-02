@@ -14,11 +14,11 @@ import { useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import StarRating from "@/components/ui/StarRating"
+import StarRating from "@/components/ui/StarRating";
 import { Rating } from "react-simple-star-rating";
 import axios from "@/lib/axios";
 import { Label } from "@/components/ui/label";
-import DateTimePicker from 'react-datetime-picker';
+import DateTimePicker from "react-datetime-picker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
@@ -26,13 +26,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 // import StarRatings from './react-star-ratings';
 // import { Link } from "react-router-dom"
-import 'react-datetime-picker/dist/DateTimePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import 'react-clock/dist/Clock.css';
-let checkBoxValue=[]
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
+let checkBoxValue = [];
 export default function FormRender() {
   const version_id = useSelector((state) => state?.formStore.version_id);
   const token = useSelector((state) => state?.authStore?.token);
@@ -41,18 +41,18 @@ export default function FormRender() {
   const [loader, setLoader] = useState(false);
   const [selectedChoices, setSelectedChoices] = useState([]);
   const params = useParams();
-  
+
   console.log(params.id);
   const [formDataApi, setFormDataApi] = useState([
     //   {
     //     containerName: "Tab Name",
     //     controls: [
-    //       { controlType: 0, name: "Personal Details", is_Required: true, placeholder: "Enter text here" },
-    //       { controlType: 1, name: "DummyButton", is_Required: false, placeholder: "A dummy button" },
-    //       { controlType: 2, name: "Range Slider", is_Required: true, placeholder: "Select age range" },
-    //       { controlType: 3, name: "File Upload", is_Required: false, placeholder: "Upload File Here" },
-    //       { controlType: 5, name: "Phone Number", is_Required: true, placeholder: "+92 300 0000000" },
-    //       { controlType: 4, name: "OTP", is_Required: false, placeholder: "" },
+    //       { controlType: 0, name: "Personal Details", isRequired: true, placeholder: "Enter text here" },
+    //       { controlType: 1, name: "DummyButton", isRequired: false, placeholder: "A dummy button" },
+    //       { controlType: 2, name: "Range Slider", isRequired: true, placeholder: "Select age range" },
+    //       { controlType: 3, name: "File Upload", isRequired: false, placeholder: "Upload File Here" },
+    //       { controlType: 5, name: "Phone Number", isRequired: true, placeholder: "+92 300 0000000" },
+    //       { controlType: 4, name: "OTP", isRequired: false, placeholder: "" },
     //     ]
     //   }
   ]);
@@ -121,7 +121,7 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           otpInput: values[key],
         }));
-        const ratingInput = Object.keys(values)
+      const ratingInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -135,9 +135,9 @@ export default function FormRender() {
         .map((key) => ({
           controlId: key.toLowerCase(),
           ratingValue: values[key].toString(),
-          ratingComment:"abc"
+          ratingComment: "abc",
         }));
-      const phoneNumberInstanceInput = Object.keys(values)
+      const phoneNumberInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -153,7 +153,7 @@ export default function FormRender() {
           phoneNumber: values[key],
           phoneType: "any",
         }));
-        const checkBoxInput = Object.keys(values)
+      const checkBoxInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -168,7 +168,7 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           checkBoxInput: values[key].toString(),
         }));
-        const radioButtonInput = Object.keys(values)
+      const radioButtonInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -183,7 +183,7 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           radioButtonInput: values[key].toString(),
         }));
-        const timeInput = Object.keys(values)
+      const timeInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -198,7 +198,7 @@ export default function FormRender() {
           controlId: key.toLowerCase(),
           timeInput: values[key].toString(),
         }));
-        const dropdown = Object.keys(values)
+      const dropdownInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -209,12 +209,12 @@ export default function FormRender() {
               )
             )
         )
-    
+
         .map((key) => ({
           controlId: key.toLowerCase(),
-          timeInput: values[key].toString(),
+          dropdownInput: values[key].toString(),
         }));
-        const sliderInput = Object.keys(values)
+      const sliderInput = Object.keys(values)
         .filter(
           (key) =>
             key !== "undefined" &&
@@ -235,16 +235,21 @@ export default function FormRender() {
       //   "phoneType": "any",
 
       // }));
-      console.log("ata:", dropdown);
+      console.log("ata:", sliderInput);
       // toast.success('Form submitted successfully!');
       try {
         setLoader(true);
         const data = {
           formVersionId: version_id,
           textBoxInput,
-          phoneNumberInstanceInput,
+          phoneNumberInput,
           otpInput,
-          ratingInput,checkBoxInput,timeInput,radioButtonInput
+          ratingInput,
+          checkBoxInput,
+          timeInput,
+          radioButtonInput,
+          dropdownInput,
+          sliderInput,
         };
         // const response = await fetch(
         //   "http://135.181.57.251:3048/api/FormInstance/CreateFormInstance",
@@ -257,7 +262,10 @@ export default function FormRender() {
         //     body: JSON.stringify(data),
         //   }
         // );
-        const response = await axios.post("/FormInstance/CreateFormInstance", JSON.stringify(data));
+        const response = await axios.post(
+          "/FormInstance/CreateFormInstance",
+          JSON.stringify(data)
+        );
         const dataRes = response.data;
         console.log(dataRes, "data");
         setLoader(false);
@@ -285,15 +293,21 @@ export default function FormRender() {
         {formDataApi.length > 0 && (
           <Tabs defaultValue={formDataApi[0].containerName}>
             <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
-            {formDataApi.map((tab, index) => (
-              <>
-               {tab.containerName!=null&&
-              <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
-                <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
-              </TabsTrigger>
-               }
-               </>
-            ))}
+              {formDataApi.map((tab, index) => (
+                <>
+                  {/* {tab.containerName!=null&& */}
+                  <TabsTrigger
+                    key={index}
+                    value={tab?.containerName}
+                    className="rounded p-0 px-3 h-8 w-fit"
+                  >
+                    <h5 className="text-sm">
+                      {tab?.containerName || "Tab Name"}
+                    </h5>
+                  </TabsTrigger>
+                  {/* } */}
+                </>
+              ))}
             </TabsList>
             {formDataApi?.map((tab, index) => (
               <TabsContent
@@ -352,7 +366,7 @@ function GetRelevantField({ control, formik }) {
       <div className="h-fit col-span-1 row-span-1">
         <p className="text-[12px]">
           {field?.name}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3">
           <Input
@@ -374,7 +388,7 @@ function GetRelevantField({ control, formik }) {
       <div className="h-fit">
         <p className="text-[12px]">
           {field.name}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3">
           <Button className="border-black mt-2 bg-[#e2252e] hover:bg-[#be1f27]">
@@ -388,23 +402,24 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 2) {
     // Slider
     const handleSliderChange = (value) => {
-      console.log(value,field.name,"12345")
-      formik.setFieldValue(field.name, value[0]);
+      formik.setFieldValue(field.controlId, value[0]);
     };
-
     return (
       <div className="col-span-1 flex flex-col gap-y-2 h-fit">
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3">
+          <div>{field.minValue}</div>
           <Slider
-            max={100}
+            max={field.maxValue || 100}
+            min={field.minValue || 0}
             step={1}
-            value={[formik.values[field.name] || 0]}
+            value={[formik.values[field.controlId]]}
             onValueChange={handleSliderChange}
           />
+          <div>{field.maxValue}</div>
         </div>
       </div>
     );
@@ -416,7 +431,7 @@ function GetRelevantField({ control, formik }) {
       <div className=" h-fit">
         <p className="text-[12px]">
           {field?.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="grid gap-4 pb-4 text-transparent">
           <Input
@@ -438,7 +453,7 @@ function GetRelevantField({ control, formik }) {
       <div className=" h-fit">
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3 pt-2">
           <InputOTP
@@ -463,7 +478,7 @@ function GetRelevantField({ control, formik }) {
       <div className=" h-fit col-span-1 row-span-1">
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3">
           <Input
@@ -480,6 +495,28 @@ function GetRelevantField({ control, formik }) {
   }
   if (field?.controlType == 6) {
     // RadioButton
+    const [dropdownOptions, setDropdownOptions] = useState([]);
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data, "responseOptions");
+          setDropdownOptions(responseOptions.data);
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e);
+      }
+    }
+    useEffect(() => {
+      return () => {
+        {
+          field?.choices === null && inflateOptions();
+        }
+      };
+    }, []);
     const handleRadioChange = (value) => {
       formik.setFieldValue(field.controlId, value);
     };
@@ -488,105 +525,155 @@ function GetRelevantField({ control, formik }) {
       <div className=" h-fit">
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
-        <div className="my-4 grid grid-cols-3 items-center">
+        <div className="my-4 items-center">
           <RadioGroup
-            className="flex gap-4"
+            className="grid grid-cols-3 gap-2 w-full"
             onValueChange={handleRadioChange}
-            value={formik.values[field.controlId] || ''}
+            value={formik.values[field.controlId] || ""}
           >
-            {field.choices?.map((choice, index) => (
-              <div key={index} className="flex items-center space-x-2 cursor-pointer">
-                <RadioGroupItem
-                  value={choice.choiceName}
-                  id={`radio-${index}`}
-                  className="border-red-500"
-                />
-                <Label htmlFor={`radio-${index}`} className="cursor-pointer">
-                  {choice.choiceName}
-                </Label>
-              </div>
-            ))}
+            {field.choices != null &&
+              field.choices?.map((choice, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
+                  <RadioGroupItem
+                    value={choice.choiceName}
+                    id={`radio-${index}`}
+                    className="border-red-500"
+                  />
+                  <Label htmlFor={`radio-${index}`} className="cursor-pointer">
+                    {choice.choiceName}
+                  </Label>
+                </div>
+              ))}
+            {field.choices === null &&
+              dropdownOptions?.map((choice, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
+                  <RadioGroupItem
+                    value={choice[field?.valueField]}
+                    id={`radio-${index}`}
+                    className="border-red-500"
+                  />
+                  <Label htmlFor={`radio-${index}`} className="cursor-pointer">
+                    {choice[field?.displayValue]}
+                  </Label>
+                </div>
+              ))}
           </RadioGroup>
         </div>
       </div>
     );
   }
-  if (field?.controlType === 7) {// Dropdown
-    const handleRadioChange = (value) => {
+  if (field?.controlType === 7) {
+    // Dropdown
+    const [dropdownOptions, setDropdownOptions] = useState([]);
+
+    const handleDropdownChange = (value) => {
       formik.setFieldValue(field.controlId, value);
     };
-  return (
-    <div className=" h-fit">
-    <p className="text-[12px]">
-      {field.question}
-      {field.is_Required ? (
-        <span className="text-red-500"> *</span>
-      ) : (
-        ''
-      )}
-    </p>
-    <div className="my-3 items-center">
-      <Select
-        className="w-full"
-        value={formik.selectedChoice}
-        onChange={handleRadioChange}
-      >
-        <SelectTrigger className="w-full h-[48px]">
-          <SelectValue placeholder="Select Tab" />
-        </SelectTrigger>
-        <SelectContent>
-          {field.choices?.map((style, index) => (
-            <SelectItem key={index} value={style?.id}>
-              {style?.choiceName}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {formik.touched.selectedChoice && formik.errors.selectedChoice ? (
-        <div className="text-red-500 text-sm">{formik.errors.selectedChoice}</div>
-      ) : null}
-    </div>
-  </div>
+
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+        if (response.ok) {
+          const responseOptions = await response.json();
+          setDropdownOptions(responseOptions.data);
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.error(e);
+      }
+    }
+
+    useEffect(() => {
+      if (field?.choices === null) {
+        inflateOptions();
+      }
+    }, [field]);
+
+    return (
+      <div className="h-fit">
+        <p className="text-[12px]">
+          {field.question}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
+        </p>
+        <div className="my-3 items-center">
+          <Select
+            className="w-full"
+            value={formik.values[field.controlId] || ""}
+            onValueChange={handleDropdownChange}
+          >
+            <SelectTrigger className="w-full h-[48px]">
+              <SelectValue placeholder="Select Tab" />
+            </SelectTrigger>
+            <SelectContent>
+              {field.choices !== null &&
+                field.choices.map((choice, index) => (
+                  <SelectItem key={index} value={choice.choiceName}>
+                    {choice.choiceName}
+                  </SelectItem>
+                ))}
+              {field.choices === null &&
+                dropdownOptions.map((option, index) => (
+                  <SelectItem key={index} value={option[field.valueField]}>
+                    {console.log(option[field.displayValue], "1234")}
+                    {option[field.displayValue]}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          {formik.touched[field.controlId] && formik.errors[field.controlId] ? (
+            <div className="text-red-500 text-sm">
+              {formik.errors[field.controlId]}
+            </div>
+          ) : null}
+        </div>
+      </div>
     );
   }
-  if (field?.controlType === 8) { // rating
-    const totalStars=5;
+  if (field?.controlType === 8) {
+    // rating
+    const totalStars = 5;
     //  rating
     return (
       <div className=" h-fit">
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ""}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex w-full gap-3">
-        <StarRating
+          <StarRating
             totalStars={5}
             fieldName={field.controlId}
             setFieldValue={formik.setFieldValue}
             value={formik.values[field.controlId] || 0}
-          /> 
+          />
         </div>
       </div>
     );
   }
-  
+
   if (field?.controlType === 9) {
     const handleCheckboxChange = (choiceName) => {
       const currentChoices = formik.values[field.controlId] || [];
       const updatedChoices = currentChoices.includes(choiceName)
         ? currentChoices.filter((name) => name !== choiceName)
         : [...currentChoices, choiceName];
-  
+
       formik.setFieldValue(field.controlId, updatedChoices);
     };
-  
+
     return (
       <div>
         <p className="text-[12px] pb-1">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="my-4 grid grid-cols-3 items-center">
           {field.choices?.map((choice, index) => (
@@ -594,7 +681,9 @@ function GetRelevantField({ control, formik }) {
               <input
                 type="checkbox"
                 id={`checkbox-${index}`}
-                checked={(formik.values[field.controlId] || []).includes(choice.choiceName)}
+                checked={(formik.values[field.controlId] || []).includes(
+                  choice.choiceName
+                )}
                 onChange={() => handleCheckboxChange(choice.choiceName)}
               />
               <Label
@@ -619,17 +708,13 @@ function GetRelevantField({ control, formik }) {
       <div>
         <p className="text-[12px] pb-1">
           {control.question}
-          {control.is_Required ? (
-            <span className="text-red-500"> *</span>
-          ) : (
-            ''
-          )}
+          {control.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <DateTimePicker
           onChange={handleTimeChange}
           value={formik.values[control.controlId] || null}
           disableCalendar={true}
-          format={control.timeFormat == 0 ? 'hh:mm a' : 'HH:mm'}
+          format={control.timeFormat == 0 ? "hh:mm a" : "HH:mm"}
         />
       </div>
     );

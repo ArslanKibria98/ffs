@@ -79,7 +79,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       file_Format: 0,
     };
 

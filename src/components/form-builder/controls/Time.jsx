@@ -27,7 +27,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
   ];
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [timeFormat, setTimeFormat] = useState(!isUpdate ? 0 : updateFieldData.timeFormat);
   const [id, setId] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       containerId: id,
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       timeFormat: timeFormat,
     };
 
@@ -69,7 +69,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       timeFormat: timeFormat,
     };
 
