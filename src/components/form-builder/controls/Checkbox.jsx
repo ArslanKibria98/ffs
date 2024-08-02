@@ -30,10 +30,10 @@ export default function Checkbox({
   const [question, setQuestion] = useState(
     !isUpdate ? "" : updateFieldData.question
   );
-  const [radioParams, setRadioParams] = useState([{ key: "", value: "" }]);
-  const [radioHeaders, setRadioHeaders] = useState([{ key: "", value: "" }]);
+  const [radioBody, setRadioBody] = useState([{ parmKey: "", parmValue: "" }]);
+  const [radioHeaders, setRadioHeaders] = useState([{ parmKey: "", parmValue: "" }]);
   const [isRequired, setIsRequired] = useState(
-    !isUpdate ? false : updateFieldData.is_Required
+    !isUpdate ? false : updateFieldData.isRequired
   );
   const [choices, setChoices] = useState(
     !isUpdate
@@ -43,6 +43,8 @@ export default function Checkbox({
   const [endpoint, setEndpoint] = useState("");
   const [radioOptions, setRadioOptions] = useState([]);
   const [id, setId] = useState("");
+  const [showLabel, setShowLabel] = useState("");
+  const [showValue, setShowValue] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
   const handleAddChoice = () => {
     setChoices([...choices, ""]);
@@ -61,6 +63,55 @@ export default function Checkbox({
     console.log(newChoices, "1122");
   };
 
+  function verifyPayload(payload) {
+    if (!payload.formVersionId || payload.formVersionId == "") {
+      console.log("formVersionId error")
+      return false;
+    }
+    if (payload.containerId == undefined || payload.containerId == null) {
+      console.log("containerId error")
+      return false;
+    }
+    if (!payload.regionId || payload.regionId == "") {
+      console.log("regionId error")
+      return false;
+    }
+    if (!payload.question || payload.question == "") {
+      console.log("question error")
+      return false;
+    }
+    if (payload.isRequired == null || payload.isRequired === "") {
+      console.log("isRequired error")
+      return false;
+    }
+    if (radiosType == "manual" && (!payload.choices || payload.choices == "")) {
+      console.log("choices error")
+      return false;
+    }
+    if (radiosType != "manual") {
+      if (!payload.url || payload.url == "") {
+        console.log("url error")
+        return false;
+      }
+      if (!payload.headerParms || payload.headerParms.length == 0) {
+        console.log("headerParms error")
+        return false;
+      }
+      if (!payload.bodyParms || payload.bodyParms.length == 0) {
+        console.log("bodyParms error")
+        return false;
+      }
+      if (!payload.displayField || payload.displayField == "") {
+        console.log("displayField error")
+        return false;
+      }
+      if (!payload.valueField || payload.valueField == "") {
+        console.log("valueField error")
+        return false;
+      }
+    }
+    return true
+  }
   const handleSave = async () => {
     setLocalLoading(true);
     const payload = {
@@ -68,9 +119,25 @@ export default function Checkbox({
       containerId: id,
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       question: question,
-      is_Required: isRequired,
-      choices: choices,
+      isRequired: isRequired,
+      isThirdParty: radiosType == "manual" ? false : true,
     };
+    if (radiosType != "manual") {
+      payload.url = endpoint;
+      payload.headerParms = radioHeaders;
+      payload.bodyParms = radioBody;
+      payload.displayField = showLabel;
+      payload.valueField = showValue;
+    } else {
+      payload.choices = choices;
+    }
+    console.log(payload);
+    if (!verifyPayload(payload)) {
+      console.log("Verification failed")
+      toast.error("Verification failed!")
+      setLocalLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -98,11 +165,12 @@ export default function Checkbox({
     }
   };
 
+  
   const handleUpdate = async () => {
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       choices: choices,
     };
 
@@ -157,22 +225,22 @@ export default function Checkbox({
     setRadioOptions(newArray);
   }
 
-  function updateParamIndex(key, newVal, index) {
+  function updateBodyIndex(key, newVal, index) {
     console.log(key, newVal, index);
-    setRadioParams(
-      radioParams.map((item, i) =>
+    setRadioBody(
+      radioBody.map((item, i) =>
         i === index ? { ...item, [key]: newVal } : item
       )
     );
   }
-  function handleDeleteParam(index) {
-    if (index < radioParams.length - 1) {
-      setRadioParams((prevParams) => [
-        ...prevParams.slice(0, index),
-        ...prevParams.slice(index + 1),
+  function handleDeleteBody(index) {
+    if (index < radioBody.length - 1) {
+      setRadioBody((prevBody) => [
+        ...prevBody.slice(0, index),
+        ...prevBody.slice(index + 1),
       ]);
     } else {
-      toast.error("Cannot delete default empty param");
+      toast.error("Cannot delete default empty body");
       return;
     }
   }
@@ -209,11 +277,11 @@ export default function Checkbox({
             id="manual"
             className="border-red-500"
           />
-          <Label htmlFor="manual">Manual Input</Label>
+          <Label htmlFor="manual" className="cursor-pointer">Manual Input</Label>
         </div>
         <div className="flex items-center space-x-2 cursor-pointer">
           <RadioGroupItem value="api" id="api" className="border-red-500" />
-          <Label htmlFor="api">Fetch List using API</Label>
+          <Label htmlFor="api" className="cursor-pointer">Fetch List using API</Label>
         </div>
       </RadioGroup>
       <br />
@@ -306,6 +374,29 @@ export default function Checkbox({
         <>
           <div className="grid grid-cols-2 gap-8 gap-y-3">
             <div className="col-span-2">
+              <Select
+                className="w-full"
+                onValueChange={(e) => {
+                  setId(e);
+                }}
+                // defaultValue={formDataApi[0]?.containerName}
+              >
+                <label htmlFor="minLen" className="text-xs font-semibold">
+                  Tab Name
+                </label>
+                <SelectTrigger className="w-full h-[48px]">
+                  <SelectValue placeholder="Select Tab" />
+                </SelectTrigger>
+                <SelectContent>
+                  {formDataApi?.map((style, index) => (
+                    <SelectItem key={index} value={style?.id}>
+                      {style?.containerName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="col-span-2">
               <label htmlFor="tabName" className="text-[16px] font-semibold">
                 Caption
               </label>
@@ -313,6 +404,8 @@ export default function Checkbox({
                 name="tabName"
                 placeholder="Type Here"
                 className="p-4 h-[48px]"
+                value={question}
+                onChange={(e)=>{setQuestion(e.target.value)}}
               />
             </div>
             <div className="col-span-2">
@@ -326,52 +419,6 @@ export default function Checkbox({
                 value={endpoint}
                 onChange={(e) => setEndpoint(e?.target?.value)}
               />
-            </div>
-            <div className="col-span-2">
-              <label htmlFor="radioParams" className="text-xs font-semibold">
-                Params
-              </label>
-              <div className="flex flex-col gap-2">
-                {radioParams?.map((param, index) => (
-                  <div key={index} className="flex gap-2">
-                    <div className="grid grid-cols-2 gap-3 w-full">
-                      <Input
-                        name="radioParams"
-                        placeholder="Param Key"
-                        className="p-4 h-[48px]"
-                        value={param.key}
-                        onChange={(e) =>
-                          updateParamIndex("key", e?.target?.value, index)
-                        }
-                      />
-                      <Input
-                        name="radioParams"
-                        placeholder="Param Value"
-                        className="p-4 h-[48px]"
-                        value={param.value}
-                        onChange={(e) =>
-                          updateParamIndex("value", e?.target?.value, index)
-                        }
-                      />
-                    </div>
-                    <Button
-                      variant="destructive"
-                      className="h-[48px]"
-                      onClick={() => {
-                        if (index < radioParams.length - 1)
-                          handleDeleteParam(index);
-                        else
-                          setRadioParams([
-                            { key: "", value: "" },
-                            ...radioParams,
-                          ]);
-                      }}
-                    >
-                      {index < radioParams.length - 1 ? "−" : "+"}
-                    </Button>
-                  </div>
-                ))}
-              </div>
             </div>
             <div className="col-span-2">
               <label htmlFor="radioHeaders" className="text-xs font-semibold">
@@ -419,6 +466,49 @@ export default function Checkbox({
                 ))}
               </div>
             </div>
+            <div className="col-span-2">
+              <label htmlFor="radioBody" className="text-xs font-semibold">
+                Body
+              </label>
+              <div className="flex flex-col gap-2">
+                {radioBody?.map((param, index) => (
+                  <div key={index} className="flex gap-2">
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      <Input
+                        name="radioBody"
+                        placeholder="Body Key"
+                        className="p-4 h-[48px]"
+                        value={param.parmKey}
+                        onChange={(e) =>
+                          updateBodyIndex("parmKey", e?.target?.value, index)
+                        }
+                      />
+                      <Input
+                        name="radioBody"
+                        placeholder="Body Value"
+                        className="p-4 h-[48px]"
+                        value={param.parmValue}
+                        onChange={(e) =>
+                          updateBodyIndex("parmValue", e?.target?.value, index)
+                        }
+                      />
+                    </div>
+                    <Button
+                      variant="destructive"
+                      className="h-[48px]"
+                      onClick={() => {
+                        if (index < radioBody.length - 1)
+                          handleDeleteBody(index);
+                        else
+                          setRadioBody([{ parmKey: "", parmValue: "" }, ...radioBody]);
+                      }}
+                    >
+                      {index < radioBody.length - 1 ? "−" : "+"}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="my-4 col-span-2 flex items-center space-x-2">
               <Checkbox2 />
               <label
@@ -449,63 +539,76 @@ export default function Checkbox({
                 <Button className="mt-5" variant="destructive" onClick={()=>{removedArray(radioOptions, index)}}>-</Button>
               </div>
             ))} */}
-            <div className="col-span-1">
-              <Select
-                className="w-full"
-                onValueChange={(e) => {
-                  setId(e);
-                }}
-                // defaultValue={formDataApi[0]?.containerName}
-              >
-                <label htmlFor="minLen" className="text-xs font-semibold">
-                  Label
-                </label>
-                <SelectTrigger className="w-full h-[48px]">
-                  <SelectValue placeholder="Select Tab" />
-                </SelectTrigger>
-                <SelectContent>
-                  {radioOptions &&
-                    radioOptions?.map((style, index) => (
-                      <SelectItem key={index} value={style}>
-                        {style}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="col-span-1">
-              <Select
-                className="w-full"
-                onValueChange={(e) => {
-                  setId(e);
-                }}
-                // defaultValue={formDataApi[0]?.containerName}
-              >
-                <label htmlFor="minLen" className="text-xs font-semibold">
-                  Value
-                </label>
-                <SelectTrigger className="w-full h-[48px]">
-                  <SelectValue placeholder="Select Tab" />
-                </SelectTrigger>
-                <SelectContent>
-                  {radioOptions &&
-                    radioOptions?.map((style, index) => (
-                      <SelectItem key={index} value={style}>
-                        {style}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
+
+            {radioOptions && radioOptions?.length > 0 && (
+              <div className="col-span-1">
+                <Select
+                  className="w-full"
+                  onValueChange={(e) => {
+                    setShowLabel(e);
+                  }}
+                  // defaultValue={formDataApi[0]?.containerName}
+                >
+                  <label htmlFor="minLen" className="text-xs font-semibold">
+                    Label
+                  </label>
+                  <SelectTrigger className="w-full h-[48px]">
+                    <SelectValue placeholder="Select Tab" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {radioOptions &&
+                      radioOptions?.map((style, index) => (
+                        <SelectItem key={index} value={style}>
+                          {style}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {radioOptions && radioOptions?.length > 0 && (
+              <div className="col-span-1">
+                <Select
+                  className="w-full"
+                  onValueChange={(e) => {
+                    setShowValue(e);
+                  }}
+                  // defaultValue={formDataApi[0]?.containerName}
+                >
+                  <label htmlFor="minLen" className="text-xs font-semibold">
+                    Value
+                  </label>
+                  <SelectTrigger className="w-full h-[48px]">
+                    <SelectValue placeholder="Select Tab" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {radioOptions &&
+                      radioOptions?.map((style, index) => (
+                        <SelectItem key={index} value={style}>
+                          {style}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
-          {radioOptions && radioOptions?.length < 1 && (
+          {radioOptions && (
             <div>
-              <p className="text-center text-xs text-neutral-600">
-                No options added!
-              </p>
-              <div className="flex flex-row-reverse gap-4 py-1 my-4 pb-28">
+              {radioOptions?.length < 1 && (
+                <p className="text-center text-xs text-neutral-600">
+                  No options added!
+                </p>
+              )}
+              <div className="flex flex-row-reverse gap-4 py-1 my-4">
                 <Button
-                  onClick={() => inflateOptions()}
+                  onClick={() =>
+                    toast.promise(inflateOptions(), {
+                      loading: "Getting...",
+                      success: <span>Got Data!</span>,
+                      error: <span>Could not get Data.</span>,
+                    })
+                  }
                   className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
                 >
                   Get List
