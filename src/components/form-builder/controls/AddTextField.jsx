@@ -35,7 +35,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
   const [maxLength, setMaxLength] = useState(!isUpdate ? "" : updateFieldData.maxLength)
   const [errorMessage, setErrorMessage] = useState(!isUpdate ? "" : updateFieldData.errorMsgTxt)
   const [errorMessagePosition, setErrorMessagePosition] = useState(!isUpdate ? 'option-one' : updateFieldData.errorMsgPosition)
-  const [isMandatory, setIsMandatory] = useState(!isUpdate ? false : updateFieldData.is_Required)
+  const [isMandatory, setIsMandatory] = useState(!isUpdate ? false : updateFieldData.isRequired)
 
   const handleSubmit = async () => {
     const formData = {
@@ -52,7 +52,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       maxLength: maxLength,
       errorMsgTxt: errorMessage,
       errorMsgPosition: errorMessagePosition,
-      is_Required: isMandatory
+      isRequired: isMandatory
     }
     console.log(formData)
     // return;
@@ -86,7 +86,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       maxLength: maxLength,
       errorMsgTxt: errorMessage,
       errorMsgPosition: errorMessagePosition,
-      is_Required: isMandatory
+      isRequired: isMandatory
     }
     
     try {

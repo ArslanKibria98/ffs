@@ -52,37 +52,37 @@ export default function FormPreviewPage() {
     //     { //  Text Field
     //       controlType: 0,
     //       name: "Personal Details",
-    //       is_Required: true,
+    //       isRequired: true,
     //       placeholder: "Enter text here"
     //     },
     //     { //  Button
     //       controlType: 1,
     //       name: "DummyButton",
-    //       is_Required: false,
+    //       isRequired: false,
     //       placeholder: "A dummy button"
     //     },
     //     { //  Slider
     //       controlType: 2,
     //       name: "Range Slider",
-    //       is_Required: true,
+    //       isRequired: true,
     //       placeholder: "Select age range"
     //     },
     //     { //  File
     //       controlType: 3,
     //       name: "File Upload",
-    //       is_Required: false,
+    //       isRequired: false,
     //       placeholder: "Upload File Here"
     //     },
     //     { //  Phone Number
     //       controlType: 5,
     //       name: "Phone Number",
-    //       is_Required: true,
+    //       isRequired: true,
     //       placeholder: "+92 300 0000000"
     //     },
     //     { //  OTP
     //       controlType: 4,
     //       name: "DummyButton",
-    //       is_Required: false,
+    //       isRequired: false,
     //       placeholder: ""
     //     },
     //   ]
@@ -139,11 +139,11 @@ export default function FormPreviewPage() {
           <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
             {formDataApi.map((tab, index) => (
               <>
-               {tab.containerName!=null&&
+               {/* {tab.containerName!=null&& */}
               <TabsTrigger key={index} value={tab?.containerName} className="rounded p-0 px-3 h-8 w-fit">
                 <h5 className='text-sm'>{tab?.containerName || 'Tab Name'}</h5>
               </TabsTrigger>
-               }
+               {/* } */}
                </>
             ))}
           </TabsList>
@@ -199,7 +199,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px]">
           {field?.name}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : ( '' )}
         </p>
@@ -220,7 +220,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px]">
           {'Button'}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="flex justify-between w-full gap-3">
           <button
@@ -239,7 +239,7 @@ export function GetRelevantField(control) {
       <div className='col-span-2 flex flex-col gap-y-2'>
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="flex justify-between w-full gap-3">
           <Slider defaultValue={[33]} max={100} step={1} />
@@ -253,7 +253,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px]">
           {field?.question}
-          {field.is_Required ? <span className="text-red-500"> *</span> : ''}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ''}
         </p>
         <div className="grid gap-4 pb-4 text-transparent">
           <Input
@@ -272,7 +272,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px]">
           {'OTP'}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
@@ -297,7 +297,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px]">
           {'Phone No'}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
@@ -337,7 +337,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px] pb-1">
           {field.question}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
@@ -350,11 +350,34 @@ export function GetRelevantField(control) {
     )
   }
   if (field?.controlType == 6) {  //  radiobutton
+    const [dropdownOptions,setDropdownOptions]=useState([])
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+    
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data,"responseOptions")
+          setDropdownOptions(responseOptions.data)
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e)
+      }
+    }
+    useEffect(() => {
+      return () => {
+        { field?.choices===null &&
+          inflateOptions()
+        }
+       
+      };
+    }, [])
     return (
       <div>
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
@@ -366,7 +389,7 @@ export function GetRelevantField(control) {
         // onValueChange={setRadiosType}
         // defaultValue={radiosType}
       >  
-      {field.choices?.map((choice, index) => (
+      {field.choices!=null && field.choices?.map((choice, index) => (
         
         <div className="flex items-center space-x-2 cursor-pointer">
           
@@ -376,6 +399,18 @@ export function GetRelevantField(control) {
             className="border-red-500"
           />
           <Label htmlFor="manual" className="cursor-pointer">{choice?.choiceName}</Label>
+        </div>
+            ))}
+                  {field.choices===null  && dropdownOptions?.map((choice, index) => (
+        
+        <div className="flex items-center space-x-2 cursor-pointer">
+          
+          <RadioGroupItem
+            value="manual"
+            id="manual"
+            className="border-red-500"
+          />
+          <Label htmlFor="manual" className="cursor-pointer"> {choice[field.displayValue]}</Label>
         </div>
             ))}
         {/* <div className="flex items-center space-x-2 cursor-pointer">
@@ -388,18 +423,41 @@ export function GetRelevantField(control) {
     )
   }
   if (field?.controlType == 9) {  //  checkBox
+    const [dropdownOptions,setDropdownOptions]=useState([])
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+    
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data,"responseOptions")
+          setDropdownOptions(responseOptions.data)
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e)
+      }
+    }
+    useEffect(() => {
+      return () => {
+        { field?.choices===null &&
+          inflateOptions()
+        }
+       
+      };
+    }, []) 
     return (
       <div>
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
           )}
         </p>
         <div className="my-4 grid grid-cols-3 items-center">
-        {field.choices?.map((choice, index) => (
+        {field.choices!=null && field.choices?.map((choice, index) => (
                      <>
                      <div className='w-100 flex gap-2 pb-3'>
                      <Checkbox2 />
@@ -414,16 +472,54 @@ export function GetRelevantField(control) {
                      </>
                  
                 ))}
+                       {field.choices===null  && dropdownOptions?.map((choice, index) => (
+                     <>
+                     <div className='w-100 flex gap-2 pb-3'>
+                     <Checkbox2 />
+                     <Label
+                       htmlFor="terms"
+                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                     >
+                       {choice[field.displayValue]}
+                     </Label>
+                     </div>
+                   
+                     </>
+                 
+                ))}
           </div>
       </div>
     )
   }
   if (field?.controlType == 7) {  //  dropdown
+  const [dropdownOptions,setDropdownOptions]=useState([])
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+    
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data,"responseOptions")
+          setDropdownOptions(responseOptions.data)
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e)
+      }
+    }
+    useEffect(() => {
+      return () => {
+        { field?.choices===null &&
+          inflateOptions()
+        }
+       
+      };
+    }, [])  
     return (
       <div>
         <p className="text-[12px]">
           {field.question}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''
@@ -441,9 +537,14 @@ export function GetRelevantField(control) {
                 <SelectValue placeholder="Select Tab" />
               </SelectTrigger>
               <SelectContent>
-                {field.choices?.map((style, index) => (
+                {field.choices!=null && field.choices?.map((style, index) => (
                   <SelectItem key={index} value={style?.id}>
                     {style?.choiceName}
+                  </SelectItem>
+                ))}
+                   {field.choices===null && dropdownOptions?.map((style, index) => (
+                  <SelectItem key={index} value={style[field.valueField]}>
+                    {style[field.displayValue]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -473,7 +574,7 @@ export function GetRelevantField(control) {
       <div>
         <p className="text-[12px] pb-1">
           {field.question}
-          {field.is_Required ? (
+          {field.isRequired ? (
             <span className="text-red-500"> *</span>
           ) : (
             ''

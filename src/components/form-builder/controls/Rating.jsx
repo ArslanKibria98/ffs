@@ -20,7 +20,7 @@ import { setIsLoading } from "../../../redux/store/loading";
 
 export default function Rating({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.ratingValue);
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
@@ -39,7 +39,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       ratingValue: parseInt(minValue),
       ratingComment:"test"
     };
@@ -80,7 +80,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       ratingValue: parseInt(minValue),
       ratingComment:"test",
     };

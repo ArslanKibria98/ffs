@@ -29,7 +29,7 @@ export default function PhoneNumber({
 
   const fontFamilies = ["any", "Normal"];
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData?.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.is_Required);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.isRequired);
   const [phoneType, setPhoneType] = useState(!isUpdate ? "Normal" : updateFieldData?.phone_Type);
   const [phoneNumber, setPhoneNumber] = useState(!isUpdate ? "" : updateFieldData?.phone_Number);
   const [id, setId] = useState("");
@@ -41,7 +41,7 @@ export default function PhoneNumber({
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       phone_Type: phoneType,
       phone_Number: phoneNumber,
     };
@@ -76,7 +76,7 @@ export default function PhoneNumber({
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       phone_Type: phoneType,
       phone_Number: phoneNumber,
     }

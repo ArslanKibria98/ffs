@@ -74,9 +74,9 @@ export default function FormBuilder() {
       // console.log(data.data);
       if (data?.data?.length > 0) {
         // console.log(data.data)
-        setForms(data.data)
+        setForms(data?.data)
         setLocalLoading(false);
-        setTotalPages(Math.ceil(data.data.length / rowsPerPage))
+        setTotalPages(data?.pageInfo)
         setTimeout(()=>{
           dispatch(setIsLoading(false));
           setLocalLoading(false);
@@ -308,6 +308,13 @@ console.log(forms.length)
           ) : ""}
         </Table>
         <div className="flex justify-end items-center mt-4">
+        <button
+            onClick={() => handlePageChange(null, 1)}
+            disabled={page<=1}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`<<`}
+          </button>
           <button
             onClick={() => handlePageChange(null, page - 1)}
             disabled={page<=1}
@@ -331,6 +338,13 @@ console.log(forms.length)
             className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
           >
             {`>`}
+          </button>
+          <button
+            onClick={() => handlePageChange(null,totalPages.totalPages)}
+            disabled={forms.length<15}
+            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
+          >
+            {`>>`}
           </button>
         </div>
       </div>

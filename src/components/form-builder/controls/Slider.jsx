@@ -22,7 +22,7 @@ import axios from "@/lib/axios";
 export default function Slider({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const [localLoading, setLocalLoading] = useState(false);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.is_Required);
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.min_Value);
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
@@ -36,7 +36,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       min_Value: parseInt(minValue),
       max_Value: parseInt(maxValue),
     };
@@ -70,7 +70,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       min_Value: parseInt(minValue),
       max_Value: parseInt(maxValue),
     };
