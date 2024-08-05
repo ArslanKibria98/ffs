@@ -147,7 +147,7 @@ export default function BuilderPage() {
   const controlList = [
     {
       icon: "/control-icons/addNewTab.svg",
-      title: "Add New Tab",
+      title: "New Tab",
       data: (
         <AddNewTab
           getter={usAddNewTab}
@@ -158,7 +158,7 @@ export default function BuilderPage() {
     },
     {
       icon: "/control-icons/addTextField.svg",
-      title: "Add Text Field",
+      title: "Text Field",
       controlType: 0,
       data: (
         <AddTextField
@@ -237,7 +237,7 @@ export default function BuilderPage() {
     },
     {
       icon: "/control-icons/addOtp.svg",
-      title: "Add OTP",
+      title: "OTP",
       controlType: 4,
       data: (
         <AddOtp
@@ -613,15 +613,19 @@ export default function BuilderPage() {
                 >
                   Loading...
                 </TabsTrigger>
-              ) : formDataApi?.map((tab, index) => (
-                <TabsTrigger
-                  value={tab?.containerName}
-                  key={index}
-                  className="px-5 h-10 mb-0 mr-1"
-                >
-                  {tab?.containerName}
-                </TabsTrigger>
-              ))}
+              ) : formDataApi?.map((tab, index) => {
+                if (tab?.containerName != "Default") {
+                  return (
+                    <TabsTrigger
+                      value={tab?.containerName}
+                      key={index}
+                      className="px-5 h-10 mb-0 mr-1"
+                    >
+                      {tab?.containerName}
+                    </TabsTrigger>
+                  )
+                }
+              })}
             </TabsList>
             {formDataApi?.map((tab, index2) => (
               <TabsContent
