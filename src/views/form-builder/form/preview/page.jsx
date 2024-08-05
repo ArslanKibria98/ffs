@@ -375,51 +375,58 @@ export function GetRelevantField(control) {
     }, [])
     return (
       <div>
-        <p className="text-[12px]">
-          {field.question}
-          {field.isRequired ? (
-            <span className="text-red-500"> *</span>
-          ) : (
-            ''
-          )}
-        </p>
-        <div className="my-4 grid grid-cols-3 items-center">
-        <RadioGroup
-        className="flex gap-4"
+      <p className="text-[12px]">
+        {field.question}
+        {field.isRequired ? (
+          <span className="text-red-500"> *</span>
+        ) : (
+          ''
+        )}
+      </p>
+      <div className="my-4 items-center">
+      <RadioGroup
+        className="w-100 grid grid-cols-3 gap-2"
         // onValueChange={setRadiosType}
         // defaultValue={radiosType}
-      >  
+      > 
       {field.choices!=null && field.choices?.map((choice, index) => (
-        
-        <div className="flex items-center space-x-2 cursor-pointer">
-          
-          <RadioGroupItem
+                   <>
+                   <div className='w-100 flex gap-2 pb-3'>
+                   <RadioGroupItem
             value="manual"
             id="manual"
             className="border-red-500"
           />
           <Label htmlFor="manual" className="cursor-pointer">{choice?.choiceName}</Label>
-        </div>
-            ))}
-                  {field.choices===null  && dropdownOptions?.map((choice, index) => (
-        
-        <div className="flex items-center space-x-2 cursor-pointer">
+                   </div>
+                 
+                   </>
+               
+              ))}
+                     {field.choices===null  && dropdownOptions?.map((choice, index) => (
+                   <>
+                   <div className='w-100 flex gap-2 pb-3'>
           
+        
           <RadioGroupItem
             value="manual"
             id="manual"
             className="border-red-500"
           />
-          <Label htmlFor="manual" className="cursor-pointer"> {choice[field.displayValue]}</Label>
+                   <Label
+                     htmlFor="terms"
+                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                   >
+                     {choice[field.displayValue]}
+                   </Label>
+                   </div>
+                 
+                   </>
+               
+              ))}
+               </RadioGroup>
         </div>
-            ))}
-        {/* <div className="flex items-center space-x-2 cursor-pointer">
-          <RadioGroupItem value="api" id="api" className="border-red-500" />
-          <Label htmlFor="api" className="cursor-pointer">Fetch List using API</Label>
-        </div> */}
-      </RadioGroup>
-          </div>
-      </div>
+    </div>
     )
   }
   if (field?.controlType == 9) {  //  checkBox
@@ -533,7 +540,7 @@ export function GetRelevantField(control) {
               }}
               // defaultValue={formDataApi[0]?.containerName}
             >
-              <SelectTrigger className="w-full h-[48px]">
+              <SelectTrigger className="w-full h-[40px]">
                 <SelectValue placeholder="Select Tab" />
               </SelectTrigger>
               <SelectContent>

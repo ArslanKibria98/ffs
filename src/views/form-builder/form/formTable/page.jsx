@@ -80,11 +80,12 @@ export default function FormTable() {
   return (
     <div className="max-w-[1000px] min-h-[83vh] mx-auto p-2">
     <h3 className="pb-3 pt-8 text-[20px] font-[600]">Form Versions</h3>
-          <div class="grid grid-cols-2 border rounded-lg bg-[#ffffff]">
+          <div class="flex border rounded-lg bg-[#ffffff]">
           {tableData&&tableData?.formInstanceLists?.map((instance) => (
-            <div key={instance.containerId} className="mb-4">
-    <Table className="rounded-lg border bg-white overflow-x-scroll">
+            <div key={instance.containerId} className="mb-4 w-full">
+    <Table className="rounded-lg border bg-white overflow-x-scroll overflow-scroll">
       <TableHeader>
+        
         <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
           {instance.containerName!=null &&
           <TableHead colSpan={Object.keys(instance?.controlsAndInstances).length + 2} className="text-white text-center">

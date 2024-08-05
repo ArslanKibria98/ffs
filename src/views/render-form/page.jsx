@@ -81,7 +81,24 @@ export default function FormRender() {
       setLoader(false);
     }
   };
-
+  function formatDate(inputDate) {
+    // Parse the input date string
+    const date = new Date(inputDate);
+  
+    // Get the year, month, date, etc.
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+    const milliseconds = String(date.getUTCMilliseconds()).padStart(3, '0');
+  
+    // Format the date to the desired string
+    const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+  
+    return formattedDate;
+  }
   useEffect(() => {
     fetchForms();
   }, []);
@@ -196,7 +213,7 @@ export default function FormRender() {
         )
         .map((key) => ({
           controlId: key.toLowerCase(),
-          timeInput: values[key].toString(),
+          timeInput: formatDate(values[key].toString()),
         }));
       const dropdownInput = Object.keys(values)
         .filter(
@@ -281,17 +298,21 @@ export default function FormRender() {
       // e.g., postFormData({ textBoxInput, otpInput });
     },
   });
+  const [isLastTabActive, setIsLastTabActive] = useState(false);
 
-  const handleSave = () => {
-    console.log("Form Data on Save:", formik.values);
-    toast.success("Form saved successfully!");
+  // Function to handle tab change
+  const handleTabChange = (newTabValue) => {
+    if (formDataApi.length > 1) {
+      const lastTabValue = formDataApi[formDataApi.length - 1].containerName;
+      setIsLastTabActive(newTabValue === lastTabValue);
+    }
   };
-
+  console.log(isLastTabActive,"isLastTabActive")
   return (
-    <div className="max-w-[1000px] h-[83vh] mx-auto p-14">
+    <div className="max-w-[1000px] h-fit mx-auto p-14">
       <form onSubmit={formik.handleSubmit}>
         {formDataApi.length > 0 && (
-          <Tabs defaultValue={formDataApi[0].containerName}>
+          <Tabs defaultValue={formDataApi[0].containerName}  onValueChange={handleTabChange}>
             <TabsList className="w-fit space-x-2 py-1 border bg-gray-200 rounded-lg px-1">
               {formDataApi.map((tab, index) => (
                 <>
@@ -343,15 +364,29 @@ export default function FormRender() {
         {/* {
           formDataApi.length==formDataApi.length&&
         } */}
-        <div className="flex flex-row-reverse gap-4 py-4 my-4">
-          <Button
-            type="submit"
-            className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
-            disabled={loader}
-          >
-            Submit
-          </Button>
-        </div>
+        {formDataApi.length >1 ?(
+          <>
+        {isLastTabActive &&
+          <div className="flex flex-row-reverse gap-4 py-4 my-4">
+            <Button
+              type="submit"
+              className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
+              disabled={loader}
+            >
+              Submit
+            </Button>
+          </div>
+         }</>):(<>    <div className="flex flex-row-reverse gap-4 py-4 my-4">
+         <Button
+           type="submit"
+           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
+           disabled={loader}
+         >
+           Submit
+         </Button>
+       </div></>)
+        }
+
       </form>
     </div>
   );
@@ -609,7 +644,7 @@ function GetRelevantField({ control, formik }) {
             value={formik.values[field.controlId] || ""}
             onValueChange={handleDropdownChange}
           >
-            <SelectTrigger className="w-full h-[48px]">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Tab" />
             </SelectTrigger>
             <SelectContent>
@@ -659,7 +694,7 @@ function GetRelevantField({ control, formik }) {
     );
   }
 
-  if (field?.controlType === 9) {
+  if (field?.controlType === 9) { //checkbox
     const handleCheckboxChange = (choiceName) => {
       const currentChoices = formik.values[field.controlId] || [];
       const updatedChoices = currentChoices.includes(choiceName)
@@ -668,7 +703,28 @@ function GetRelevantField({ control, formik }) {
 
       formik.setFieldValue(field.controlId, updatedChoices);
     };
+    const [dropdownOptions, setDropdownOptions] = useState([]);
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
 
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data, "responseOptions");
+          setDropdownOptions(responseOptions.data);
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e);
+      }
+    }
+    useEffect(() => {
+      return () => {
+        {
+          field?.choices === null && inflateOptions();
+        }
+      };
+    }, []);
     return (
       <div>
         <p className="text-[12px] pb-1">
@@ -676,7 +732,7 @@ function GetRelevantField({ control, formik }) {
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="my-4 grid grid-cols-3 items-center">
-          {field.choices?.map((choice, index) => (
+          {field.choices!=null &&field.choices?.map((choice, index) => (
             <div key={index} className="w-100 flex gap-2 pb-3">
               <input
                 type="checkbox"
@@ -691,6 +747,25 @@ function GetRelevantField({ control, formik }) {
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 {choice.choiceName}
+              </Label>
+            </div>
+          ))}
+                 {field.choices===null &&dropdownOptions?.map((choice, index) => (
+            <div key={index} className="w-100 flex gap-2 pb-3">
+              <input
+                type="checkbox"
+                id={`checkbox-${index}`}
+                checked={(formik.values[field.controlId] || []).includes(
+                  choice[field?.valueField]
+                )}
+                
+                onChange={() => handleCheckboxChange(choice[field?.valueField])}
+              />
+              <Label
+                htmlFor={`checkbox-${index}`}
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                {choice[field.displayValue]}
               </Label>
             </div>
           ))}

@@ -51,7 +51,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       minLength: minLength,
       maxLength: maxLength,
       errorMsgTxt: errorMessage,
-      errorMsgPosition: errorMessagePosition,
+      errorMsgPosition: "option-one",
       isRequired: isMandatory
     }
     console.log(formData)
@@ -252,7 +252,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             onChange={(e) => setErrorMessage(e.target.value)}
           />
         </div>
-        <div>
+        {/* <div>
           <label
             htmlFor="errorMessagePosition"
             className="text-xs font-semibold"
@@ -273,7 +273,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
               <Label htmlFor="option-two">Error below field</Label>
             </div>
           </RadioGroup>
-        </div>
+        </div> */}
 
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2 checked={isMandatory} onCheckedChange={(e)=>setIsMandatory(e)} />
