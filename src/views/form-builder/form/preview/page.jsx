@@ -591,4 +591,20 @@ export function GetRelevantField(control) {
       </div>
     )
   }
+  const [dateChange, onDateChange] = useState(new Date());
+  if (field?.controlType == 11) {  //  calendar
+    return (
+      <div>
+        <p className="text-[12px] pb-1">
+          {field.question}
+          {field.isRequired ? (
+            <span className="text-red-500"> *</span>
+          ) : (
+            ''
+          )}
+        </p>
+        <DateTimePicker  onChange={onDateChange} value={dateChange} disableClock={true}  />
+      </div>
+    )
+  }
 }
