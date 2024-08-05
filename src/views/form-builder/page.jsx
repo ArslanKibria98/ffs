@@ -21,8 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button";
 import BoxLoader from "@/components/BoxLoader";
+import { ChevronDown, EyeOff, History, FolderClosed, Pencil, Trash2 } from "lucide-react"
+import { QrCode } from 'lucide-react';
 
 import toast from "react-hot-toast"
 
@@ -209,11 +219,46 @@ export default function FormBuilder() {
                 <TableCell>{form.versionNumber || "N/A"}</TableCell>
                 <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
                 <TableCell>
-                  <Button onClick={()=>{
-                    dispatch(SET_FORM_INFO(form?.formId, form?.formVersionId))
-                    dispatch(setIsLoading(true));
-                    navigate("/form-builder/form");
-                  }} className="bg-red-500 text-white">Edit</Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="bg-[#4e4e4e] flex justify-between gap-2 rounded font-thin text-white p-[2px] pl-2">
+                      Action
+                      <ChevronDown className="h-5 " />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="p-0">
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                        <QrCode className="h-4"/>&nbsp;&nbsp;
+                        Live
+                      </DropdownMenuItem>
+                      {/* <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/> */}
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                        <EyeOff className="h-4"/>&nbsp;&nbsp;
+                        Unpublish
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                        <History className="h-4"/>&nbsp;&nbsp;
+                        Versions
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                        <FolderClosed className="h-4"/>&nbsp;&nbsp;
+                        Folder
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
+                      <DropdownMenuItem onClick={()=>{
+                        dispatch(SET_FORM_INFO(form?.formId, form?.formVersionId))
+                        dispatch(setIsLoading(true));
+                        navigate("/form-builder/form");
+                      }} className="focus:bg-[#fff0f0] cursor-pointer">
+                        <Pencil className="h-4"/>&nbsp;&nbsp;
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                        <Trash2 className="h-4"/>&nbsp;&nbsp;
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
