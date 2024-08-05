@@ -248,31 +248,31 @@ export default function FormBuilder() {
               <TableHead className="min-w-[100px] text-white">{locData?.columns?.formID || "Form ID"}</TableHead>
               <TableHead className="min-w-[110px] text-white">{locData?.columns?.formName || "Form Name"}</TableHead>
               <TableHead className="min-w-[160px] text-white">{locData?.columns?.repository || "Repository"}</TableHead>
-              <TableHead className="min-w-[150px] text-white">{locData?.columns?.languages || "Languages"}</TableHead>
-              <TableHead className="min-w-[150px] text-white">{locData?.columns?.countries || "Countries"}</TableHead>
+              {/* <TableHead className="min-w-[150px] text-white">{locData?.columns?.languages || "Languages"}</TableHead>
+              <TableHead className="min-w-[150px] text-white">{locData?.columns?.countries || "Countries"}</TableHead> */}
               <TableHead className="min-w-[130px] text-white">{locData?.columns?.createdBy || "Created By"}</TableHead>
               <TableHead className="min-w-[130px] text-white">{locData?.columns?.createdDate || "Created Date"}</TableHead>
               <TableHead className="min-w-[160px] text-white">{locData?.columns?.lastModifiedBy || "Last Modified By"}</TableHead>
               <TableHead className="min-w-[160px] text-white">{locData?.columns?.lastModifiedDate || "Last Modified Date"}</TableHead>
               <TableHead className="text-white">{locData?.columns?.version || "Version"}</TableHead>
-              <TableHead className="text-white">{locData?.columns?.status || "Status"}</TableHead>
+              {/* <TableHead className="text-white">{locData?.columns?.status || "Status"}</TableHead> */}
               <TableHead className="text-white">{locData?.columns?.action || "Action"}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {forms && forms?.map((form, index) => (
               <TableRow key={index} className={index % 2 == 0 ? "bg-[#ffffff] border-0" : "bg-[#f5f5f5] border-0"}>
-                <TableCell>{form?.formVersionId?.substring(0, 8) || "N/A"}</TableCell>
-                <TableCell>{form?.formName || "N/A"}</TableCell>
-                <TableCell>{form?.repositoryName || "N/A"}</TableCell>
-                <TableCell>{form?.languages?.join(', ') || "N/A"}</TableCell>
-                <TableCell>{form?.countries?.join(', ') || "N/A"}</TableCell>
-                <TableCell>{form.createdBy || "N/A"}</TableCell>
-                <TableCell>{form.createdDate || "N/A"}</TableCell>
-                <TableCell>{form.lastModifiedBy || "N/A"}</TableCell>
-                <TableCell>{form.lastModifiedDate || "N/A"}</TableCell>
-                <TableCell>{form.versionNumber || "N/A"}</TableCell>
-                <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell>
+                <TableCell className="font-mono">F-{form?.formVersionId?.substring(0, 5).toUpperCase() || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form?.formName || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form?.repositoryName || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                {/* <TableCell>{form?.languages?.join(', ') || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form?.countries?.join(', ') || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell> */}
+                <TableCell>{form.createdBy || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form.createdDate || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form.lastModifiedBy || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>{form.lastModifiedDate || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                <TableCell>V {form.versionNumber || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
+                {/* <TableCell>{((form.status == "Publish" || form.status == "Published" || form.status == true) ? locData?.formStatus[0] : locData?.formStatus[0]) || form.status || "N/A"}</TableCell> */}
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger className="bg-[#4e4e4e] flex justify-between gap-2 rounded font-thin text-white p-[2px] pl-2">
