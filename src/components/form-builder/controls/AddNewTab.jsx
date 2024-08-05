@@ -17,18 +17,18 @@ import axios from '@/lib/axios'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch();
-  
-  const isLoading = useSelector((state) => state?.loadingStore?.value)
+  console.log(updateFieldData,"1234")
   const version_id = useSelector((state) => state?.formStore.version_id)
 
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32]
   const fontFamilies = ['Normal', 'Mono', 'Sans', 'Ariel', 'Times']
   const fontColours = ['Black', 'White', 'Red', 'Blue', 'Yellow', 'Green']
 
-  const [tabName, setTabName] = useState('')
-  const [fontSize, setFontSize] = useState(16)
-  const [fontFamily, setFontFamily] = useState('Normal')
-  const [fontColour, setFontColour] = useState('Black')
+  const [tabName, setTabName] = useState(!isUpdate ? "" : updateFieldData.containerName)
+  const [fontSize, setFontSize] = useState(!isUpdate ? 16 : Number(updateFieldData.fontSize))
+  const [fontFamily, setFontFamily] = useState(!isUpdate ? "Normal" : updateFieldData.fontFamily)
+  const [fontColour, setFontColour] = useState(!isUpdate ? "Black" : updateFieldData.fontColor)
+
   const handleSubmit = async () => {
     dispatch(setIsLoading(true))
     const data = {
@@ -45,13 +45,11 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
       const response = await axios.post('/Controls/CreateContainer', JSON.stringify(data))
 
       if (response.data) {
-        // Handle success (e.g., show a success message, close the dialog, etc.)
-        console.log('Tab saved successfully')
-        let responseData=response.data
         setter(!getter);
-        toast.success(responseData.notificationMessage)
-        dispatch(setIsLoading(false))
+        let responseData=response.data;
+        toast.success(responseData.notificationMessage);
         resetForm();
+        document.getElementById("NewTabDialogClose").click();
       } else {
         // Handle error (e.g., show an error message)
         console.error('Failed to save tab')
@@ -64,10 +62,43 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
       dispatch(setIsLoading(false))
     }
   }
+  const handleUpdate = async () => {
+    const data = {
+      containerId:updateFieldData.id,
+      containerType: 0,
+      parentContainerId: "00000000-0000-0000-0000-000000000000",
+      formVersionId: version_id,
+      fontSize:fontSize.toString(),
+      fontFamily:fontFamily,
+      fontColor:fontColour,
+      containerName:tabName,
+    }
 
+    try {
+      const response = await axios.post('/Controls/UpdateContainer', JSON.stringify(data))
+
+      if (response.data) {
+        console.log('Tab saved successfully')
+        let responseData=response.data;
+        resetForm();
+        toast.success(responseData.notificationMessage)
+        dispatch(setIsLoading(false))
+        document.getElementById("NewTabDialogClose").click();
+      } else {
+        // Handle error (e.g., show an error message)
+        console.error('Failed to save tab')
+        toast.error("Failed to save tab!");
+        dispatch(setIsLoading(false))
+      }
+    } catch (error) {
+      console.error('An error occurred while saving the tab:', error)
+      toast.error("Something went wrong!");
+      dispatch(setIsLoading(false))
+    }
+  }
   return (
     <div>
-      <DialogTitle>Add Tab</DialogTitle>
+      <DialogTitle>{!isUpdate ? "Add " : "Edit "}Tab</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-4">
         <div className="col-span-2">
@@ -154,17 +185,12 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
       <div className="flex flex-row-reverse gap-4 py-1 my-4">
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-          onClick={handleSubmit}
-          disabled={isLoading}
+          onClick={!isUpdate ? handleSubmit : handleUpdate}
         >
-          Save
+          {!isUpdate ? "Add " : "Save "} Field
         </Button>
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-          {/* <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          > */}
-            Cancel
-          {/* </Button> */}
+        <DialogClose id='NewTabDialogClose' className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+          Cancel
         </DialogClose>
       </div>
     </div>

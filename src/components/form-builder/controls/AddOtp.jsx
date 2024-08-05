@@ -39,6 +39,7 @@ export default function AddOtp({
   const [isRequired, setIsRequired] = useState(
     !isUpdate ? false : updateFieldData?.isRequired
   );
+  const token = useSelector((state) => state?.authStore?.token);
   const [otpFormat, setOtpFormat] = useState(
     !isUpdate ? "4-digits" : (updateFieldData?.otp_Format == 0 ? "4-digits" : (
       updateFieldData?.otp_Format == 1 ? "5-digits" : (
@@ -71,6 +72,7 @@ export default function AddOtp({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'Authorization':`Bearer ${token}`
           },
           body: JSON.stringify(postData),
         }

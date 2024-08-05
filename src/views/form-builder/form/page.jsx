@@ -548,7 +548,6 @@ export default function BuilderPage() {
 
     return controlList[1].data;
   }
-
   return (
     <div className="grid grid-cols-4">
       <div className="col-span-1 border border-[#d3d3d3] bg-[#fff]">
@@ -628,6 +627,7 @@ export default function BuilderPage() {
               <TabsContent
                 value={tab?.containerName}
                 key={index2}
+                
                 className="my-0 py-0 w-full"
               >
                 <div className="bg-[#fff] relative pb-4">
@@ -635,6 +635,7 @@ export default function BuilderPage() {
                     <TabSection
                       tab={tab}
                       index={index2}
+                      updateModalData={getControlbyType(tab)}
                       resetForm={fetchForms}
                     >
                       {tab?.controls?.map((field, index3) => (
