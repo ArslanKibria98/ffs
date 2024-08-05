@@ -161,7 +161,31 @@ export default function FormBuilder() {
       console.error('Error creating form:', error)
     }
   }
-
+  const deletFormVersion = async (id) => {
+    try {
+      const response = await fetch(
+        'http://135.181.57.251:3048/api/Form/DeleteFormVersion',
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${token}`
+          },
+          body: JSON.stringify({
+            formVersionId: id,
+          })
+        }
+      )
+      if (response.ok) {
+        let responseData = await response.json()
+          handlePageChange("",1)
+        toast.success(responseData?.notificationMessage)
+        setLocalLoading(true);
+      } 
+    } catch (error) {
+      console.error('Error Deleting form:', error)
+    }
+  }
   let locData = localisationData.home.en;
 
   if (language == "en") {
@@ -284,7 +308,7 @@ export default function FormBuilder() {
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{deletFormVersion(form?.formVersionId)}}>
                         <Trash2 className="h-4"/>&nbsp;&nbsp;
                         Delete
                       </DropdownMenuItem>
