@@ -264,6 +264,9 @@
 .formBuilderTablist > :last-child {
   border-radius: 0 10px 0 0;
 }
+.formBuilderTabDef {
+  border-radius: 10px 10px 0 0 !important;
+}
 
 
 .style-module_emptyIcons__Bg-FZ {
