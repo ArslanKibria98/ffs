@@ -163,14 +163,13 @@ export default function FormBuilder() {
   }
 
   let locData = localisationData.home.en;
-  // console.log(locData);
 
   if (language == "en") {
     locData = localisationData.home.en;
   } else if (language == "ar") {
     locData = localisationData.home.ar;
   }
-console.log(forms.length)
+  
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">

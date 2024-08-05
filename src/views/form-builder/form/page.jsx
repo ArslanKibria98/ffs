@@ -212,7 +212,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addCalander.svg",
       title: "Calendar",
-      // controlType: 0,
+      controlType: 11,
       data: (
         <Calendar
           getter={usCalendar}
@@ -608,8 +608,6 @@ export default function BuilderPage() {
             <TabsList className="formBuilderTablist">
               {!loading &&
                 formDataApi?.map((tab, index) => (
-                  <>
-                  {/* {tab?.containerName!=null&& */}
                   <TabsTrigger
                     value={tab?.containerName}
                     key={index}
@@ -618,29 +616,26 @@ export default function BuilderPage() {
                   
                     {tab?.containerName}
                   </TabsTrigger>
-                  {/* } */}
-                  </>
                 ))}
             </TabsList>
             {!loading &&
-              formDataApi?.map((tab, index) => (
+              formDataApi?.map((tab, index2) => (
                 <TabsContent
                   value={tab?.containerName}
-                  key={index}
+                  key={index2}
                   className="my-0 py-0 w-full"
                 >
                   <div className="bg-[#fff] pb-4">
                     <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center">
                       <TabSection
-                        key={index}
                         tab={tab}
-                        index={index}
+                        index={index2}
                         resetForm={fetchForms}
                       >
-                        {tab?.controls?.map((field, index) => (
+                        {tab?.controls?.map((field, index3) => (
                           <FieldInfo
                             field={field}
-                            key={index}
+                            key={index3}
                             resetForm={fetchForms}
                             updateModalData={getControlbyType(field)}
                           />
