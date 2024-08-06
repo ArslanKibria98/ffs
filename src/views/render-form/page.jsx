@@ -608,11 +608,12 @@ function GetRelevantField({ control, formik }) {
   if (field?.controlType === 7) {
     // Dropdown
     const [dropdownOptions, setDropdownOptions] = useState([]);
-
+  
     const handleDropdownChange = (value) => {
+      console.log(value, "1234");
       formik.setFieldValue(field.controlId, value);
     };
-
+  
     async function inflateOptions() {
       try {
         const response = await fetch(field.url);
@@ -625,13 +626,13 @@ function GetRelevantField({ control, formik }) {
         console.error(e);
       }
     }
-
+  
     useEffect(() => {
       if (field?.choices === null) {
         inflateOptions();
       }
     }, [field]);
-
+  
     return (
       <div className="h-fit">
         <p className="text-[12px]">
@@ -641,7 +642,9 @@ function GetRelevantField({ control, formik }) {
         <div className="my-3 items-center">
           <Select
             className="w-full"
-            value={formik.values[field.controlId] || ""}
+            value={
+              formik.values[field.controlId]
+            }
             onValueChange={handleDropdownChange}
           >
             <SelectTrigger className="w-full">
@@ -657,7 +660,6 @@ function GetRelevantField({ control, formik }) {
               {field.choices === null &&
                 dropdownOptions.map((option, index) => (
                   <SelectItem key={index} value={option[field.valueField]}>
-                    {console.log(option[field.displayValue], "1234")}
                     {option[field.displayValue]}
                   </SelectItem>
                 ))}
@@ -672,6 +674,7 @@ function GetRelevantField({ control, formik }) {
       </div>
     );
   }
+  
   if (field?.controlType === 8) {
     // rating
     const totalStars = 5;
