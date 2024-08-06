@@ -20,6 +20,7 @@ import { setIsLoading } from '../../../redux/store/loading'
 
 export default function AddTextField({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch()
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id)
   const default_id = useSelector((state) => state?.formStore.default_id);
   // console.log(updateFieldData);
@@ -290,6 +291,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSubmit : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Add " : "Save "} Field
         </Button>

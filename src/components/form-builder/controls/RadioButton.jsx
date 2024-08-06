@@ -34,6 +34,7 @@ export default function RadioButton({
   isUpdate = false,
   updateFieldData = null,
 }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const [radiosType, setRadiosType] = useState("manual");
   const [endpoint, setEndpoint] = useState("");
   const [radioOptions, setRadioOptions] = useState([]);
@@ -49,8 +50,9 @@ export default function RadioButton({
   const [choices, setChoices] = useState(
     !isUpdate
       ? ["", ""]
-      : updateFieldData.choices.map((choice) => choice.choiceName)
+      : updateFieldData?.choices?.map((choice) => choice?.choiceName)
   );
+  console.log(updateFieldData?.choices);
   const [radioCols, setRadioCols] = useState(false);
 
   const [id, setId] = useState("");
@@ -97,6 +99,47 @@ export default function RadioButton({
     }
     if (!payload.regionId || payload.regionId == "") {
       console.log("regionId error")
+      return false;
+    }
+    if (!payload.question || payload.question == "") {
+      console.log("question error")
+      return false;
+    }
+    if (payload.isRequired == null || payload.isRequired === "") {
+      console.log("isRequired error")
+      return false;
+    }
+    if (radiosType == "manual" && (!payload.choices || payload.choices == "")) {
+      console.log("choices error")
+      return false;
+    }
+    if (radiosType != "manual") {
+      if (!payload.url || payload.url == "") {
+        console.log("url error")
+        return false;
+      }
+      if (!payload.headerParms || payload.headerParms.length == 0) {
+        console.log("headerParms error")
+        return false;
+      }
+      if (!payload.bodyParms || payload.bodyParms.length == 0) {
+        console.log("bodyParms error")
+        return false;
+      }
+      if (!payload.displayField || payload.displayField == "") {
+        console.log("displayField error")
+        return false;
+      }
+      if (!payload.valueField || payload.valueField == "") {
+        console.log("valueField error")
+        return false;
+      }
+    }
+    return true
+  }
+  function verifyUpdate(payload) {
+    if (!payload.controlId || payload.controlId == "") {
+      console.log("controlId error")
       return false;
     }
     if (!payload.question || payload.question == "") {
@@ -207,12 +250,29 @@ export default function RadioButton({
   };
 
   const handleUpdate = async () => {
+    setLocalLoading(true);
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
       isRequired: isRequired,
-      choices: choices,
+      isThirdParty: radiosType == "manual" ? false : true,
     };
+    if (radiosType != "manual") {
+      formUpdateData.url = endpoint;
+      formUpdateData.headerParms = radioHeaders;
+      formUpdateData.bodyParms = radioBody;
+      formUpdateData.displayField = showLabel;
+      formUpdateData.valueField = showValue;
+    } else {
+      formUpdateData.choices = choices;
+    }
+    console.log(formUpdateData);
+    if (!verifyUpdate(formUpdateData)) {
+      console.log("Verification failed")
+      toast.error("Verification failed!")
+      setLocalLoading(false);
+      return;
+    }
 
     try {
       const response = await axios.post(
@@ -228,13 +288,16 @@ export default function RadioButton({
         }
         toast.success(responseData?.notificationMessage);
         resetForm();
-        document.getElementById("CheckDialogClose").click();
+        alert("Closing modal");
+        document.getElementById("RadioDialogClose").click();
       } else {
         console.error("Failed to edit Slider field!");
         toast.error("Unable to edit!");
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLocalLoading(false);
     }
   };
 
@@ -279,7 +342,7 @@ export default function RadioButton({
 
   return (
     <div>
-      <DialogTitle>Add Radio Button</DialogTitle>
+      <DialogTitle>Add Radio Button - {getter ? "true" : "false"}</DialogTitle>
       <br />
       <RadioGroup
         className="flex gap-4"
@@ -322,7 +385,7 @@ export default function RadioButton({
                   <SelectValue placeholder="Select Tab" />
                 </SelectTrigger>
                 <SelectContent>
-                  {formDataApi?.map((style, index) => (
+                  {formDataApi && formDataApi?.map((style, index) => (
                     <SelectItem key={index} value={style?.id}>
                       {style?.containerName}
                     </SelectItem>
@@ -356,7 +419,7 @@ export default function RadioButton({
               Choices
             </label>
 
-            {choices.map((choice, index) => (
+            {choices && choices.map((choice, index) => (
               <div
                 key={index}
                 className="col-span-1 flex items-center space-x-2"
@@ -631,6 +694,7 @@ export default function RadioButton({
         </Button>
 
         <DialogClose
+          id="RadioDialogClose"
           disabled={localLoading}
           className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
         >

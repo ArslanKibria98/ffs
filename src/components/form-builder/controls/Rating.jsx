@@ -17,8 +17,10 @@ import toast from "react-hot-toast";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
+import axios from "@/lib/axios";
 
 export default function Rating({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.ratingValue);
@@ -64,13 +66,10 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
         toast.success(responseData.notificationMessage);
         resetForm();
       } else {
-        // Handle error
-        // setter(!getter);
         console.log("Failed to save");
         toast.error("Failed to save");
       }
     } catch (error) {
-      // setter(!getter);
       console.error("Error:", error);
       toast.error("Something went wrong!");
     }
@@ -86,27 +85,18 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/UpdateRating",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization':`Bearer ${token}`
-          },
-          body: JSON.stringify(formUpdateData),
-        }
-      );
+      const response = await axios.post("/api/Controls/UpdateRating", JSON.stringify(formUpdateData));
 
-      if (response.ok) {
-        let responseData = await response.json();
+      if (response?.data?.success) {
+        // Handle success
+        let responseData = response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;
         }
         toast.success(responseData?.notificationMessage);
         resetForm();
-        document.getElementById("SliDialogClose").click();
+        document.getElementById("RatingDialogClose").click();
       } else {
         console.error("Failed to edit Slider field!");
         toast.error("Unable to edit!");
@@ -242,11 +232,12 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSave : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>
 
-        <DialogClose id="SliDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+        <DialogClose id="RatingDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
         </DialogClose>
       </div>

@@ -25,6 +25,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       value:1
      }
   ];
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
@@ -84,7 +85,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
         }
         toast.success(responseData?.notificationMessage);
         resetForm();
-        document.getElementById("CheckDialogClose").click();
+        document.getElementById("TimeDialogClose").click();
       } else {
         console.error("Failed to edit Slider field!");
         toast.error("Unable to edit!");
@@ -178,7 +179,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
           Save
         </Button>
 
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+        <DialogClose id="TimeDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
         </DialogClose>
       </div>

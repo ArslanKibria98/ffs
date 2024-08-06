@@ -25,6 +25,7 @@ export default function DropDown({
   isUpdate = false,
   updateFieldData = null,
 }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const [radiosType, setRadiosType] = useState("manual");
   const [endpoint, setEndpoint] = useState("");
   const [dropdownOptions, setDropdownOptions] = useState([]);
@@ -215,13 +216,15 @@ export default function DropDown({
         }
         toast.success(responseData?.notificationMessage);
         resetForm();
-        document.getElementById("CheckDialogClose").click();
+        document.getElementById("DropdownDialogClose").click();
       } else {
         console.error("Failed to edit Slider field!");
         toast.error("Unable to edit!");
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLocalLoading(false);
     }
   };
 
@@ -340,7 +343,7 @@ export default function DropDown({
             <label className="text-[16px] font-semibold col-span-2">
               Choices
             </label>
-            {choices.map((choice, index) => (
+            {choices && choices.map((choice, index) => (
               <div
                 key={index}
                 className="col-span-1 flex items-center space-x-2"
@@ -612,6 +615,7 @@ export default function DropDown({
         </Button>
 
         <DialogClose
+          id="DropdownDialogClose"
           disabled={localLoading}
           className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
         >

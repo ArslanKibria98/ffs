@@ -51,12 +51,14 @@ function FieldInfo({ field, resetForm, updateModalData }) {
                 <span className="text-[10px]">Mandatory</span>
                 <Switch checked={field?.isRequired ? true : false} />
               </div>
+              {console.log(field)}
               <Dialog>
-                <DialogTrigger>
+                <DialogTrigger disabled={field?.isThirdParty && true}>
                   <div
                     className={
                       "inline-flex items-center rounded-md px-4 py-2 h-[40px] w-[50px]" +
-                      " bg-[#ffffff] hover:bg-[#efefef] flex flex-col items-center text-[#838383] hover:text-[#ff9d00]"
+                      " bg-[#ffffff] hover:bg-[#efefef] flex flex-col items-center text-[#838383] hover:text-[#ff9d00] " +
+                      (field?.isThirdParty && " pointer-events-none opacity-50")
                     }
                   >
                     <span className="text-[10px]">Edit</span>
