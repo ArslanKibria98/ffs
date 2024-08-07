@@ -32,6 +32,7 @@ export default function AddOtp({
     "5-digits": 1,
     "6-digits": 2,
   };
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState(
     !isUpdate ? "" : updateFieldData?.question
@@ -220,6 +221,7 @@ export default function AddOtp({
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSubmit : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>

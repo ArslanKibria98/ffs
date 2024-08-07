@@ -24,6 +24,7 @@ export default function Calendar({
   isUpdate = false,
   updateFieldData = null,
 }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
 
   const dateFormats = [
@@ -60,7 +61,6 @@ export default function Calendar({
         setter(!getter);
         toast.success(response?.data?.notificationMessage);
         resetForm();
-        document.getElementById("CalendarDialogClose").click();
       } else {
         console.error("Failed to add Calendar", response);
         toast.error("Unable to save!");
@@ -213,6 +213,7 @@ export default function Calendar({
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSubmit : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>

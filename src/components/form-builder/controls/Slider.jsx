@@ -27,6 +27,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
   const version_id = useSelector((state) => state?.formStore.version_id);
+  const loading = useSelector((state) => state?.loadingStore?.value);
   
   const handleSave = async () => {
     setLocalLoading(true)

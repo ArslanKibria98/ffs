@@ -17,6 +17,7 @@ import axios from '@/lib/axios'
 
 export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch();
+  const loading = useSelector((state) => state?.loadingStore?.value);
   console.log(updateFieldData,"1234")
   const version_id = useSelector((state) => state?.formStore.version_id)
 
@@ -49,7 +50,6 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
         let responseData=response.data;
         toast.success(responseData.notificationMessage);
         resetForm();
-        document.getElementById("NewTabDialogClose").click();
       } else {
         // Handle error (e.g., show an error message)
         console.error('Failed to save tab')
@@ -186,6 +186,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSubmit : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Add " : "Save "} Field
         </Button>

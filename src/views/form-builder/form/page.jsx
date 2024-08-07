@@ -619,7 +619,7 @@ export default function BuilderPage() {
                     <TabsTrigger
                       value={tab?.containerName}
                       key={index}
-                      className="px-5 h-10 mb-0 mr-1"
+                      className={"px-5 h-10 mb-0 mr-1 " + (formDataApi.length == 1 && " formBuilderTabDef")}
                     >
                       {tab?.containerName}
                     </TabsTrigger>

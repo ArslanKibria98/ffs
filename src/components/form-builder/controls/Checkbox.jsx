@@ -25,6 +25,7 @@ export default function Checkbox({
   isUpdate = false,
   updateFieldData = null,
 }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const [radiosType, setRadiosType] = useState("manual");
   const [localLoading, setLocalLoading] = useState(false);
   const [question, setQuestion] = useState(
@@ -188,13 +189,15 @@ export default function Checkbox({
         }
         toast.success(responseData?.notificationMessage);
         resetForm();
-        document.getElementById("CheckDialogClose").click();
+        document.getElementById("CheckboxDialogClose").click();
       } else {
-        console.error("Failed to edit Slider field!");
+        console.error("Failed to edit Checbox!");
         toast.error("Unable to edit!");
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLocalLoading(false);
     }
   };
   async function inflateOptions() {
@@ -218,11 +221,6 @@ export default function Checkbox({
       toast.error(e?.message);
       console.log(e);
     }
-  }
-
-  function removedArray(array, index) {
-    const newArray = array.filter((_, i) => i !== index);
-    setRadioOptions(newArray);
   }
 
   function updateBodyIndex(key, newVal, index) {
@@ -340,7 +338,7 @@ export default function Checkbox({
             <label className="text-[16px] font-semibold col-span-2">
               Choices
             </label>
-            {choices.map((choice, index) => (
+            {choices && choices.map((choice, index) => (
               <div
                 key={index}
                 className="col-span-1 flex items-center space-x-2"
@@ -629,6 +627,7 @@ export default function Checkbox({
         </Button>
 
         <DialogClose
+          id="CheckboxDialogClose"
           disabled={localLoading}
           className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
         >

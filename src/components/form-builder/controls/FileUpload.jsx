@@ -17,6 +17,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 import axios from "@/lib/axios";
 export default function FileUpload({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);
@@ -107,7 +108,8 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
         : [...prevSelectedFormats, format.label]
     );
   };
-console.log(selectedFormat)
+  console.log(selectedFormat)
+
   return (
     <div>
       <DialogTitle>Add File</DialogTitle>
@@ -184,15 +186,12 @@ console.log(selectedFormat)
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={handleSubmit}
+          disabled={loading}
         >
           Save
         </Button>
-        <DialogClose className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-          {/* <Button
-            className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-          > */}
+        <DialogClose id="FileDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           Cancel
-          {/* </Button> */}
         </DialogClose>
       </div>
     </div>

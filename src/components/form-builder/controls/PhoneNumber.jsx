@@ -25,6 +25,7 @@ export default function PhoneNumber({
   resetForm,
   isUpdate = false, updateFieldData = null
 }) {
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
 
   const fontFamilies = ["any", "Normal"];
@@ -207,6 +208,7 @@ export default function PhoneNumber({
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSave : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>
