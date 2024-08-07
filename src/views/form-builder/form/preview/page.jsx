@@ -344,7 +344,7 @@ export function GetRelevantField(control) {
           )}
         </p>
         
-        <StarRating totalStars={5} />
+        <StarRating totalStars={Number(field.ratingValue)} />
         
       </div>
     )

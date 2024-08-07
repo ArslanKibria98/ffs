@@ -687,7 +687,7 @@ function GetRelevantField({ control, formik }) {
         </p>
         <div className="flex w-full gap-3">
           <StarRating
-            totalStars={5}
+            totalStars={Number(field.ratingValue)}
             fieldName={field.controlId}
             setFieldValue={formik.setFieldValue}
             value={formik.values[field.controlId] || 0}
