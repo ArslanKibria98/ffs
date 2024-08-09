@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -11,31 +10,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-
 import toast from "react-hot-toast";
-
-import { useSelector, useDispatch } from "react-redux";
-import { setIsLoading } from "../../../redux/store/loading";
+import { useSelector } from "react-redux";
 
 export default function PhoneNumber({
   getter,
   setter,
   formDataApi,
   resetForm,
-  isUpdate = false, updateFieldData = null
+  isUpdate = false,
+  updateFieldData = null
 }) {
   const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
 
   const fontFamilies = ["any", "Normal"];
-  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData?.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.isRequired);
-  const [phoneType, setPhoneType] = useState(!isUpdate ? "Normal" : updateFieldData?.phone_Type);
-  const [phoneNumber, setPhoneNumber] = useState(!isUpdate ? "" : updateFieldData?.phone_Number);
+  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData?.question || "");
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.isRequired || false);
+  const [phoneType, setPhoneType] = useState(!isUpdate ? "Normal" : updateFieldData?.phone_Type || "Normal");
+  const [phoneNumber, setPhoneNumber] = useState(!isUpdate ? "" : updateFieldData?.phone_Number || "");
   const [id, setId] = useState("");
 
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (!phoneNumber.trim()) formErrors.phoneNumber = "Phone number is required.";
+    // Additional validation can be added here
+    return formErrors;
+  };
+
   const handleSave = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const requestBody = {
       formVersionId: version_id,
       containerId: id,
@@ -46,6 +58,7 @@ export default function PhoneNumber({
       phone_Type: phoneType,
       phone_Number: phoneNumber,
     };
+
     try {
       const response = await fetch(
         "http://135.181.57.251:3048/api/Controls/CreatePhoneNumber",
@@ -74,14 +87,20 @@ export default function PhoneNumber({
   };
 
   const handleUpdate = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
       isRequired: isRequired,
       phone_Type: phoneType,
       phone_Number: phoneNumber,
-    }
-    
+    };
+
     try {
       const response = await fetch('http://135.181.57.251:3048/api/Controls/UpdatePhoneNumber', {
         method: 'POST',
@@ -89,39 +108,34 @@ export default function PhoneNumber({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formUpdateData)
-      })
+      });
 
       if (response.ok) {
-        let responseData = await response.json()
-        if (!responseData.success) {
-          toast.error(responseData?.notificationMessage);
-          return;
-        }
-        toast.success(responseData?.notificationMessage)
+        const responseData = await response.json();
+        toast.success(responseData.notificationMessage);
         resetForm();
         document.getElementById("PHDialogClose").click();
       } else {
-        console.error('Failed to edit phone number field!')
-        toast.error("Unable to edit!")
+        console.error('Failed to edit phone number field!');
+        toast.error("Unable to edit!");
       }
     } catch (error) {
-      console.error('Error:', error)
-      toast.error("Something went wrong!")
+      console.error('Error:', error);
+      toast.error("Something went wrong!");
     }
-  }
+  };
 
   return (
     <div>
       <DialogTitle>{!isUpdate ? "Add" : "Edit"} Phone Number</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        {isUpdate ? "" : (
+        {!isUpdate && (
           <div className="col-span-2">
             <Select
               className="w-full"
-              onValueChange={(e) => {
-                setId(e);
-              }}
+              onValueChange={(e) => setId(e)}
+              value={id}
             >
               <label htmlFor="minLen" className="text-xs font-semibold">
                 Tab Name
@@ -137,6 +151,7 @@ export default function PhoneNumber({
                 ))}
               </SelectContent>
             </Select>
+            {errors.id && <p className="text-red-500 text-xs">{errors.id}</p>}
           </div>
         )}
 
@@ -151,7 +166,9 @@ export default function PhoneNumber({
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
+
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
@@ -175,7 +192,7 @@ export default function PhoneNumber({
           </label>
           <Select
             className="w-full"
-            value={isUpdate ? phoneType : null}
+            value={phoneType}
             onValueChange={(e) => setPhoneType(e)}
           >
             <SelectTrigger className="w-full">
@@ -190,8 +207,9 @@ export default function PhoneNumber({
             </SelectContent>
           </Select>
         </div>
+
         <div>
-          <label htmlFor="fontColour" className="text-xs font-semibold">
+          <label htmlFor="phoneNumber" className="text-xs font-semibold">
             Phone Number
           </label>
           <Input
@@ -201,6 +219,7 @@ export default function PhoneNumber({
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
+          {errors.phoneNumber && <p className="text-red-500 text-xs">{errors.phoneNumber}</p>}
         </div>
       </div>
 

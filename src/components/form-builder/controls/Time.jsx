@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   Select,
   SelectTrigger,
@@ -11,29 +10,39 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "@/lib/axios";
+
 export default function Time({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
   const timeFormats = [
-    {
-     label:"12",
-     value:0 
-    },
-    {
-      label:"24",
-      value:1
-     }
+    { label: "12", value: 0 },
+    { label: "24", value: 1 }
   ];
   const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
-  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
-  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
-  const [timeFormat, setTimeFormat] = useState(!isUpdate ? 0 : updateFieldData.timeFormat);
+  const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question || "");
+  const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired || false);
+  const [timeFormat, setTimeFormat] = useState(!isUpdate ? 0 : updateFieldData.timeFormat || 0);
   const [id, setId] = useState("");
   const [localLoading, setLocalLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    return formErrors;
+  };
+
   const handleSave = async () => {
     setLocalLoading(true);
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      setLocalLoading(false);
+      return;
+    }
+
     const payload = {
       formVersionId: version_id,
       containerId: id,
@@ -47,26 +56,29 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       const response = await axios.post("/Controls/CreateTime", JSON.stringify(payload));
 
       if (response?.data?.success) {
-        // Handle success
         let responseData = response.data;
         setter(!getter);
         toast.success(responseData.notificationMessage);
         resetForm();
-        setLocalLoading(false);
       } else {
-        // Handle error
         console.log("Failed to save");
         toast.error("Failed to save");
-        setLocalLoading(false);
       }
     } catch (error) {
       console.error("Error:", error);
       toast.error("Something went wrong!");
+    } finally {
       setLocalLoading(false);
     }
   };
 
   const handleUpdate = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
@@ -78,37 +90,31 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
       const response = await axios.post("/Controls/UpdateTime", JSON.stringify(formUpdateData));
 
       if (response.data.success) {
-        let responseData =response.data;
-        if (!responseData.success) {
-          toast.error(responseData?.notificationMessage);
-          return;
-        }
-        toast.success(responseData?.notificationMessage);
+        let responseData = response.data;
+        toast.success(responseData.notificationMessage);
         resetForm();
         document.getElementById("TimeDialogClose").click();
       } else {
-        console.error("Failed to edit Slider field!");
+        console.error("Failed to edit Time field!");
         toast.error("Unable to edit!");
       }
     } catch (error) {
       console.error("Error:", error);
-     
+      toast.error("Something went wrong!");
     }
   };
-  console.log(timeFormat,"timeFormat")
+
   return (
     <div>
-      <DialogTitle>Add Time</DialogTitle>
+      <DialogTitle>{!isUpdate ? "Add Time" : "Edit Time"}</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-      {isUpdate ? "" : (
+        {!isUpdate && (
           <div className="col-span-2">
             <Select
               className="w-full"
-              onValueChange={(e) => {
-                setId(e);
-              }}
-              // defaultValue={formDataApi[0]?.containerName}
+              onValueChange={(e) => setId(e)}
+              value={id}
             >
               <label htmlFor="minLen" className="text-xs font-semibold">
                 Tab Name
@@ -124,8 +130,10 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
                 ))}
               </SelectContent>
             </Select>
+       
           </div>
         )}
+
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
             Caption
@@ -137,6 +145,7 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2 checked={isRequired} onCheckedChange={setIsRequired} />
@@ -150,36 +159,43 @@ export default function Time({ getter, setter, formDataApi, resetForm, isUpdate 
 
         <label className="text-[16px] font-semibold col-span-2">Choices</label>
 
-        <div>
+        <div className="col-span-2">
           <label htmlFor="timeFormat" className="text-xs font-semibold">
             Time Format
           </label>
           <Select
             className="w-full"
-            onValueChange={(e) => setTimeFormat(e)}
-            defaultValue={timeFormat}
+            onValueChange={(e) => setTimeFormat(Number(e))}
+            value={timeFormat}
           >
             <SelectTrigger className="w-full">
-              <SelectValue />
+              <SelectValue placeholder="Choose Time Format" />
             </SelectTrigger>
             <SelectContent>
-              {timeFormats.map((style, index) => (
-                <SelectItem key={index} value={style.value}>
-                  {style?.label}
+              {timeFormats.map((format) => (
+                <SelectItem key={format.value} value={format.value}>
+                  {format.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+          {errors.timeFormat && <p className="text-red-500 text-xs">{errors.timeFormat}</p>}
         </div>
       </div>
 
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">
-        <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]" onClick={!isUpdate ? handleSave : handleUpdate}
-          disabled={localLoading}>
-          Save
+        <Button
+          className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+          onClick={!isUpdate ? handleSave : handleUpdate}
+          disabled={localLoading}
+        >
+          {!isUpdate ? "Save" : "Update"}
         </Button>
 
-        <DialogClose id="TimeDialogClose" className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
+        <DialogClose
+          id="TimeDialogClose"
+          className="bg-[#ababab] px-4 hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
+        >
           Cancel
         </DialogClose>
       </div>

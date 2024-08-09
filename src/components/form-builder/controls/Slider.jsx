@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -11,26 +10,38 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-
 import toast from "react-hot-toast";
-
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 import axios from "@/lib/axios";
 
 export default function Slider({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const dispatch = useDispatch();
   const [localLoading, setLocalLoading] = useState(false);
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.min_Value);
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
+  const [errors, setErrors] = useState({});
   const version_id = useSelector((state) => state?.formStore.version_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
-  
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (!minValue.trim() || isNaN(minValue)) formErrors.minValue = "Valid minimum value is required.";
+    if (!maxValue.trim() || isNaN(maxValue)) formErrors.maxValue = "Valid maximum value is required.";
+    if (parseInt(minValue) >= parseInt(maxValue)) formErrors.range = "Minimum value must be less than maximum value.";
+    return formErrors;
+  };
   const handleSave = async () => {
-    setLocalLoading(true)
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+    setLocalLoading(true);
     const payload = {
       formVersionId: version_id,
       containerId: id,
@@ -46,28 +57,29 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
       const response = await axios.post("/Controls/CreateSlider", JSON.stringify(payload));
       
       if (response?.data?.success) {
-        // Handle success
-        let responseData = response.data;
+        const responseData = response.data;
         setter(!getter);
         toast.success(responseData.notificationMessage);
         resetForm();
-        setLocalLoading(false);
       } else {
-        // Handle error
-        // setter(!getter);
         console.log("Failed to save");
         toast.error("Failed to save");
-        setLocalLoading(false);
       }
     } catch (error) {
-      // setter(!getter);
       console.error("Error:", error);
       toast.error("Something went wrong!");
+    } finally {
       setLocalLoading(false);
     }
   };
 
   const handleUpdate = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
@@ -79,13 +91,9 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
     try {
       const response = await axios.post("/Controls/UpdateSlider", JSON.stringify(formUpdateData));
 
-      if (response.ok) {
-        let responseData = await response.json();
-        if (!responseData.success) {
-          toast.error(responseData?.notificationMessage);
-          return;
-        }
-        toast.success(responseData?.notificationMessage);
+      if (response?.data?.success) {
+        const responseData = response.data;
+        toast.success(responseData.notificationMessage);
         resetForm();
         document.getElementById("SliDialogClose").click();
       } else {
@@ -96,22 +104,21 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
       console.error("Error:", error);
       toast.error("Something went wrong!");
     }
-  }
+  };
 
   return (
     <div>
       <DialogTitle>{!isUpdate ? "Add" : "Edit"} Slider</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        {isUpdate ? "" : (
+        {!isUpdate && (
           <div className="col-span-2">
             <Select
               className="w-full"
-              onValueChange={(e) => {
-                setId(e);
-              }}
+              onValueChange={(e) => setId(e)}
+              value={id}
             >
-              <label htmlFor="minLen" className="text-xs font-semibold">
+              <label htmlFor="tabName" className="text-xs font-semibold">
                 Tab Name
               </label>
               <SelectTrigger className="w-full h-[48px]">
@@ -125,21 +132,24 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
                 ))}
               </SelectContent>
             </Select>
+          
           </div>
         )}
 
         <div className="col-span-2">
-          <label htmlFor="tabName" className="text-[16px] font-semibold">
+          <label htmlFor="question" className="text-[16px] font-semibold">
             Caption
           </label>
           <Input
-            name="tabName"
+            name="question"
             placeholder="Type Here"
             className="p-4 h-[48px]"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
+
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
@@ -168,6 +178,7 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
             value={minValue}
             onChange={(e) => setMinValue(e.target.value)}
           />
+          {errors.minValue && <p className="text-red-500 text-xs">{errors.minValue}</p>}
         </div>
         <div>
           <label htmlFor="maxValue" className="text-xs font-semibold">
@@ -180,6 +191,8 @@ export default function Slider({ getter, setter, formDataApi, resetForm, isUpdat
             value={maxValue}
             onChange={(e) => setMaxValue(e.target.value)}
           />
+          {errors.maxValue && <p className="text-red-500 text-xs">{errors.maxValue}</p>}
+          {errors.range && <p className="text-red-500 text-xs">{errors.range}</p>}
         </div>
       </div>
 
