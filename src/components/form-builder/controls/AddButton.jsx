@@ -9,10 +9,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
-
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "@/redux/store/loading";
+
 export default function AddButton({
   getter,
   setter,
@@ -24,10 +24,11 @@ export default function AddButton({
   const dispatch = useDispatch();
   const version_id = useSelector((state) => state?.formStore.version_id);
   const isLoading = useSelector((state) => state?.loadingStore?.value);
+
   const fontSizes = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32];
   const fontFamilies = ["Normal", "Mono", "Sans", "Ariel", "Times"];
   const fontColours = ["Black", "White", "Red", "Blue", "Yellow", "Green"];
-  const BackgroundColours = [
+  const backgroundColours = [
     "Black",
     "White",
     "Red",
@@ -40,12 +41,29 @@ export default function AddButton({
   const [fontSize, setFontSize] = useState(16);
   const [fontFamily, setFontFamily] = useState("Normal");
   const [fontColour, setFontColour] = useState("Black");
-  const [BgColour, setBgColour] = useState("White");
+  const [bgColour, setBgColour] = useState("White");
   const [fontStyle, setFontStyle] = useState("Normal");
   const [id, setId] = useState("");
 
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!btnName.trim()) formErrors.btnName = "Button name is required.";
+
+    // Add additional validation rules as needed
+    return formErrors;
+  };
+
   const handleSubmit = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     dispatch(setIsLoading(true));
+
     const data = {
       formVersionId: version_id,
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
@@ -53,7 +71,7 @@ export default function AddButton({
       fontSize: fontSize.toString(),
       fontFamily: fontFamily,
       fontColor: fontColour,
-      backgroundColor: BgColour,
+      backgroundColor: bgColour,
       Name: btnName,
       fontStyle: fontStyle,
     };
@@ -71,22 +89,18 @@ export default function AddButton({
       );
 
       if (response.ok) {
-        // Handle success (e.g., show a success message, close the dialog, etc.)
-        console.log("Button Created successfully");
-        let responseData = await response.json();
+        const responseData = await response.json();
         setter(!getter);
         toast.success(responseData.notificationMessage);
-        dispatch(setIsLoading(false));
         resetForm();
       } else {
-        // Handle error (e.g., show an error message)
         console.error("Failed to create Button");
         toast.error("Failed to create Button!");
-        dispatch(setIsLoading(false));
       }
     } catch (error) {
-      console.error("An error occurred while cretaing Button:", error);
+      console.error("An error occurred while creating Button:", error);
       toast.error("Something went wrong!");
+    } finally {
       dispatch(setIsLoading(false));
     }
   };
@@ -98,16 +112,13 @@ export default function AddButton({
       <div className="grid grid-cols-2 gap-8 gap-y-4">
         {!isUpdate && (
           <>
-            <h5 className="text-xl font-semibold mt-4 col-span-2">
-              Select Tab
-            </h5>
+            <h5 className="text-xl font-semibold mt-4 col-span-2">Select Tab</h5>
 
             <div className="col-span-2">
               <Select
                 className="w-full"
-                onValueChange={(e) => {
-                  setId(e);
-                }}
+                onValueChange={(e) => setId(e)}
+                value={id}
               >
                 <label htmlFor="minLen" className="text-xs font-semibold">
                   Tab Name
@@ -123,6 +134,7 @@ export default function AddButton({
                   ))}
                 </SelectContent>
               </Select>
+           
             </div>
           </>
         )}
@@ -137,6 +149,7 @@ export default function AddButton({
             value={btnName}
             onChange={(e) => setBtnName(e.target.value)}
           />
+          {errors.btnName && <p className="text-red-500 text-xs">{errors.btnName}</p>}
         </div>
 
         <div>
@@ -146,7 +159,7 @@ export default function AddButton({
           <Select
             className="w-full"
             onValueChange={(e) => setFontFamily(e)}
-            defaultValue={fontFamily}
+            value={fontFamily}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -167,7 +180,7 @@ export default function AddButton({
           <Select
             className="w-full"
             onValueChange={(e) => setFontSize(Number(e))}
-            defaultValue={fontSize}
+            value={fontSize}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -189,7 +202,7 @@ export default function AddButton({
           <Select
             className="w-full"
             onValueChange={(e) => setFontColour(e)}
-            defaultValue={fontColour}
+            value={fontColour}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
@@ -210,13 +223,13 @@ export default function AddButton({
           <Select
             className="w-full"
             onValueChange={(e) => setBgColour(e)}
-            defaultValue={BgColour}
+            value={bgColour}
           >
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {BackgroundColours.map((style, index) => (
+              {backgroundColours.map((style, index) => (
                 <SelectItem key={index} value={style}>
                   {style}
                 </SelectItem>

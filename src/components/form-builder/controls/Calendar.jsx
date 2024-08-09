@@ -11,9 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
 import axios from "@/lib/axios";
 
 export default function Calendar({
@@ -33,14 +31,30 @@ export default function Calendar({
     "2024/05/23 (yyyy/mm/dd)",
   ];
   const calanderFormats = ["Gregorian", "Hijri"];
-  console.log(updateFieldData)
+
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData?.question);
   const [dateFormat, setDateFormat] = useState(!isUpdate ? null : updateFieldData?.dateFormat);
   const [calendarFormat, setCalendarFormat] = useState(!isUpdate ? null : updateFieldData?.calendarType);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData?.isRequired);
   const [id, setId] = useState("");
+  
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    let formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (dateFormat === null) formErrors.dateFormat = "Date format is required.";
+    if (calendarFormat === null) formErrors.calendarFormat = "Calendar type is required.";
+    return formErrors;
+  };
 
   const handleSubmit = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const postData = {
       formVersionId: version_id,
       containerId: id,
@@ -48,7 +62,7 @@ export default function Calendar({
       question: question,
       isRequired: isRequired,
       dateFormat: dateFormat,
-      calendarType: calendarFormat
+      calendarType: calendarFormat,
     };
 
     try {
@@ -59,25 +73,28 @@ export default function Calendar({
 
       if (response?.data?.success) {
         setter(!getter);
-        toast.success(response?.data?.notificationMessage);
         resetForm();
       } else {
         console.error("Failed to add Calendar", response);
-        toast.error("Unable to save!");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Something went wrong!");
     }
   };
 
   const handleUpdate = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
       isRequired: isRequired,
       dateFormat: dateFormat,
-      calendarType: calendarFormat
+      calendarType: calendarFormat,
     };
 
     try {
@@ -87,21 +104,13 @@ export default function Calendar({
       );
 
       if (response.data.success) {
-        let responseData = response.data;
-        if (!responseData.success) {
-          toast.error(responseData?.notificationMessage);
-          return;
-        }
-        toast.success(responseData?.notificationMessage);
         resetForm();
         document.getElementById("CalendarDialogClose").click();
       } else {
         console.error("Failed to edit Calendar!");
-        toast.error("Unable to edit!");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Something went wrong!");
     }
   };
 
@@ -114,10 +123,7 @@ export default function Calendar({
           <div className="col-span-2">
             <Select
               className="w-full"
-              onValueChange={(e) => {
-                setId(e);
-              }}
-              // defaultValue={formDataApi[0]?.containerName}
+              onValueChange={(e) => setId(e)}
             >
               <label htmlFor="minLen" className="text-xs font-semibold">
                 Tab Name
@@ -133,6 +139,7 @@ export default function Calendar({
                 ))}
               </SelectContent>
             </Select>
+           
           </div>
         )}
 
@@ -145,11 +152,12 @@ export default function Calendar({
             placeholder="Type Here"
             className="p-4 h-[48px]"
             value={question}
-            onChange={(e)=>setQuestion(e.target.value)}
+            onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
         <div className="my-4 col-span-2 flex items-center space-x-2">
-          <Checkbox2 id="terms" value={isRequired} onCheckedChange={(e)=>setIsRequired(e)} />
+          <Checkbox2 id="terms" value={isRequired} onCheckedChange={(e) => setIsRequired(e)} />
           <label
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -185,6 +193,7 @@ export default function Calendar({
               ))}
             </SelectContent>
           </Select>
+          {errors.dateFormat && <p className="text-red-500 text-xs">{errors.dateFormat}</p>}
         </div>
         <div>
           <label htmlFor="dateFormat" className="text-xs font-semibold">
@@ -206,6 +215,7 @@ export default function Calendar({
               ))}
             </SelectContent>
           </Select>
+          {errors.calendarFormat && <p className="text-red-500 text-xs">{errors.calendarFormat}</p>}
         </div>
       </div>
 

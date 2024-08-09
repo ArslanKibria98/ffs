@@ -1,47 +1,66 @@
-import React, { useState, useEffect } from 'react'
-
+import React, { useState, useEffect } from 'react';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectItem,
-  SelectContent} from "@/components/ui/select"
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Checkbox2 } from '@/components/ui/checkbox'
-import { DialogTitle, DialogClose } from '@/components/ui/dialog'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+  SelectContent
+} from "@/components/ui/select";
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Checkbox2 } from '@/components/ui/checkbox';
+import { DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import axios from "@/lib/axios";
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { setIsLoading } from '../../../redux/store/loading'
+import { useSelector, useDispatch } from 'react-redux';
+import { setIsLoading } from '../../../redux/store/loading';
 
 export default function AddTextField({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const loading = useSelector((state) => state?.loadingStore?.value);
-  const version_id = useSelector((state) => state?.formStore.version_id)
+  const version_id = useSelector((state) => state?.formStore.version_id);
   const default_id = useSelector((state) => state?.formStore.default_id);
-  // console.log(updateFieldData);
 
-  const fieldTypes = ['Numeric', 'Text', 'Email', 'Password']
+  const fieldTypes = ['Numeric', 'Text', 'Email', 'Password'];
 
-  const [fieldType, setFieldType] = useState(!isUpdate ? fieldTypes[0] : updateFieldData.inputType)
-  const [fieldLabel, setFieldLabel] = useState(!isUpdate ? "" : updateFieldData.name)
-  const [id, setId] = useState("")
-  const [fieldName, setFieldName] = useState(!isUpdate ? "" : updateFieldData.name)
-  const [fieldPlaceholder, setFieldPlaceholder] = useState(!isUpdate ? "" : updateFieldData.placePlaceholder)
-  const [minLength, setMinLength] = useState(!isUpdate ? "" : updateFieldData.minLength)
-  const [maxLength, setMaxLength] = useState(!isUpdate ? "" : updateFieldData.maxLength)
-  const [errorMessage, setErrorMessage] = useState(!isUpdate ? "" : updateFieldData.errorMsgTxt)
-  const [errorMessagePosition, setErrorMessagePosition] = useState(!isUpdate ? 'option-one' : updateFieldData.errorMsgPosition)
-  const [isMandatory, setIsMandatory] = useState(!isUpdate ? false : updateFieldData.isRequired)
+  const [fieldType, setFieldType] = useState(!isUpdate ? fieldTypes[0] : updateFieldData.inputType);
+  const [fieldLabel, setFieldLabel] = useState(!isUpdate ? "" : updateFieldData.name);
+  const [id, setId] = useState("");
+  const [fieldName, setFieldName] = useState(!isUpdate ? "" : updateFieldData.name);
+  const [fieldPlaceholder, setFieldPlaceholder] = useState(!isUpdate ? "" : updateFieldData.placePlaceholder);
+  const [minLength, setMinLength] = useState(!isUpdate ? "" : updateFieldData.minLength);
+  const [maxLength, setMaxLength] = useState(!isUpdate ? "" : updateFieldData.maxLength);
+  const [errorMessage, setErrorMessage] = useState(!isUpdate ? "" : updateFieldData.errorMsgTxt);
+  const [errorMessagePosition, setErrorMessagePosition] = useState(!isUpdate ? 'option-one' : updateFieldData.errorMsgPosition);
+  const [isMandatory, setIsMandatory] = useState(!isUpdate ? false : updateFieldData.isRequired);
+
+  const [errors, setErrors] = useState({});
+
+  const validateFields = () => {
+    let errors = {};
+
+    if (!fieldLabel) errors.fieldLabel = "Field label is required";
+    if (!fieldName) errors.fieldName = "Field name is required";
+    if (!fieldPlaceholder) errors.fieldPlaceholder = "Field placeholder is required";
+    if (!minLength) errors.minLength = "Minimum length is required";
+    if (!maxLength) errors.maxLength = "Maximum length is required";
+    if (!errorMessage) errors.errorMessage = "Error Message is required";
+    if (minLength !== "" && maxLength !== "" && minLength > maxLength) errors.length = "Minimum length cannot be greater than maximum length";
+
+    setErrors(errors);
+
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async () => {
+    if (!validateFields()) return;
+
     const formData = {
       formVersionId: version_id,
-      containerId: id?id:default_id,
+      containerId: id ? id : default_id,
       regionId: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
       name: fieldName,
       default_Value: 'abc',
@@ -54,28 +73,30 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       errorMsgTxt: errorMessage,
       errorMsgPosition: "option-one",
       isRequired: isMandatory
-    }
-    console.log(formData)
+    };
+    console.log(formData);
     // return;
     try {
       const response = await axios.post("/Controls/CreateTextbox", JSON.stringify(formData));
 
       if (response?.data?.success) {
-        let responseData=response.data
+        let responseData = response.data;
         setter(!getter);
-        toast.success(responseData?.notificationMessage)
+        toast.success(responseData?.notificationMessage);
         resetForm();
       } else {
-        console.error('Failed to add Text field!')
-        toast.error("Unable to save!")
+        console.error('Failed to add Text field!');
+        toast.error("Unable to save!");
       }
     } catch (error) {
-      console.error('Error:', error)
-      toast.error("Something went wrong!")
+      console.error('Error:', error);
+      toast.error("Something went wrong!");
     }
-  }
+  };
 
   const handleUpdate = async () => {
+    if (!validateFields()) return;
+
     const formUpdateData = {
       id: updateFieldData.controlId,
       controlId: updateFieldData.controlId,
@@ -88,8 +109,8 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       errorMsgTxt: errorMessage,
       errorMsgPosition: errorMessagePosition,
       isRequired: isMandatory
-    }
-    
+    };
+
     try {
       const response = await axios.post("/Controls/UpdateTextbox", JSON.stringify(formUpdateData));
       if (response?.data?.success) {
@@ -98,19 +119,19 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
           toast.error(responseData?.notificationMessage);
           return;
         }
-        toast.success(responseData?.notificationMessage)
+        toast.success(responseData?.notificationMessage);
         resetForm();
         document.getElementById("TFDialogClose").click();
       } else {
-        console.error('Failed to edit Text field!')
-        toast.error("Unable to edit!")
+        console.error('Failed to edit Text field!');
+        toast.error("Unable to edit!");
       }
     } catch (error) {
-      console.error('Error:', error)
-      toast.error("Something went wrong!")
+      console.error('Error:', error);
+      toast.error("Something went wrong!");
     }
-  }
-  
+  };
+
   return (
     <div>
       <DialogTitle>{!isUpdate ? "Add " : "Edit "} Input Field</DialogTitle>
@@ -124,7 +145,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
               <Select
                 className="w-full"
                 onValueChange={(e) => {
-                  setId(e)
+                  setId(e);
                 }}
               >
                 <label htmlFor="minLen" className="text-xs font-semibold">
@@ -151,7 +172,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
           <Select
             className="w-full"
             onValueChange={(e) => {
-              setFieldType(e)
+              setFieldType(e);
             }}
             defaultValue={fieldType}
           >
@@ -184,6 +205,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             value={fieldLabel}
             onChange={(e) => setFieldLabel(e.target.value)}
           />
+          {errors.fieldLabel && <span className="text-red-500 text-xs">{errors.fieldLabel}</span>}
         </div>
         <div>
           <label htmlFor="fieldName" className="text-xs font-semibold">
@@ -196,6 +218,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             value={fieldName}
             onChange={(e) => setFieldName(e.target.value)}
           />
+          {errors.fieldName && <span className="text-red-500 text-xs">{errors.fieldName}</span>}
         </div>
         <div>
           <label htmlFor="fieldPlaceholder" className="text-xs font-semibold">
@@ -208,6 +231,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             value={fieldPlaceholder}
             onChange={(e) => setFieldPlaceholder(e.target.value)}
           />
+          {errors.fieldPlaceholder && <span className="text-red-500 text-xs">{errors.fieldPlaceholder}</span>}
         </div>
 
         <h5 className="text-xl font-semibold mt-4 col-span-2">Field Length</h5>
@@ -223,6 +247,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             value={minLength}
             onChange={(e) => setMinLength(e.target.value)}
           />
+          {errors.minLength && <span className="text-red-500 text-xs">{errors.minLength}</span>}
         </div>
         <div>
           <label htmlFor="maxLen" className="text-xs font-semibold">
@@ -235,11 +260,11 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             value={maxLength}
             onChange={(e) => setMaxLength(e.target.value)}
           />
+          {errors.maxLength && <span className="text-red-500 text-xs">{errors.maxLength}</span>}
         </div>
+        {errors.length && <span className="text-red-500 text-xs col-span-2">{errors.length}</span>}
 
-        <h5 className="text-xl font-semibold mt-4 col-span-2">
-          Field Validation
-        </h5>
+        <h5 className="text-xl font-semibold mt-4 col-span-2">Field Validation</h5>
 
         <div>
           <label htmlFor="errorMessage" className="text-xs font-semibold">
@@ -253,31 +278,9 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
             onChange={(e) => setErrorMessage(e.target.value)}
           />
         </div>
-        {/* <div>
-          <label
-            htmlFor="errorMessagePosition"
-            className="text-xs font-semibold"
-          >
-            Error Message Position
-          </label>
-          <RadioGroup
-            defaultValue="option-one"
-            value={errorMessagePosition}
-            onValueChange={setErrorMessagePosition}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="option-one" id="option-one" />
-              <Label htmlFor="option-one">Error above field</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="option-two" id="option-two" />
-              <Label htmlFor="option-two">Error below field</Label>
-            </div>
-          </RadioGroup>
-        </div> */}
-
+        {errors.errorMessage && <span className="text-red-500 text-xs col-span-2">{errors.errorMessage}</span>}
         <div className="my-4 col-span-2 flex items-center space-x-2">
-          <Checkbox2 checked={isMandatory} onCheckedChange={(e)=>setIsMandatory(e)} />
+          <Checkbox2 checked={isMandatory} onCheckedChange={(e) => setIsMandatory(e)} />
           <label
             htmlFor="terms"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -300,5 +303,5 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
         </DialogClose>
       </div>
     </div>
-  )
+  );
 }

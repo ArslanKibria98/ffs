@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -11,69 +10,47 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import toast from "react-hot-toast";
-
-import { useSelector, useDispatch } from "react-redux";
-import { setIsLoading } from "../../../redux/store/loading";
+import { useSelector } from "react-redux";
 import axios from "@/lib/axios";
-export default function FileUpload({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+
+export default function FileUpload({ getter, setter, formDataApi, resetForm }) {
   const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
   const [question, setQuestion] = useState("");
   const [isRequired, setIsRequired] = useState(false);
   const [id, setId] = useState("");
   const [selectedFormat, setSelectedFormat] = useState([]);
+  const [errors, setErrors] = useState({});
+
   const availableFormat = [
-    {
-      label: "JPEG",
-      value:0
-    },
-    {
-      label: "PNG",
-      value:1
-    },
-    {
-      label: "SVG",
-      value:2
-    },
-    {
-      label: "GIF",
-      value:3
-    },
-    {
-      label: "TIFF",
-      value:4
-    },
-    {
-      label: "PDF",
-      value:5
-    },
-    {
-      label: "DOC",
-      value:6
-    },
-    {
-      label: "XLS",
-      value:7
-    },
-    {
-      label: "PPT",
-      value:8
-    },
-    {
-      label: "ODP",
-      value:9
-    },
-    {
-      label: "TXT",
-      value:10
-    },
-    {
-      label: "All Files",
-      value:11
-    }
+    { label: "JPEG", value: 0 },
+    { label: "PNG", value: 1 },
+    { label: "SVG", value: 2 },
+    { label: "GIF", value: 3 },
+    { label: "TIFF", value: 4 },
+    { label: "PDF", value: 5 },
+    { label: "DOC", value: 6 },
+    { label: "XLS", value: 7 },
+    { label: "PPT", value: 8 },
+    { label: "ODP", value: 9 },
+    { label: "TXT", value: 10 },
+    { label: "All Files", value: 11 },
   ];
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (selectedFormat.length === 0) formErrors.selectedFormat = "At least one file format must be selected.";
+    return formErrors;
+  };
+
   const handleSubmit = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const postData = {
       formVersionId: version_id,
       containerId: id,
@@ -81,23 +58,19 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
       controlType: 0,
       question: question,
       isRequired: isRequired,
-      file_Format: 0,
+      file_Format: selectedFormat.map(format => format.value), // or any other logic for file_Format
     };
 
     try {
       const response = await axios.post("/Controls/CreateFile", JSON.stringify(postData));
       if (response?.data?.success) {
-        let responseData =response.data;
         setter(!getter);
-        toast.success(responseData?.notificationMessage);
         resetForm();
       } else {
         console.error("Failed to add OTP");
-        toast.error("Unable to save!");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Something went wrong!");
     }
   };
 
@@ -108,7 +81,6 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
         : [...prevSelectedFormats, format.label]
     );
   };
-  console.log(selectedFormat)
 
   return (
     <div>
@@ -139,7 +111,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
         </div>
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-          Caption
+            Caption
           </label>
           <Input
             name="tabName"
@@ -148,6 +120,7 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
@@ -168,18 +141,19 @@ export default function FileUpload({ getter, setter, formDataApi, resetForm, isU
           </label>
         </div>
         <div className="col-span-2 grid grid-cols-4 gap-4">
-        {availableFormat.map((format, index) => (
-        <div key={index} className="col-span-1 flex items-center space-x-2">
-          <Checkbox2
-            checked={selectedFormat.includes(format.label)}
-            onCheckedChange={() => handleFormatChange(format)}
-          />
-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-            {format.label}
-          </label>
+          {availableFormat.map((format, index) => (
+            <div key={index} className="col-span-1 flex items-center space-x-2">
+              <Checkbox2
+                checked={selectedFormat.includes(format.label)}
+                onCheckedChange={() => handleFormatChange(format)}
+              />
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {format.label}
+              </label>
+            </div>
+          ))}
         </div>
-      ))}
-        </div>
+        {errors.selectedFormat && <p className="text-red-500 text-xs col-span-2">{errors.selectedFormat}</p>}
       </div>
 
       <div className="flex flex-row-reverse gap-4 py-1 pt-4 my-4">

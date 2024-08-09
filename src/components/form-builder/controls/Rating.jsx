@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Select,
   SelectTrigger,
@@ -11,30 +10,50 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { Checkbox2 } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { v4 as uuidv4 } from 'uuid';
 import toast from "react-hot-toast";
-
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 import axios from "@/lib/axios";
 
 export default function Rating({ getter, setter, formDataApi, resetForm, isUpdate = false, updateFieldData = null }) {
+  const dispatch = useDispatch();
   const loading = useSelector((state) => state?.loadingStore?.value);
+  const version_id = useSelector((state) => state?.formStore.version_id);
+  const token = useSelector((state) => state?.authStore?.token);
+
   const [question, setQuestion] = useState(!isUpdate ? "" : updateFieldData.question);
   const [isRequired, setIsRequired] = useState(!isUpdate ? false : updateFieldData.isRequired);
   const [minValue, setMinValue] = useState(!isUpdate ? "" : updateFieldData.ratingValue);
   const [maxValue, setMaxValue] = useState(!isUpdate ? "" : updateFieldData.max_Value);
   const [id, setId] = useState("");
-  const version_id = useSelector((state) => state?.formStore.version_id);
-  const token = useSelector((state) => state?.authStore?.token);
+
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     return () => {
       const dynamicRegionId = uuidv4();
-      console.log(dynamicRegionId,"==--==")
+      console.log(dynamicRegionId, "==--==");
     };
-  }, [])
+  }, []);
+
+  const validateForm = () => {
+    const formErrors = {};
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (!minValue.trim() || isNaN(minValue)) formErrors.minValue = "Valid rating value is required.";
+    // Add additional validation rules as needed
+    return formErrors;
+  };
+
   const handleSave = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    dispatch(setIsLoading(true));
+
     const payload = {
       formVersionId: version_id,
       containerId: id,
@@ -43,7 +62,7 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
       question: question,
       isRequired: isRequired,
       ratingValue: parseInt(minValue),
-      ratingComment:"test"
+      ratingComment: "test",
     };
 
     try {
@@ -53,15 +72,14 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'Authorization':`Bearer ${token}`
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(payload),
         }
       );
 
       if (response.ok) {
-        // Handle success
-        let responseData = await response.json();
+        const responseData = await response.json();
         setter(!getter);
         toast.success(responseData.notificationMessage);
         resetForm();
@@ -72,24 +90,31 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
     } catch (error) {
       console.error("Error:", error);
       toast.error("Something went wrong!");
+    } finally {
+      dispatch(setIsLoading(false));
     }
   };
 
   const handleUpdate = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
       isRequired: isRequired,
       ratingValue: parseInt(minValue),
-      ratingComment:"test",
+      ratingComment: "test",
     };
 
     try {
       const response = await axios.post("/api/Controls/UpdateRating", JSON.stringify(formUpdateData));
 
       if (response?.data?.success) {
-        // Handle success
-        let responseData = response.data;
+        const responseData = response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;
@@ -105,20 +130,19 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
       console.error("Error:", error);
       toast.error("Something went wrong!");
     }
-  }
+  };
 
   return (
     <div>
       <DialogTitle>{!isUpdate ? "Add" : "Edit"} Rating</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        {isUpdate ? "" : (
+        {!isUpdate && (
           <div className="col-span-2">
             <Select
               className="w-full"
-              onValueChange={(e) => {
-                setId(e);
-              }}
+              onValueChange={(e) => setId(e)}
+              value={id}
             >
               <label htmlFor="minLen" className="text-xs font-semibold">
                 Tab Name
@@ -134,21 +158,24 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
                 ))}
               </SelectContent>
             </Select>
+            
           </div>
         )}
 
         <div className="col-span-2">
-          <label htmlFor="tabName" className="text-xs font-semibold">
+          <label htmlFor="question" className="text-xs font-semibold">
             Caption
           </label>
           <Input
-            name="tabName"
+            name="question"
             placeholder="Type Here"
             className="p-4 h-[48px]"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
+
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
             checked={isRequired}
@@ -163,12 +190,12 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
         </div>
 
         <label className="text-[16px] font-semibold col-span-2">
-        Rating Values
+          Rating Values
         </label>
 
         <div>
           <label htmlFor="minValue" className="text-xs font-semibold">
-          Value
+            Value
           </label>
           <Input
             name="minValue"
@@ -177,46 +204,12 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
             value={minValue}
             onChange={(e) => setMinValue(e.target.value)}
           />
+          {errors.minValue && <p className="text-red-500 text-xs">{errors.minValue}</p>}
         </div>
-        {/* <div>
-          <label htmlFor="maxValue" className="text-xs font-semibold">
-          Rating 2
-          </label>
-          <Input
-            name="maxValue"
-            placeholder="Type Here"
-            className="p-4 h-[48px]"
-            value={maxValue}
-            onChange={(e) => setMaxValue(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="minValue" className="text-xs font-semibold">
-          Rating 3
-          </label>
-          <Input
-            name="minValue"
-            placeholder="Type Here"
-            className="p-4 h-[48px]"
-            value={minValue}
-            onChange={(e) => setMinValue(e.target.value)}
-          />
-        </div>
+        {/* Uncomment and apply validation if needed
         <div>
           <label htmlFor="maxValue" className="text-xs font-semibold">
-          Rating 4
-          </label>
-          <Input
-            name="maxValue"
-            placeholder="Type Here"
-            className="p-4 h-[48px]"
-            value={maxValue}
-            onChange={(e) => setMaxValue(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="maxValue" className="text-xs font-semibold">
-          Rating 5
+            Rating 2
           </label>
           <Input
             name="maxValue"
