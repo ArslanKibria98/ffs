@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
+import { useFormik } from "formik";
+import FormRenderer from '@/components/form-builder/Render/FormRenderer';
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import FieldInfo from "@/components/form-builder/FieldInfo";
-import { Link } from "react-router-dom";
 
 import TabSection from "@/components/form-builder/TabSection";
 import BuildTab from "@/components/form-builder/tabs/BuildTab";
@@ -32,6 +42,7 @@ import List from "@/components/form-builder/controls/List";
 import Slider from "@/components/form-builder/controls/Slider";
 
 import toast from "react-hot-toast";
+import { EyeIcon } from "lucide-react";
 import BoxLoader from "@/components/BoxLoader";
 
 import localisationData from "../../../localisation.json";
@@ -527,6 +538,202 @@ export default function BuilderPage() {
     ],
   };
 
+  const formik = useFormik({
+    initialValues: {},
+    onSubmit: async (values) => {
+      console.log("Form Data:", values);
+      const textBoxInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 0
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          textBoxInput: values[key],
+        }));
+
+      const otpInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 4
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          otpInput: values[key],
+        }));
+      const ratingInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 8
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          ratingValue: values[key].toString(),
+          ratingComment: "abc",
+        }));
+      const phoneNumberInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 5
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          phoneNumber: values[key],
+          phoneType: "any",
+        }));
+      const checkBoxInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 9
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          checkBoxInput: values[key].toString(),
+        }));
+      const radioButtonInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 6
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          radioButtonInput: values[key].toString(),
+        }));
+      const timeInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 10
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          timeInput: formatDate(values[key].toString()),
+        }));
+      const dropdownInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 7
+              )
+            )
+        )
+
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          dropdownInput: values[key].toString(),
+        }));
+      const sliderInput = Object.keys(values)
+        .filter(
+          (key) =>
+            key !== "undefined" &&
+            formDataApi.some((tab) =>
+              tab.controls.some(
+                (control) =>
+                  control.controlId === key && control.controlType === 2
+              )
+            )
+        )
+        .map((key) => ({
+          controlId: key.toLowerCase(),
+          sliderInput: values[key].toString(),
+        }));
+      // const controlFileInstanceInput = Object.keys(values).filter(key => key !== "undefined" && formDataApi.some(tab => tab.controls.some(control => control.controlId === key && control.controlType === 3))).map(key => ({
+      //   "controlId": key.toLowerCase(),
+      //   "fileFormat": 0,
+      //   "phoneType": "any",
+
+      // }));
+      console.log("ata:", sliderInput);
+      // toast.success('Form submitted successfully!');
+      try {
+        setLoader(true);
+        const data = {
+          formVersionId: version_id,
+          textBoxInput,
+          phoneNumberInput,
+          otpInput,
+          ratingInput,
+          checkBoxInput,
+          timeInput,
+          radioButtonInput,
+          dropdownInput,
+          sliderInput,
+        };
+        // const response = await fetch(
+        //   "http://135.181.57.251:3048/api/FormInstance/CreateFormInstance",
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       "Request-Id": "b561073e-d25b-4057-a1d3-7299129ff0f2",
+        //     },
+        //     body: JSON.stringify(data),
+        //   }
+        // );
+        const response = await axios.post(
+          "/FormInstance/CreateFormInstance",
+          JSON.stringify(data)
+        );
+        const dataRes = response.data;
+        console.log(dataRes, "data");
+        setLoader(false);
+        toast.success(dataRes?.notificationMessage);
+        // You can add your POST API call here
+        // e.g., postFormData(textBoxInput);
+      } catch (error) {
+        console.error("Error fetching form data:", error);
+        toast.error("Failed to submit form.");
+        setLoader(false);
+      }
+      // You can add your POST API call here
+      // e.g., postFormData({ textBoxInput, otpInput });
+    },
+  });
+
   useEffect(() => {
     return () => {
       dispatch(setIsLoading(true));
@@ -601,9 +808,11 @@ export default function BuilderPage() {
         </Tabs>
       </div>
 
-      <div className="col-span-3 mx-4 pt-6 relative">
-        {formDataApi.length > 0 ? (
+      <div className="col-span-3 mx-4 pt-4 relative">
+        
+        {formDataApi.length > 0 ? 
           <Tabs defaultValue={formDataApi && formDataApi[0]?.containerName}>
+            <div className="flex justify-between items-end">
             <TabsList className="formBuilderTablist">
               {loading ? (
                 <TabsTrigger
@@ -619,7 +828,7 @@ export default function BuilderPage() {
                     <TabsTrigger
                       value={tab?.containerName}
                       key={index}
-                      className={"px-5 h-10 mb-0 mr-1 " + (formDataApi.length == 1 && " formBuilderTabDef")}
+                      className={"px-5 h-10 mb-0 mr-[2px] " + (formDataApi.length == 1 && " formBuilderTabDef")}
                     >
                       {tab?.containerName}
                     </TabsTrigger>
@@ -627,6 +836,20 @@ export default function BuilderPage() {
                 }
               })}
             </TabsList>
+            <Dialog>
+              <DialogTrigger className="mb-3 rounded-lg py-2 px-4 bg-[#ffeff0] flex gap-2">
+                <EyeIcon className="w-5" />
+                View Form
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogDescription>
+                    <FormRenderer formDataApi={formDataApi} formik={formik} loader={loading} preview={true} />
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+            </div>
             {formDataApi?.map((tab, index2) => (
               <TabsContent
                 value={tab?.containerName}
@@ -677,7 +900,7 @@ export default function BuilderPage() {
               </TabsContent>
             ))}
           </Tabs>
-        ) : !loading && formDataApi.length < 1 ? (
+         : !loading && formDataApi.length < 1 ? (
           <div className="bg-white text-center px-10 py-20 text-gray-700 text-sm">
             No Fields in this Form!
           </div>
