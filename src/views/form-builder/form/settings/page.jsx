@@ -114,9 +114,8 @@ export default function FormSettingsPage() {
       toast.error("An error occurred. Please try again.");
     }
   };
+  
   let locData = localisationData.formSetting.en;
-  // console.log(locData);
-
   if (language == "en") {
     locData = localisationData.formSetting.en;
   } else if (language == "ar") {
@@ -130,19 +129,19 @@ export default function FormSettingsPage() {
             value={"details"}
             className="px-5 h-10 mb-0 mr-1"
           >
-            Form Details
+            {locData?.name || "Form Details"}
           </TabsTrigger>
           <TabsTrigger
             value={"language"}
             className="px-5 h-10 mb-0 mr-1"
           >
-            Language Settings
+            {locData?.lSetting || "Language Settings"}
           </TabsTrigger>
           <TabsTrigger
             value={"country"}
             className="px-5 h-10 mb-0 mr-1"
           >
-            Country Settings
+            {locData?.cSetting || "Country Settings"}
           </TabsTrigger>
         </TabsList>
         <div className="border-radius bg-white p-6 min-h-[500px]">
@@ -310,11 +309,11 @@ export default function FormSettingsPage() {
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={handleSubmit}
         >
-          Next
+          {locData?.next || "Next"}
         </Button>
         <a href={`/form-builder/form`}>
           <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
-            Previous
+          {locData?.prev || "Previous"}
           </Button>
         </a>
       </div>

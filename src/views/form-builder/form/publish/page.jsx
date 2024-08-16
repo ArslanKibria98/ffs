@@ -13,11 +13,22 @@ import {
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast"
 import { useSelector } from "react-redux";
+import localisationData from "../../../../localisation.json";
 
 export default function FormPublishPage() {
   const location = window.location.origin;
   const version_id = useSelector((state) => state?.formStore.version_id);
   const form_Id = useSelector((state) => state?.formStore.form_id);
+
+  const language = useSelector((state) => state.language.language);
+    
+  let locData = localisationData.renderForm.en;
+  if (language == "en") {
+    locData = localisationData.renderForm.en;
+  } else if (language == "ar") {
+    locData = localisationData.renderForm.ar;
+  }
+
   const handlePublish =async (version) => {
     const body={
       versionId: version,
@@ -45,9 +56,9 @@ export default function FormPublishPage() {
             <div className="flex items-center justify-center mb-6">
               <img src={successIcon} />
             </div>
-            <div className="font-bold text-4xl">Thank You!</div>
+            <div className="font-bold text-4xl">{locData?.thank || "Thank You!"}</div>
             <div>Form ID : {form_Id}</div>
-            <div>Date : 25/03/2024</div>
+            <div>{locData?.date || "Date"} : 25/03/2024</div>
             <div className="">
               Access URL : {" "}
               <a
@@ -59,15 +70,15 @@ export default function FormPublishPage() {
               </a>
             </div>
             <div className="text-xl mt-3 mx-auto max-w-[550px]">
-              Your draft Form has been created. 
-              {" "}<a className="underline text-blue-400" onClick={()=>{handlePublish(version_id)}}>Click here</a>{" "}
-              to publish your unpublished forms.
+              {locData?.bClick || "Your draft Form has been created."}
+              {" "}<a className="underline text-blue-400" onClick={()=>{handlePublish(version_id)}}>{locData?.click || "Click here"}</a>{" "}
+              {locData?.aClick || "to publish your unpublished forms."}
             </div>
             
             <div className="flex flex-row-reverse justify-center gap-4 py-4 my-4">
               <Dialog>
                 <DialogTrigger className="px-4 bg-[#e2252e] hover:bg-[#db3139] text-white rounded-lg">
-                  View HTML Tag
+                  {locData?.view || "View HTML Tag"}
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -88,7 +99,7 @@ export default function FormPublishPage() {
               </Dialog>
               <a href={`/form-builder`}>
                 <Button className="bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-light">
-                  Back to Home
+                  {locData?.back || "Back to Home"}
                 </Button>
               </a>
             </div>

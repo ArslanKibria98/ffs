@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { deleteApi } from "@/lib/apiRequests";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsLoading } from "@/redux/store/loading";
 import {
   Dialog,
@@ -13,8 +13,18 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../ui/dialog";
+import localisationData from "../../localisation.json";
+
 function TabSection({ tab, index, children, resetForm, updateModalData }) {
   const dispatch = useDispatch();
+
+  const language = useSelector((state) => state.language.language);
+  let locData = localisationData.formBuilder.en;
+  if (language == "en") {
+    locData = localisationData.formBuilder.en;
+  } else if (language == "ar") {
+    locData = localisationData.formBuilder.ar;
+  }
 
   function resetFormForward() {
     console.log("Forward function in Tab Section");
@@ -32,14 +42,14 @@ function TabSection({ tab, index, children, resetForm, updateModalData }) {
             height={16}
             width={16}
           />
-          <h4>Tab {index + 1}</h4>
+          <h4>{locData?.tab || "Tab"} {index + 1}</h4>
         </div>
 
         {/* Tab Name Field Box */}
         <div className="flex gap-1 items-center w-full">
           <div className="w-[16px]"></div>
           <div className="w-full">
-            <span className="text-[12px]">Tab Name</span>
+            <span className="text-[12px]">{locData?.tabName || "Tab Name"}</span>
             <div className="flex justify-between w-full gap-3">
               <Input
                 className="w-[90%]"
@@ -58,7 +68,7 @@ function TabSection({ tab, index, children, resetForm, updateModalData }) {
                         " bg-[#ffffff] hover:bg-[#efefef] flex flex-col items-center text-[#838383] hover:text-[#ff9d00]"
                       }
                     >
-                      <span className="text-[10px]">Edit</span>
+                      <span className="text-[10px]">{locData?.edit || "Edit"}</span>
                       <img
                         src="/form-layout-icons/editIcon.svg"
                         alt="Edit Icon"
@@ -80,7 +90,7 @@ function TabSection({ tab, index, children, resetForm, updateModalData }) {
                     deleteApi(tab?.id, resetFormForward, true);
                   }}
                 >
-                  <span className="text-[10px]">Delete</span>
+                  <span className="text-[10px]">{locData?.delete || "Delete"}</span>
                   <img
                     src="/form-layout-icons/deleteIcon.svg"
                     alt="Delete Icon"
@@ -99,7 +109,7 @@ function TabSection({ tab, index, children, resetForm, updateModalData }) {
       <div className=" mb-10">
         <div className="flex gap-1 items-center mb-2">
           <div className="w-[16px]"></div>
-          <h4>Fields</h4>
+          <h4>{locData?.field || "Fields"}</h4>
         </div>
 
         {/* Tab Name Field Box */}
