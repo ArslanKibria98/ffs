@@ -69,7 +69,7 @@ export default function FormVersionPage() {
           <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table/${id.id}`)}}>
           Form Report
             </Button>
-            <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg">
+            <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg" onClick={()=>{navigate(`/form-instant-preview/${id.id}/0`)}}>
             Form Preview
             </Button>
             <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-[14px] font-[400] text-white rounded-lg">

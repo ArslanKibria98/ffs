@@ -20,7 +20,7 @@ import FormVersionPage from "./views/form-builder/form/formVersions/page";
 import FormSavePage from "./views/form-builder/form/save/page";
 import FormPublishPage from "./views/form-builder/form/publish/page";
 import FormTable from "./views/form-builder/form/formTable/page";
-
+import InstantPreview from "./views/instant-preview/page"
 import Unauthenticated from "./views/unauthenticated/page";
 
 export default function App() {
@@ -33,6 +33,7 @@ export default function App() {
           <Route path=":token" element={<AuthHandover />} />
           <Route path="form-builder" element={<FormBuilder />} />
           <Route path="form-version-table/:id" element={<FormTable />} />
+          <Route path="form-instant-preview/:fromId/:instantId" element={<InstantPreview />} />
           <Route path="form-versions/:id" element={<FormVersionPage />} />
           <Route path="render-form/:id" element={<FormRender />} />
           <Route path="form-builder/form" element={<BuilderLayout />}>
