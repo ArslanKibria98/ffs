@@ -40,6 +40,15 @@ import localisationData from "../../localisation.json"
 import { useDispatch, useSelector } from 'react-redux';
 import { setIsLoading } from "../../redux/store/loading";
 import { SET_FORM_INFO,SET_DEFAULT_CONTAINER_ID } from "../../redux/store/form";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 export default function FormBuilder() {
   // const params=useParams()
@@ -57,12 +66,12 @@ export default function FormBuilder() {
   const [totalPages, setTotalPages] = useState(0)
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const handlePageChange =async (event, newPage) => {
+  const handlePageChange =async (size, newPage) => {
     setPage(newPage)
     setLocalLoading(true);
 
     try {
-      const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=15`,{
+      const response = await fetch(`http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=${size}`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -96,9 +105,44 @@ export default function FormBuilder() {
       }, 2000)
     }
 };
+const handlePublish =async (version,status) => {
+  setLocalLoading(true);
+  try {
+    const response = await fetch(`http://135.181.57.251:3048/api/Form/ChangeFormStatus`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization':`Bearer ${token}`
+      },
+      body: JSON.stringify({
+        versionId: version,
+        status: status==2?1:2
+      })
+     
+    }) 
+    const data = await response.json()
+    console.log(data);
+    if(data?.notificationMessage){
+      handlePageChange(null,page)
+      setLocalLoading(false);
+      toast.success(data?.notificationMessage)
+    }
+    else{
+      toast.error(data?.errors[0])
+    }
+
+
+  } catch (error) {
+    toast.error("Server Unavailable!");
+    setTimeout(()=>{
+      dispatch(setIsLoading(false));
+      setLocalLoading(false);
+    }, 2000)
+  }
+};
   useEffect(() => {
     return async () => {
-      handlePageChange(null,page)
+      handlePageChange(rowsPerPage,page)
     }
   }, [])
 
@@ -193,7 +237,7 @@ export default function FormBuilder() {
   } else if (language == "ar") {
     locData = localisationData.home.ar;
   }
-  
+  console.log(rowsPerPage,"rows")
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
@@ -285,9 +329,9 @@ export default function FormBuilder() {
                         Live
                       </DropdownMenuItem>
                       {/* <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/> */}
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer">
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{handlePublish(form.formVersionId,form.status)}}>
                         <EyeOff className="h-4"/>&nbsp;&nbsp;
-                        Unpublish
+                        {form.status==0?"Draft":form.status==1?"Publish":"Unpublish"}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
                       <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate(`/form-versions/${form.formVersionId}`)}}>
@@ -331,45 +375,86 @@ export default function FormBuilder() {
           ) : ""}
         </Table>
         <div className="flex justify-end items-center mt-4">
+          {/* <span>
+          Rows per page
+          </span> */}
+          <Select
+                className="w-full"
+                onValueChange={(e) => {handlePageChange(e,page);setRowsPerPage(e)}}
+                value={rowsPerPage}
+              >
+                <label htmlFor="minLen" className="text-ls font-semibold pr-2">
+                Rows per page
+                </label>
+                <SelectTrigger className="w-16 h-[30px]">
+                  <SelectValue placeholder="10" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value={10}>
+                     10
+                    </SelectItem>
+                    <SelectItem value={15}>
+                     15
+                    </SelectItem>
+                    <SelectItem value={25}>
+                     25
+                    </SelectItem>
+                    <SelectItem value={50}>
+                     50
+                    </SelectItem>
+                </SelectContent>
+              </Select>
+          
+  <button
+    onClick={() => handlePageChange(rowsPerPage, 1)}
+    disabled={page <= 1}
+    className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
+  >
+    {`<<`}
+  </button>
+  <button
+    onClick={() => handlePageChange(rowsPerPage, page - 1)}
+    disabled={page <= 1}
+    className="px-4 py-2 mx-1 pagination-btn rounded"
+  >
+    {`<`}
+  </button>
+
+  {Array.from({ length: 3 }, (_, index) => {
+    const pageNumber = page - 1 + index;
+    if (pageNumber > 0 && pageNumber <= 4) {
+      return (
         <button
-            onClick={() => handlePageChange(null, 1)}
-            disabled={page<=1}
-            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
-          >
-            {`<<`}
-          </button>
-          <button
-            onClick={() => handlePageChange(null, page - 1)}
-            disabled={page<=1}
-            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
-          >
-            {`<`}
-          </button>
-        
-            <button
-              
-              // onClick={() => handlePageChange(null, pageNumber)}
-              className={`px-4 py-2 mx-1 ${page === page ? "bg-red-500 text-white" : "bg-gray-200 text-gray-800"} rounded`}
-            >
-              
-              {page}
-            </button>
-       
-          <button
-            onClick={() => handlePageChange(null, page + 1)}
-            disabled={forms.length<15}
-            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
-          >
-            {`>`}
-          </button>
-          <button
-            onClick={() => handlePageChange(null,totalPages.totalPages)}
-            disabled={forms.length<15}
-            className="px-4 py-2 mx-1 bg-gray-200 text-gray-800 rounded"
-          >
-            {`>>`}
-          </button>
-        </div>
+          key={pageNumber}
+          onClick={() => handlePageChange(rowsPerPage, pageNumber)}
+          className={`px-4 py-2 mx-1 ${
+            pageNumber === page ? "bg-red-500 text-white" : "pagination-btn text-gray-800"
+          } rounded`}
+        >
+          {pageNumber}
+        </button>
+      );
+    } else {
+      return null;
+    }
+  })}
+
+  <button
+    onClick={() => handlePageChange(rowsPerPage, page + 1)}
+    disabled={forms.length < rowsPerPage}
+    className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
+  >
+    {`>`}
+  </button>
+  <button
+    onClick={() => handlePageChange(rowsPerPage, totalPages)}
+    disabled={forms.length < rowsPerPage}
+    className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
+  >
+    {`>>`}
+  </button>
+</div>
+
       </div>
       {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import successIcon from "../../../../assets/images/SuccessIcon.svg";
-
+import axios from '@/lib/axios';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,14 +11,32 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-
+import toast from "react-hot-toast"
 import { useSelector } from "react-redux";
 
 export default function FormPublishPage() {
   const location = window.location.origin;
-  console.log(location, "location");
   const version_id = useSelector((state) => state?.formStore.version_id);
   const form_Id = useSelector((state) => state?.formStore.form_id);
+  const handlePublish =async (version) => {
+    const body={
+      versionId: version,
+          status:2
+    }
+    console.log("hello")
+    try {
+      const response = await axios.post('/Form/ChangeFormStatus', JSON.stringify(body));
+      console.log(response);
+      if(response?.data?.notificationMessage){
+        toast.success(response?.data?.notificationMessage)
+      }
+      else{
+        toast.error(response?.data?.errors[0])
+      }
+    } catch (error) {
+      toast.error("Server Unavailable!");
+    }
+  };
   return (
     <>
       <div className="px-4 bg-[#FAFAFA] grid grid-cols-1">
@@ -42,7 +60,7 @@ export default function FormPublishPage() {
             </div>
             <div className="text-xl mt-3 mx-auto max-w-[550px]">
               Your draft Form has been created. 
-              {" "}<a className="underline text-blue-400" href="">Click here</a>{" "}
+              {" "}<a className="underline text-blue-400" onClick={()=>{handlePublish(version_id)}}>Click here</a>{" "}
               to publish your unpublished forms.
             </div>
             
