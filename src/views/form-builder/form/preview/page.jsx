@@ -58,7 +58,6 @@ export default function FormPreviewPage() {
       setLoader(false)
     } catch (error) {
       console.error('Error fetching forms:', error)
-      toast.error("Unable to get form!")
       setLoader(false)
     }
   }

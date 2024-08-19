@@ -75,12 +75,18 @@ export default function FormRender() {
       );
       const data = await response.json();
       console.log(data, "data");
-      setFormDataApi(data?.data?.containers);
-      setDefaultTabVal(formDataApi[0]?.containerName?.toString() + "");
-      setLoader(false);
+      if(data.data.formVersionStatus==2){
+        setFormDataApi(data?.data?.containers);
+        setDefaultTabVal(formDataApi[0]?.containerName?.toString() + "");
+        setLoader(false);
+      }
+      else{
+        setLoader(false);
+        toast.error("Form is not published yet!")
+      }
+      
     } catch (error) {
       console.error("Error fetching forms:", error);
-      toast.error("Unable to get form!");
       setLoader(false);
     }
   };

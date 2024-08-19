@@ -91,7 +91,7 @@ export default function FormBuilder() {
           setLocalLoading(false);
         }, 2000)
       } else {
-        toast.error("No forms found for this user!");
+        // toast.error("No forms found for this user!");
         setTimeout(()=>{
           dispatch(setIsLoading(false));
           setLocalLoading(false);
@@ -123,7 +123,7 @@ const handlePublish =async (version,status) => {
     const data = await response.json()
     console.log(data);
     if(data?.notificationMessage){
-      handlePageChange(null,page)
+      handlePageChange(rowsPerPage,page)
       setLocalLoading(false);
       toast.success(data?.notificationMessage)
     }
@@ -222,7 +222,7 @@ const handlePublish =async (version,status) => {
       )
       if (response.ok) {
         let responseData = await response.json()
-          handlePageChange("",1)
+          handlePageChange(rowsPerPage,1)
         toast.success(responseData?.notificationMessage)
         setLocalLoading(true);
       } 
@@ -334,7 +334,7 @@ const handlePublish =async (version,status) => {
                         {form.status==0?"Draft":form.status==1?"Publish":"Unpublish"}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/>
-                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate(`/form-versions/${form.formVersionId}`)}}>
+                      <DropdownMenuItem className="focus:bg-[#fff0f0] cursor-pointer" onClick={()=>{navigate(`/form-versions/${form?.formId}/${form.formVersionId}`)}}>
                         <History className="h-4"/>&nbsp;&nbsp;
                         Versions
                       </DropdownMenuItem>
@@ -441,14 +441,14 @@ const handlePublish =async (version,status) => {
 
   <button
     onClick={() => handlePageChange(rowsPerPage, page + 1)}
-    disabled={forms.length < rowsPerPage}
+    disabled={forms.length <= rowsPerPage}
     className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
   >
     {`>`}
   </button>
   <button
     onClick={() => handlePageChange(rowsPerPage, totalPages)}
-    disabled={forms.length < rowsPerPage}
+    disabled={forms.length <= rowsPerPage}
     className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
   >
     {`>>`}

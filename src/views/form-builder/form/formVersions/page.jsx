@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
+import { SET_FORM_INFO,SET_DEFAULT_CONTAINER_ID } from "../../../../redux/store/form";
 import { Input } from "@/components/ui/input";
 // import {
 //   Popover,
@@ -21,13 +22,14 @@ import {
 
 // import { cn } from '@/lib/utils'
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BoxLoader from "@/components/BoxLoader";
 import { useNavigate, useParams } from "react-router-dom";
 
 // import { Link } from "react-router-dom"
 
 export default function FormVersionPage() {
+  const dispatch =useDispatch()
   const navigate=useNavigate();
   const id=useParams()
   const version_id = useSelector((state) => state?.formStore.version_id);
@@ -66,13 +68,15 @@ export default function FormVersionPage() {
         </div>
         <div className="col-span-5 ">
           <div className="p-6 gap-2 flex">
-          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table/${id.id}`)}}>
+          <Button variant="outline" className="bg-[white] text-[#e2252e] text-[14px] font-[400] rounded-lg border-red-700" onClick={()=>{navigate(`/form-version-table/${id.versionId}`)}}>
           Form Report
             </Button>
-            <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg" onClick={()=>{navigate(`/form-instant-preview/${id.id}/0`)}}>
+            <Button className="bg-[#000000]  text-white text-[14px] font-[400] rounded-lg" onClick={()=>{navigate(`/form-instant-preview/${id.versionId}/0`)}}>
             Form Preview
             </Button>
-            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-[14px] font-[400] text-white rounded-lg">
+            <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-[14px] font-[400] text-white rounded-lg" onClick={()=>{dispatch(SET_FORM_INFO(id?.formId,id?.versionId))
+                       
+                        navigate("/form-builder/form");}}  >
             Update
             </Button>
           </div>

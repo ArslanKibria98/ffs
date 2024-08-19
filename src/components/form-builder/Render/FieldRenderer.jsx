@@ -32,7 +32,7 @@ import {
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
-
+import ReCAPTCHA from 'react-google-recaptcha';
 function FieldRenderer({ control, formik }) {
     const [selectedChoices, setSelectedChoices] = useState([]);
 
@@ -452,6 +452,31 @@ function FieldRenderer({ control, formik }) {
             )}
           </p>
           <DateTimePicker  onChange={onDateChange} value={dateChange} disableClock={true}  />
+        </div>
+      )
+    }
+    const [captchaValue, setCaptchaValue] = useState(null);
+
+    const handleCaptchaChange = (value) => {
+        setCaptchaValue(value);
+    };
+    if (field?.controlType == 12) {  //  captcha
+      return (
+        <div>
+          <p className="text-[12px] pb-1">
+            {field.question}
+            {field.isRequired ? (
+              <span className="text-red-500"> *</span>
+            ) : (
+              ''
+            )}
+          </p>
+          <div className={`flex justify-${field.alignment==1?"center":field.alignment==2?"end":"start"} pt-2`}>
+          <ReCAPTCHA
+                sitekey="6LeTGSgqAAAAADsoRumBk2bHNKWD0EpNZjPtzyzR" // replace with your actual site key
+                onChange={handleCaptchaChange}
+            />
+            </div>
         </div>
       )
     }

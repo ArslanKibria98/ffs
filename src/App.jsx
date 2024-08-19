@@ -34,7 +34,7 @@ export default function App() {
           <Route path="form-builder" element={<FormBuilder />} />
           <Route path="form-version-table/:id" element={<FormTable />} />
           <Route path="form-instant-preview/:fromId/:instantId" element={<InstantPreview />} />
-          <Route path="form-versions/:id" element={<FormVersionPage />} />
+          <Route path="form-versions/:formId/:versionId" element={<FormVersionPage />} />
           <Route path="render-form/:id" element={<FormRender />} />
           <Route path="form-builder/form" element={<BuilderLayout />}>
             <Route index element={<BuilderPage />} />

@@ -57,59 +57,6 @@ export default function InstantPreview() {
     //     ]
     //   }
   ]);
-  const staticData = [
-    {
-      containerId: "f3e6e281-33b3-4753-3e95-08dcb6a202c0",
-      containerName: "test 1",
-      containerType: 0,
-      controlsInForm: [
-        {
-          controlId: "43cbd61a-dab4-4591-6abe-08dcb6a22ddd",
-          controlName: "sadfdg",
-          controlInput: "sfvxf"
-        },
-        {
-          controlId: "e23d5506-db57-4bea-6abf-08dcb6a22ddd",
-          controlName: "wraf",
-          controlInput: "awfsed"
-        }
-      ]
-    },
-    {
-      containerId: "cc20fb09-cdf4-4e5b-3e96-08dcb6a202c0",
-      containerName: "sub header 1",
-      containerType: 0,
-      controlsInForm: [
-        {
-          controlId: "1c7c00b4-0bf4-4b43-6ac0-08dcb6a22ddd",
-          controlName: "sdvf",
-          controlInput: "sfdg"
-        },
-        {
-          controlId: "12335206-244d-4c18-6ac1-08dcb6a22ddd",
-          controlName: "ewfgrf",
-          controlInput: "sfvxgs"
-        },
-        {
-          controlId: "6db652f4-fa91-4ced-6ac2-08dcb6a22ddd",
-          controlName: "sacfsdv",
-          controlInput: "43"
-        }
-      ]
-    },
-    {
-      containerId: "a9a775c3-6e95-4899-3e97-08dcb6a202c0",
-      containerName: "header 3",
-      containerType: 0,
-      controlsInForm: [
-        {
-          controlId: "adca5e6f-f823-49ef-6ac3-08dcb6a22ddd",
-          controlName: "svfdv",
-          controlInput: "arfssd"
-        }
-      ]
-    }
-  ];
   const fetchForms = async () => {
     setLoader(true);
     console.log("hello1")
@@ -161,7 +108,6 @@ export default function InstantPreview() {
 
     } catch (error) {
       console.error("Error fetching forms:", error);
-      toast.error("Unable to get form!");
       setLoader(false);
     }
   };
@@ -177,7 +123,7 @@ export default function InstantPreview() {
       setLoader(false);
     } catch (error) {
       console.error("Error fetching forms:", error);
-      toast.error("Unable to get form!");
+
       setLoader(false);
     }
   };

@@ -327,7 +327,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addCaptcha.svg",
       title: "Captcha",
-      // controlType: 0,
+      controlType: 12,
       data: (
         <Captcha
           getter={usCaptcha}
