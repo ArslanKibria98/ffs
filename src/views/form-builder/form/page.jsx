@@ -839,7 +839,7 @@ export default function BuilderPage() {
             <Dialog>
               <DialogTrigger className="mb-3 rounded-lg py-2 px-4 bg-[#ffeff0] flex gap-2">
                 <EyeIcon className="w-5" />
-                View Form
+                {locData?.viewForm || "View Form"}
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -875,7 +875,7 @@ export default function BuilderPage() {
                       ))}
                       {!loading && tab?.controls?.length < 1 ? (
                         <p className="text-sm text-center text-gray-600">
-                          No fields in this Tab!
+                          {locData?.emptyTab || "No fields in this Tab!"}
                         </p>
                       ) : (
                         ""
@@ -890,7 +890,7 @@ export default function BuilderPage() {
                     )}
                     {!loading && formDataApi?.length < 1 ? (
                       <p className="text-sm text-center text-gray-600">
-                        Form Empty!
+                        {locData?.noFields || "Form Empty!"}
                       </p>
                     ) : (
                       ""
@@ -902,7 +902,7 @@ export default function BuilderPage() {
           </Tabs>
          : !loading && formDataApi.length < 1 ? (
           <div className="bg-white text-center px-10 py-20 text-gray-700 text-sm">
-            No Fields in this Form!
+            {locData?.emptyForm || "No Fields in this Form!"}
           </div>
         ) : loading && formDataApi.length < 1 && (
           <div className="absolute top-0 left-0 w-full bg-transparent text-center px-10 py-20 text-gray-700 text-sm">
@@ -913,12 +913,12 @@ export default function BuilderPage() {
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
           <a href={`/form-builder/form/settings`}>
             <Button className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg">
-              Next
+              {locData?.next || "Next"}
             </Button>
           </a>
           <a href="/form-builder">
             <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light">
-              Previous
+              {locData?.prev || "Previous"}
             </Button>
           </a>
         </div>

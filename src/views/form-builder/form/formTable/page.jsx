@@ -40,12 +40,12 @@ import {
 
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import localisationData from "../../../../localisation.json";
 
 export default function FormTable() {
   const navigate = useNavigate();
   const location = window.location.origin;
   const dispatch = useDispatch();
-  const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
   const token = useSelector((state) => state?.authStore?.token);
   const tenantId = useSelector((state) => state?.authStore?.tenant_id);
@@ -54,6 +54,15 @@ export default function FormTable() {
   const [forms, setForms] = useState([]);
   const [tableData, setTableData] = useState({});
   const id = useParams();
+
+  const language = useSelector((state) => state.language.language);
+    
+  let locData = localisationData.formReport.en;
+  if (language == "en") {
+    locData = localisationData.formReport.en;
+  } else if (language == "ar") {
+    locData = localisationData.formReport.ar;
+  }
 
   const fetchForms = async () => {
     dispatch(setIsLoading(true));
@@ -129,10 +138,10 @@ export default function FormTable() {
             }}
           >
             {"<-"}
-            <span className="ps-1">Back</span>
+            <span className="ps-1">{locData?.back || "Back"}</span>
           </div>
           <label className="text-ls font-semibold px-2">
-            User Sign Up - Report
+            User Sign Up - {locData?.report || "Report"}
           </label>
         </div>
         <div className="flex justify-evenly gap-2 items-center">
@@ -140,7 +149,7 @@ export default function FormTable() {
             className="bg-[#e2252e] hover:bg-[#e2252eec] font-normal text-[16px] h-[45px]"
             onClick={exportToCSV}
           >
-            {"Export As CSV"}
+            {locData?.export || "Export As CSV"}
           </Button>
         </div>
       </div>

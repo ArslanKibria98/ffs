@@ -12,11 +12,20 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "../ui/dialog";
-import { useDispatch } from "react-redux";
 import { setIsLoading } from "@/redux/store/loading";
+import { useDispatch, useSelector } from "react-redux";
+import localisationData from "../../localisation.json";
 
 function FieldInfo({ field, resetForm, updateModalData }) {
   const dispatch = useDispatch();
+
+  const language = useSelector((state) => state.language.language);
+  let locData = localisationData.formBuilder.en;
+  if (language == "en") {
+    locData = localisationData.formBuilder.en;
+  } else if (language == "ar") {
+    locData = localisationData.formBuilder.ar;
+  }
 
   function resetFormForward() {
       console.log("Forward function in Tab Section");
@@ -48,7 +57,7 @@ function FieldInfo({ field, resetForm, updateModalData }) {
             />
             <div className="flex justify-evenly gap-1 w-[18%] min-w-[160px]">
               <div className="h-[40px] w-[55px] flex flex-col items-center text-[#838383] hover:text-[#ff0200]">
-                <span className="text-[10px]">Mandatory</span>
+                <span className="text-[10px]">{locData?.mandatory || "Mandatory"}</span>
                 <Switch checked={field?.isRequired ? true : false} />
               </div>
               {console.log(field)}
@@ -61,7 +70,7 @@ function FieldInfo({ field, resetForm, updateModalData }) {
                       (field?.isThirdParty && " pointer-events-none opacity-50")
                     }
                   >
-                    <span className="text-[10px]">Edit</span>
+                    <span className="text-[10px]">{locData?.edit || "Edit"}</span>
                     <img
                       src="/form-layout-icons/editIcon.svg"
                       alt="Edit Icon"
@@ -83,7 +92,7 @@ function FieldInfo({ field, resetForm, updateModalData }) {
                   deleteApi(field.controlId, resetFormForward, false);
                 }}
               >
-                <span className="text-[10px]">Delete</span>
+                <span className="text-[10px]">{locData?.delete || "Delete"}</span>
                 <img
                   src="/form-layout-icons/deleteIcon.svg"
                   alt="Delete Icon"
