@@ -375,7 +375,7 @@ export default function InstantPreview() {
       <form onSubmit={formik.handleSubmit}>
         {formDataApi.length > 0 && (
           <Tabs defaultValue={formDataApi[0].containerName}  onValueChange={handleTabChange}>
-            <TabsList className="w-100 formBuilderTablist flex gap-1">
+            <TabsList className="w-100 formBuilderTablist flex gap-[2px]">
               {formDataApi.map((tab, index) => (
                 <>
                   {/* {tab.containerName!=null&& */}

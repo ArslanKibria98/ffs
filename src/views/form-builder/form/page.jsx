@@ -379,7 +379,7 @@ export default function BuilderPage() {
     {
       icon: "/control-icons/addList.svg",
       title: "List",
-      // controlType: 0,
+      controlType: 13,
       data: (
         <List
           getter={usList}

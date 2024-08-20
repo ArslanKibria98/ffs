@@ -134,7 +134,7 @@ export default function FormBuilder() {
       const data = await response.json();
       console.log(data);
       if (data?.notificationMessage) {
-        handlePageChange(null, page);
+        handlePageChange(rowsPerPage, page);
         setLocalLoading(false);
         toast.success(data?.notificationMessage);
       } else {
@@ -234,7 +234,7 @@ export default function FormBuilder() {
       );
       if (response.ok) {
         let responseData = await response.json();
-        handlePageChange("", 1);
+        handlePageChange(rowsPerPage, 1);
         toast.success(responseData?.notificationMessage);
         setLocalLoading(true);
       }
@@ -423,7 +423,7 @@ export default function FormBuilder() {
                         <DropdownMenuItem
                           className="focus:bg-[#fff0f0] cursor-pointer"
                           onClick={() => {
-                            navigate(`/render-form/${form?.formVersionId}`);
+                            window.open(`/render-form/${form?.formVersionId}`);
                           }}
                         >
                           <QrCode className="h-4" />
@@ -449,7 +449,7 @@ export default function FormBuilder() {
                         <DropdownMenuItem
                           className="focus:bg-[#fff0f0] cursor-pointer"
                           onClick={() => {
-                            navigate(`/form-versions/${form.formVersionId}`);
+                            navigate(`/form-versions/${form.formId}/${form.formVersionId}`);
                           }}
                         >
                           <History className="h-4" />
