@@ -475,7 +475,7 @@ function FieldRenderer({ control, formik }) {
           className={`flex justify-${field.alignment == 1 ? "center" : field.alignment == 2 ? "end" : "start"} pt-2`}
         >
           <ReCAPTCHA
-            sitekey="6LeTGSgqAAAAADsoRumBk2bHNKWD0EpNZjPtzyzR" // replace with your actual site key
+            sitekey="6LfwmioqAAAAALGowVAMJb_oGuIvMFQZ9V8pY6E4" // replace with your actual site key
             onChange={handleCaptchaChange}
           />
         </div>

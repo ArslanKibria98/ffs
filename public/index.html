@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+      <!-- Your code -->
+          <title>reCAPTCHA demo: Simple page</title>
+          <script src="https://www.google.com/recaptcha/enterprise.js" async defer></script>
+        </body>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
@@ -13,5 +17,10 @@
   <body class="text-blueGray-700 antialiased">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <form action="" method="POST">
+      <div class="g-recaptcha" data-sitekey="6LfwmioqAAAAALGowVAMJb_oGuIvMFQZ9V8pY6E4" data-action="LOGIN"></div>
+      <br/>
+      <input type="submit" value="Submit">
+    </form>
   </body>
 </html>
