@@ -18,6 +18,7 @@ import { Checkbox2 } from "@/components/ui/checkbox";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "@/lib/axios";
 
 export default function FormSettingsPage() {
   // const router = useRouter()
@@ -86,20 +87,11 @@ export default function FormSettingsPage() {
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Form/SetFormAttributes",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await axios.post(
+        "/Form/SetFormAttributes",JSON.stringify(formData));
 
-      if (response.ok) {
-        let responseData = await response.json();
+      if (response) {
+        let responseData = response.data;
         console.log(responseData, "1---1");
         toast.success(responseData?.notificationMessage);
         // router.push(`/form-builder/form/preview`)

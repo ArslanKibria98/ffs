@@ -294,3 +294,9 @@
   color: #FAFAFA;
   background: linear-gradient(#6C6C6C 100%, #3F3F3F 100%)  ;
 }
+.list-instatant{
+  color: white;
+  padding: 2px;
+  cursor: pointer;
+  background-color: red;
+}

@@ -12,6 +12,7 @@ import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "@/redux/store/loading";
+import axios from "@/lib/axios";
 
 export default function AddButton({
   getter,
@@ -77,15 +78,12 @@ export default function AddButton({
     };
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "http://135.181.57.251:3048/api/Controls/CreateButton",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
+      
+          
+         JSON.stringify(data),
+        
       );
 
       if (response.ok) {

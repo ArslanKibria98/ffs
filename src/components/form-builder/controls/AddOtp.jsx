@@ -12,6 +12,7 @@ import { Checkbox2 } from "@/components/ui/checkbox";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function AddOtp({
   getter,
@@ -73,20 +74,11 @@ export default function AddOtp({
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateOtp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(postData),
-        }
-      );
+      const response = await axios.post(
+        "/Controls/CreateOtp",JSON.stringify(postData));
 
-      if (response.ok) {
-        const responseData = await response.json();
+      if (response) {
+        const responseData =response.data;
         setter(!getter);
         toast.success(responseData?.notificationMessage);
         resetForm();
@@ -115,20 +107,11 @@ export default function AddOtp({
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/UpdateOtp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(formUpdateData),
-        }
-      );
+      const response = await axios.post(
+        "/Controls/UpdateOtp",JSON.stringify(formUpdateData) );
 
-      if (response.ok) {
-        const responseData = await response.json();
+      if (response) {
+        const responseData =response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;

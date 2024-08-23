@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from 'react-router-dom';
 import { SET_USER_INFO } from "../redux/store/auth";
+import axios from '@/lib/axios';
 
 export default function AuthHandover() {
   const params=useParams()
@@ -25,20 +26,10 @@ export default function AuthHandover() {
   console.log(decodedToken,"--098765")
   const getUserId = async (id) => {
     try {
-      const response = await fetch(
-        `http://135.181.57.251:3048/api/User/GetUserByIdentityUserId?IdentityUserId=${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization':`Bearer ${token}`
-          },
-         
-        }
-      );
-
-      if (response.ok) {
-        let responseData = await response.json();
+      const response = await axios.post(
+        `/User/GetUserByIdentityUserId?IdentityUserId=${id}`);
+if (response) {
+        let responseData = await response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;
@@ -50,6 +41,8 @@ export default function AuthHandover() {
             nickname: 'dummy',
             id: responseData?.data.id || 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
             tenant_id: decodedToken?.payload?.TenantId || 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
+            // tenant_id: "FF2B49B3-57ED-486C-8326-53DF5BA5B5B4" || 'FF2B49B3-57ED-486C-8326-53DF5BA5B5B4',
+            // id: "A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F" || 'A2DEC207-EDFA-4619-BCF1-6DF55A5DD56F',
             token:token,
           })
         )

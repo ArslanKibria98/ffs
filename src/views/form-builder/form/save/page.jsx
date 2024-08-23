@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux'
 
 import BoxLoader from '@/components/BoxLoader'
 import localisationData from "../../../../localisation.json";
+import axios from '@/lib/axios'
 
 export default function FormSavePage() {
   const navigate=useNavigate()
@@ -38,20 +39,13 @@ export default function FormSavePage() {
       FormName: formName
     }
     try {
-      const response = await fetch(
-        'http://135.181.57.251:3048/api/Form/SetFormName',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${token}`
-          },
-          body: JSON.stringify(data)
-        }
+      const response = await axios.post(
+        '/Form/SetFormName',JSON.stringify(data)
+        
       )
 
-      if (response.ok) {
-        let resData = await response.json()
+      if (response) {
+        let resData =  response.data
         navigate("/form-builder/form/publish")
         // window.location.href = "/form-builder/form/publish";
         console.log('Form submitted successfully', resData)

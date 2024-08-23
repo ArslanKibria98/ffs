@@ -32,6 +32,7 @@ import {
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import ReCAPTCHA from "react-google-recaptcha";
 let checkBoxValue = [];
 export default function InstantPreview() {
     const navigate=useNavigate()
@@ -372,7 +373,7 @@ export default function InstantPreview() {
                 Preview
                 </label>
         </div>
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} className={"pt-3"}>
         {formDataApi.length > 0 && (
           <Tabs defaultValue={formDataApi[0].containerName}  onValueChange={handleTabChange}>
             <TabsList className="w-100 formBuilderTablist flex gap-[2px]">
@@ -874,6 +875,92 @@ function GetRelevantField({ control, formik }) {
         <DateTimePicker  onChange={onDateChange} value={dateChange} disableClock={true}  />
       </div>
     )
+  }
+  if (field?.controlType == 12) {
+    //  captcha
+    return (
+      <div>
+        <p className="text-[12px] pb-1">
+          {field.question}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
+        </p>
+        <div
+          className={`flex justify-${field.alignment == 1 ? "center" : field.alignment == 2 ? "end" : "start"} pt-2`}
+        >
+          <ReCAPTCHA
+            sitekey="6LfwmioqAAAAALGowVAMJb_oGuIvMFQZ9V8pY6E4" // replace with your actual site key
+            onChange={handleCaptchaChange}
+          />
+        </div>
+      </div>
+    );
+  }
+  if (field?.controlType === 13) {
+    //list
+    const handleCheckboxChange = (choiceName) => {
+      const currentChoices = formik.values[field.controlId] || [];
+      const updatedChoices = currentChoices.includes(choiceName)
+        ? currentChoices.filter((name) => name !== choiceName)
+        : [...currentChoices, choiceName];
+
+      formik.setFieldValue(field.controlId, updatedChoices);
+    };
+    const [dropdownOptions, setDropdownOptions] = useState([]);
+    async function inflateOptions() {
+      try {
+        const response = await fetch(field.url);
+
+        if (response.ok) {
+          const responseOptions = await response.json();
+          console.log(responseOptions.data, "responseOptions");
+          setDropdownOptions(responseOptions.data);
+        }
+      } catch (e) {
+        toast.error(e?.message);
+        console.log(e);
+      }
+    }
+    useEffect(() => {
+      return () => {
+        {
+          field?.choices === null && inflateOptions();
+        }
+      };
+    }, []);
+    return (
+      <div style={dropdownOptions.length>=10 ||field.choices != null &&field.choices.length>=10?{maxHeight:"210px",overflow:"auto"}:{}}>
+        <p className="text-[12px] pb-1">
+          {field.question}
+          {field.isRequired ? <span className="text-red-500"> *</span> : ""}
+        </p>
+        <div className="grid grid-cols-2 items-center">
+          {field.choices != null && (
+            <ul style={field.choices.length>=10?{display:"contents"}:{}}>
+              {field.choices != null &&
+                field.choices?.map((choice, index) => (
+                  <div key={index} className="w-100 flex gap-2 pb-3">
+                    <li
+                      key={index}
+                    >{`${String.fromCharCode(97 + index)}-${choice.value}`}</li>
+                  </div>
+                ))}
+            </ul>
+          )}
+          {field.choices === null && (
+               <ul style={dropdownOptions.length>=10?{display:"contents"}:{}}>
+              {field.choices === null &&
+                dropdownOptions?.map((choice, index) => (
+                  <div key={index} className="w-100 flex gap-2 pb-3">
+                    <li
+                      key={index}
+                    >{`${String.fromCharCode(97 + index)}-${choice[field.displayValue]}`}</li>
+                  </div>
+                ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    );
   }
   return null;
 }

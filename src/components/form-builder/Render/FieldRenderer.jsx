@@ -514,6 +514,19 @@ function FieldRenderer({ control, formik }) {
         }
       };
     }, []);
+    const [selectedIndex, setSelectedIndex] = useState();
+    const [multipleIndex, setMultipleIndex] = useState();
+    const toggleSelection = (index) => {
+      setMultipleIndex((prevSelectedIndices) => {
+        if (prevSelectedIndices && prevSelectedIndices.includes(index)) {
+          // If the item is already selected, remove it from the selection
+          return prevSelectedIndices.filter((i) => i !== index);
+        } else {
+          // Otherwise, add it to the selection
+          return prevSelectedIndices ? [...prevSelectedIndices, index] : [index];
+        }
+      });
+    };
     return (
       <div style={dropdownOptions.length>=10 ||field.choices != null &&field.choices.length>=10?{maxHeight:"210px",overflow:"auto"}:{}}>
         <p className="text-[12px] pb-1">
@@ -522,25 +535,33 @@ function FieldRenderer({ control, formik }) {
         </p>
         <div className="grid grid-cols-2 items-center">
           {field.choices != null && (
-            <ul style={field.choices.length>=10?{display:"contents"}:{}}>
-              {field.choices != null &&
-                field.choices?.map((choice, index) => (
-                  <div key={index} className="w-100 flex gap-2 pb-3">
-                    <li
-                      key={index}
-                    >{`${String.fromCharCode(97 + index)}-${choice.value}`}</li>
-                  </div>
-                ))}
-            </ul>
+                 <ul style={field.choices.length >= 10 ? { display: "contents" } : {}}>
+                 {field.choices.map((choice, index) => (
+                   <div key={index} className={`w-100 flex gap-2 pb-3 ${field.multiSelection?multipleIndex?.includes(index)?'list-instatant' : '':selectedIndex === index ? 'list-instatant' : ''}`}  >
+                     <li
+                       key={index}
+                      
+                       onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
+                     >
+                       {`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}-${choice.value}`}
+                     </li>
+                   </div>
+                 ))}
+               </ul>
           )}
           {field.choices === null && (
                <ul style={dropdownOptions.length>=10?{display:"contents"}:{}}>
               {field.choices === null &&
                 dropdownOptions?.map((choice, index) => (
-                  <div key={index} className="w-100 flex gap-2 pb-3">
+                  <div key={index} className="w-100 flex gap-2 pb-3"  style={{
+                    cursor: 'pointer',
+                    backgroundColor: field.multiSelection?multipleIndex?.includes(index)?'lightblue' : 'transparent':selectedIndex === index ? 'lightblue' : 'transparent',
+                  }}>
                     <li
-                      key={index}
-                    >{`${String.fromCharCode(97 + index)}-${choice[field.displayValue]}`}</li>
+                      key={index}       
+                      onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
+
+                    >{`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}-${choice[field.displayValue]}`}</li>
                   </div>
                 ))}
             </ul>

@@ -9,6 +9,7 @@ import { useFormik } from "formik";
 import { Button } from '@/components/ui/button'
 import toast from 'react-hot-toast'
 import localisationData from "../../../../localisation.json";
+import axios from '@/lib/axios';
 
 export default function FormPreviewPage() {
   const token = useSelector((state) => state?.authStore?.token);
@@ -28,17 +29,8 @@ export default function FormPreviewPage() {
   const fetchForms = async () => {
     setLoader(true);
     try {
-      const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${token}`
-          }
-        }
-      )
-      const data = await response.json()
+      const response = await axios.get(`/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`)
+      const data = await response.data
       console.log(data, 'data')
       setFormDataApi(data?.data?.containers)
       // setForms(data)

@@ -56,6 +56,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import axios from "@/lib/axios";
 
 export default function FormBuilder() {
   // const params=useParams()
@@ -78,17 +79,10 @@ export default function FormBuilder() {
     setLocalLoading(true);
 
     try {
-      const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=${size}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await axios.get(
+        `http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=${size}`
       );
-      const data = await response.json();
+      const data = await response.data;
       // console.log(data.data);
       if (data?.data?.length > 0) {
         // console.log(data.data)
@@ -167,27 +161,19 @@ export default function FormBuilder() {
     }
     return pageNumbers;
   };
-
   const handleCreateForm = async () => {
     try {
-      const response = await fetch(
+      const response = await axios.post(
         "http://135.181.57.251:3048/api/Form/CreateForm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+        JSON.stringify({
             tenantId: tenantId,
             formName: "",
             userId: userId,
-            repositoryId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          }),
-        }
+            repositoryId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
+          }),  
       );
-      if (response.ok) {
-        let responseData = await response.json();
+      if (response) {
+        let responseData = await response.data;
         // Fetch the updated forms list
         // const updatedForms = await response.json()
         console.log("after response");
@@ -243,7 +229,6 @@ export default function FormBuilder() {
     }
   };
   let locData = localisationData.home.en;
-
   if (language == "en") {
     locData = localisationData.home.en;
   } else if (language == "ar") {

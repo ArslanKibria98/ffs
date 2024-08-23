@@ -58,7 +58,7 @@ export default function List({
     !isUpdate ? 0 : updateFieldData.listFormat
   );
   const [selectionData, setSelectionData] = useState(
-    !isUpdate ? true : updateFieldData.viewOnly
+    !isUpdate ? true : updateFieldData.listItemViewOnly
   );
   const [selectionDataType, setSelectionDataType] = useState(
     !isUpdate ? false : updateFieldData.multiSelection
