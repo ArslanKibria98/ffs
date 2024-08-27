@@ -1,17 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import localisationData from "../../../../localisation.json";
 import toast from "react-hot-toast";
 
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  SelectContent,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox2 } from "@/components/ui/checkbox";
@@ -44,6 +37,7 @@ export default function FormSettingsPage() {
     "Iran",
     "Bangladash",
   ];
+  const [formAttr, setFormAttr] = useState(null);
   const language = useSelector((state) => state.language.language);
   const navigate = useNavigate();
   const [fieldLabel, setFieldLabel] = useState("");
@@ -106,6 +100,18 @@ export default function FormSettingsPage() {
       toast.error("An error occurred. Please try again.");
     }
   };
+
+  async function getFormAttributes() {
+    await axios.get(`/Form/GetFormAttributes`).then((res) => {
+      if (res.status == 200) {
+        console.log(res);
+        setFormAttr(res.data.data)
+      } else {toast.error("Unable to get form settings!")}
+    })
+  }
+  useEffect(()=>{
+    return ()=> getFormAttributes();
+  }, [])
   
   let locData = localisationData.formSetting.en;
   if (language == "en") {
@@ -119,24 +125,36 @@ export default function FormSettingsPage() {
         <TabsList className="formBuilderTablist">
           <TabsTrigger
             value={"details"}
-            className="px-5 h-10 mb-0 mr-1"
+            className="px-5 h-10 mb-0 mr-[2px]"
           >
             {locData?.name || "Form Details"}
           </TabsTrigger>
           <TabsTrigger
             value={"language"}
-            className="px-5 h-10 mb-0 mr-1"
+            className="px-5 h-10 mb-0 mr-[2px]"
           >
             {locData?.lSetting || "Language Settings"}
           </TabsTrigger>
           <TabsTrigger
             value={"country"}
-            className="px-5 h-10 mb-0 mr-1"
+            className="px-5 h-10 mb-0 mr-[2px]"
           >
             {locData?.cSetting || "Country Settings"}
           </TabsTrigger>
+          <TabsTrigger
+            value={"error"}
+            className="px-5 h-10 mb-0 mr-[2px]"
+          >
+            {"Error Settings"}
+          </TabsTrigger>
+          <TabsTrigger
+            value={"layout"}
+            className="px-5 h-10 mb-0 mr-[2px]"
+          >
+            {"Layout Settings"}
+          </TabsTrigger>
         </TabsList>
-        <div className="border-radius bg-white p-6 min-h-[500px]">
+        <div className="border-radius bg-[#ffffff] p-6 min-h-[500px]">
           <TabsContent value={"details"} className="my-0 py-0 w-full">
             <div className="grid grid-cols-2 gap-8 gap-y-4">
               <h5 className="text-xl font-semibold mt-4 col-span-2">
@@ -291,6 +309,49 @@ export default function FormSettingsPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          </TabsContent>
+          <TabsContent value={"error"} className="my-0 py-0 w-full">
+            <div className="grid grid-cols-2 gap-8 gap-y-4">
+              <div className="col-span-2">
+                <label
+                  htmlFor="tabName"
+                  className="text-md font-semibold mt-4 col-span-2"
+                >
+                  {"Error Message Position"}
+                </label>
+              </div>
+              <RadioGroup defaultValue="below" onValueChange={(e)=>console.log(e)} className="col-span-2 grid grid-cols-2">
+                <Label htmlFor="option-one" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
+                  <RadioGroupItem value="below" id="option-one" />
+                  <Label className="cursor-pointer" htmlFor="option-one">Below Input Fields</Label>
+                </Label>
+                <Label htmlFor="option-two" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
+                  <RadioGroupItem value="after" id="option-two" />
+                  <Label className="cursor-pointer" htmlFor="option-two">Stacked After Form</Label>
+                </Label>
+              </RadioGroup>
+            </div>
+          </TabsContent>
+          <TabsContent value={"layout"} className="my-0 py-0 w-full">
+            <div className="p-10">
+              <RadioGroup defaultValue="one" className="gap-28 gap-y-4 grid grid-cols-3">
+                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                  <RadioGroupItem value="one" id="option-one" />
+                  {/* <Label htmlFor="option-one">Below Input Fields</Label> */}
+                  <img src="/one-column.png" alt="Layout columns" className="w-[96%] py-8" />
+                </div>
+                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                  <RadioGroupItem value="two" id="option-two" />
+                  {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
+                  <img src="/two-column.png" alt="Layout columns" className="w-[96%] py-8" />
+                </div>
+                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                  <RadioGroupItem value="multi" id="option-multi" />
+                  {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
+                  <img src="/multi-column.png" alt="Layout columns" className="w-[96%] py-8" />
+                </div>
+              </RadioGroup>
             </div>
           </TabsContent>
         </div>
