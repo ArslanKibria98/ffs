@@ -11,7 +11,15 @@ import { Checkbox2 } from "@/components/ui/checkbox";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import axios from "@/lib/axios";
+import BoxLoader from "@/components/BoxLoader";
 
 export default function FormSettingsPage() {
   // const router = useRouter()
@@ -50,6 +58,7 @@ export default function FormSettingsPage() {
   const [defaultCountry, setDefaultCountry] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const handleLanguageChange = (language) => {
     setSelectedLanguages((prev) =>
       prev.includes(language)
@@ -102,16 +111,39 @@ export default function FormSettingsPage() {
   };
 
   async function getFormAttributes() {
-    await axios.get(`/Form/GetFormAttributes`).then((res) => {
-      if (res.status == 200) {
+    setLoading(true);
+    await axios.get(`/Form/GetFormAttributes?FormVersionId=${version_id}`).then((res) => {
+      if (res?.data?.success) {
         console.log(res);
         setFormAttr(res.data.data)
-      } else {toast.error("Unable to get form settings!")}
+      } else {toast.error(res?.data?.notificationMessage || "Unable to get form settings!")}
     })
+    setLoading(false);
   }
+  async function updateFormAttributes(key, val) {
+    setLoading(true);
+
+    await axios.post(`/Form/UpdateFormAttributes`, {
+      ...formAttr,
+      [key]: val
+    }).then((res) => {
+      if (res?.data?.success) {
+        console.log(res);
+        setFormAttr({
+          ...formAttr,
+          [key]: val
+        })
+      } else {toast.error(res?.data?.notificationMessage || "Unable to update form settings!")}
+    })
+    setLoading(false);
+  }
+
   useEffect(()=>{
     return ()=> getFormAttributes();
   }, [])
+  // useEffect(()=>{
+  //   return ()=> updateFormAttributes();
+  // }, [formAttr])
   
   let locData = localisationData.formSetting.en;
   if (language == "en") {
@@ -154,207 +186,226 @@ export default function FormSettingsPage() {
             {"Layout Settings"}
           </TabsTrigger>
         </TabsList>
-        <div className="border-radius bg-[#ffffff] p-6 min-h-[500px]">
-          <TabsContent value={"details"} className="my-0 py-0 w-full">
-            <div className="grid grid-cols-2 gap-8 gap-y-4">
-              <h5 className="text-xl font-semibold mt-4 col-span-2">
-                {locData?.name || "Form Details"}
-              </h5>
-              <div>
-                <label htmlFor="fieldLabel" className="text-xs font-semibold">
-                  {locData?.field1 || "Required Field Indicator"}
-                </label>
-                <Input
-                  name="fieldIndicator"
-                  placeholder="Enter Field Label"
-                  className="p-4 h-[48px]"
-                  value={fieldLabel}
-                  onChange={(e) => setFieldLabel(e.target.value)}
-                />
+        {!loading ? (
+          <div className="border-radius bg-[#ffffff] p-6 min-h-[500px]">
+            <TabsContent value={"details"} className="my-0 py-0 w-full">
+              <div className="grid grid-cols-2 gap-8 gap-y-4">
+                <h5 className="text-xl font-semibold mt-4 col-span-2">
+                  {locData?.name || "Form Details"}
+                </h5>
+                <div>
+                  <label htmlFor="fieldLabel" className="text-xs font-semibold">
+                    {locData?.field1 || "Required Field Indicator"}
+                  </label>
+                  {/* formRequiredFieldIndicator */}
+                  <Select value={formAttr?.formRequiredFieldIndicator} defaultValue={formAttr?.formRequiredFieldIndicator || 0} onValueChange={(e)=>{
+                    updateFormAttributes("formRequiredFieldIndicator", e)
+                  }} className="col-span-2">
+                    <SelectTrigger className="w-full h-[48px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="*">Asterik: *</SelectItem>
+                      <SelectItem value="(Required)">Text: (Required)</SelectItem>
+                      <SelectItem value="(Custom)">Custom:</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label htmlFor="fieldName" className="text-xs font-semibold">
+                    {locData?.field2 || "Target URL"}
+                  </label>
+                  <Input
+                    name="targetUrl"
+                    placeholder="Enter Target Url"
+                    className="p-4 h-[48px]"
+                    value={fieldName}
+                    onChange={(e) => setFieldName(e.target.value)}
+                    // value={formAttr?.formRequiredFieldIndicator} defaultValue={formAttr?.formRequiredFieldIndicator || 0} onValueChange={(e)=>{
+                    //   updateFormAttributes("formRequiredFieldIndicator", e)
+                    // }}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="fieldPlaceholder"
+                    className="text-xs font-semibold"
+                  >
+                    {locData?.field3 || "Success Message"}
+                  </label>
+                  <Input
+                    name="successMessage"
+                    placeholder="Enter Success Message"
+                    className="p-4 h-[48px]"
+                    value={fieldPlaceholder}
+                    onChange={(e) => setFieldPlaceholder(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="fieldPlaceholder"
+                    className="text-xs font-semibold"
+                  >
+                    {locData?.field4 || "Fail Message"}
+                  </label>
+                  <Input
+                    name="failMessage"
+                    placeholder="Enter Fail Message"
+                    className="p-4 h-[48px]"
+                    value={fieldPlaceholderFail}
+                    onChange={(e) => setFieldPlaceholderFail(e.target.value)}
+                  />
+                </div>
               </div>
-              <div>
-                <label htmlFor="fieldName" className="text-xs font-semibold">
-                  {locData?.field2 || "Target URL"}
-                </label>
-                <Input
-                  name="targetUrl"
-                  placeholder="Enter Field Name"
-                  className="p-4 h-[48px]"
-                  value={fieldName}
-                  onChange={(e) => setFieldName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="fieldPlaceholder"
-                  className="text-xs font-semibold"
-                >
-                  {locData?.field3 || "Success Message"}
-                </label>
-                <Input
-                  name="successMessage"
-                  placeholder="Enter Field Placeholder"
-                  className="p-4 h-[48px]"
-                  value={fieldPlaceholder}
-                  onChange={(e) => setFieldPlaceholder(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="fieldPlaceholder"
-                  className="text-xs font-semibold"
-                >
-                  {locData?.field4 || "Fail Message"}
-                </label>
-                <Input
-                  name="failMessage"
-                  placeholder="Enter Field Placeholder"
-                  className="p-4 h-[48px]"
-                  value={fieldPlaceholderFail}
-                  onChange={(e) => setFieldPlaceholderFail(e.target.value)}
-                />
-              </div>
-            </div>
-          </TabsContent>
-          <TabsContent value={"language"} className="my-0 py-0 w-full">
-            <div className="grid grid-cols-2 gap-8 gap-y-4">
-              <h5 className="text-xl font-semibold mt-4 col-span-2">
-                {" "}
-                {locData?.lSetting || "Language Settings"}
-              </h5>
+            </TabsContent>
+            <TabsContent value={"language"} className="my-0 py-0 w-full">
+              <div className="grid grid-cols-2 gap-8 gap-y-4">
+                <h5 className="text-xl font-semibold mt-4 col-span-2">
+                  {" "}
+                  {locData?.lSetting || "Language Settings"}
+                </h5>
 
-              <div className="col-span-1">
-                <label htmlFor="defaultLanguage" className="text-xs font-semibold">
-                  {locData?.dLanguage || "Default Language"}
-                </label>
-                <Input
-                  name="defaultLanguage"
-                  placeholder="Enter Default Language"
-                  className="p-4 h-[48px]"
-                  value={defaultLanguage}
-                  onChange={(e) => setDefaultLanguage(e.target.value)}
-                />
+                <div className="col-span-1">
+                  <label htmlFor="defaultLanguage" className="text-xs font-semibold">
+                    {locData?.dLanguage || "Default Language"}
+                  </label>
+                  <Input
+                    name="defaultLanguage"
+                    placeholder="Enter Default Language"
+                    className="p-4 h-[48px]"
+                    value={defaultLanguage}
+                    onChange={(e) => setDefaultLanguage(e.target.value)}
+                  />
+                </div>
+                <div className="mb-4 col-span-2 flex items-center space-x-2">
+                  <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {locData?.allLanguage || "Select all languages?"}
+                  </label>
+                </div>
+                <h5 className="text-xl font-semibold mt-4 col-span-2">
+                  {locData?.sLanguage || "Select Languages"}
+                </h5>
+                <div className="col-span-2 grid grid-cols-4 gap-4">
+                  {availableLanguages.map((language, index) => (
+                    <div
+                      key={index}
+                      className="col-span-1 flex items-center space-x-2"
+                    >
+                      <Checkbox2
+                        checked={selectedLanguages.includes(language)}
+                        onCheckedChange={() => handleLanguageChange(language)}
+                      />
+                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {language}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mb-4 col-span-2 flex items-center space-x-2">
-                <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  {locData?.allLanguage || "Select all languages?"}
-                </label>
-              </div>
-              <h5 className="text-xl font-semibold mt-4 col-span-2">
-                {locData?.sLanguage || "Select Languages"}
-              </h5>
-              <div className="col-span-2 grid grid-cols-4 gap-4">
-                {availableLanguages.map((language, index) => (
-                  <div
-                    key={index}
-                    className="col-span-1 flex items-center space-x-2"
+            </TabsContent>
+            <TabsContent value={"country"} className="my-0 py-0 w-full">
+              <div className="grid grid-cols-2 gap-8 gap-y-4">
+                <div className="col-span-2">
+                  <label
+                    htmlFor="tabName"
+                    className="text-xl font-semibold mt-4 col-span-2"
                   >
-                    <Checkbox2
-                      checked={selectedLanguages.includes(language)}
-                      onCheckedChange={() => handleLanguageChange(language)}
-                    />
-                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      {language}
-                    </label>
-                  </div>
-                ))}
+                    {locData?.sCountry || "Country Settings"}
+                  </label>
+                </div>
+                <div className="col-span-1">
+                  <label htmlFor="defaultCountry" className="text-xs font-semibold">
+                    {locData?.dCountry || "Default Country"}
+                  </label>
+                  <Input
+                    name="defaultCountry"
+                    placeholder="Enter Default Country"
+                    className="p-4 h-[48px]"
+                    value={defaultCountry}
+                    onChange={(e) => setDefaultCountry(e.target.value)}
+                  />
+                </div>
+                <div className="mb-4 col-span-2 flex items-center space-x-2">
+                  <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {locData?.allCountry || "Select all Countries?"}
+                  </label>
+                </div>
+                <h5 className="text-xl font-semibold mt-4 col-span-2">
+                  {locData?.cSetting || "Select Countries"}
+                </h5>
+                <div className="col-span-2 grid grid-cols-4 gap-4">
+                  {availableCountries.map((country, index) => (
+                    <div
+                      key={index}
+                      className="col-span-1 flex items-center space-x-2"
+                    >
+                      <Checkbox2
+                        checked={selectedCountries.includes(country)}
+                        onCheckedChange={() => handleCountryChange(country)}
+                      />
+                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {country}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </TabsContent>
-          <TabsContent value={"country"} className="my-0 py-0 w-full">
-            <div className="grid grid-cols-2 gap-8 gap-y-4">
-              <div className="col-span-2">
-                <label
-                  htmlFor="tabName"
-                  className="text-xl font-semibold mt-4 col-span-2"
-                >
-                  {locData?.sCountry || "Country Settings"}
-                </label>
-              </div>
-              <div className="col-span-1">
-                <label htmlFor="defaultCountry" className="text-xs font-semibold">
-                  {locData?.dCountry || "Default Country"}
-                </label>
-                <Input
-                  name="defaultCountry"
-                  placeholder="Enter Default Country"
-                  className="p-4 h-[48px]"
-                  value={defaultCountry}
-                  onChange={(e) => setDefaultCountry(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 col-span-2 flex items-center space-x-2">
-                <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                  {locData?.allCountry || "Select all Countries?"}
-                </label>
-              </div>
-              <h5 className="text-xl font-semibold mt-4 col-span-2">
-                {locData?.cSetting || "Select Countries"}
-              </h5>
-              <div className="col-span-2 grid grid-cols-4 gap-4">
-                {availableCountries.map((country, index) => (
-                  <div
-                    key={index}
-                    className="col-span-1 flex items-center space-x-2"
+            </TabsContent>
+            <TabsContent value={"error"} className="my-0 py-0 w-full">
+              <div className="grid grid-cols-2 gap-8 gap-y-4">
+                <div className="col-span-2">
+                  <label
+                    htmlFor="tabName"
+                    className="text-md font-semibold mt-4 col-span-2"
                   >
-                    <Checkbox2
-                      checked={selectedCountries.includes(country)}
-                      onCheckedChange={() => handleCountryChange(country)}
-                    />
-                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      {country}
-                    </label>
+                    {"Error Message Position"}
+                  </label>
+                </div>
+                <RadioGroup value={formAttr?.errorMessagePosition} defaultValue={formAttr?.errorMessagePosition || 0} onValueChange={(e)=>{
+                  updateFormAttributes("errorMessagePosition", e)
+                }} className="col-span-2 grid grid-cols-2">
+                  <Label htmlFor="option-one" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
+                    <RadioGroupItem value={0} id="option-one" />
+                    <Label className="cursor-pointer" htmlFor="option-one">Below Input Fields</Label>
+                  </Label>
+                  <Label htmlFor="option-two" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
+                    <RadioGroupItem value={1} id="option-two" />
+                    <Label className="cursor-pointer" htmlFor="option-two">Stacked After Form</Label>
+                  </Label>
+                </RadioGroup>
+              </div>
+            </TabsContent>
+            <TabsContent value={"layout"} className="my-0 py-0 w-full">
+              <div className="p-10">
+                <RadioGroup value={formAttr?.formTemplate} defaultValue={formAttr?.formTemplate || 1} onValueChange={(e)=>{
+                  updateFormAttributes("formTemplate", e)
+                }} className="gap-14 xl:gap-28 gap-y-4 grid grid-cols-3">
+                  <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                    <RadioGroupItem value={1} id="option-one" />
+                    {/* <Label htmlFor="option-one">Below Input Fields</Label> */}
+                    <img src="/one-column.png" alt="Layout columns" className="w-[96%] py-8" />
                   </div>
-                ))}
+                  <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                    <RadioGroupItem value={2} id="option-two" />
+                    {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
+                    <img src="/two-column.png" alt="Layout columns" className="w-[96%] py-8" />
+                  </div>
+                  <div className="flex flex-col space-x-2 border rounded px-3 py-4">
+                    <RadioGroupItem value={3} id="option-multi" />
+                    {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
+                    <img src="/multi-column.png" alt="Layout columns" className="w-[96%] py-8" />
+                  </div>
+                </RadioGroup>
               </div>
-            </div>
-          </TabsContent>
-          <TabsContent value={"error"} className="my-0 py-0 w-full">
-            <div className="grid grid-cols-2 gap-8 gap-y-4">
-              <div className="col-span-2">
-                <label
-                  htmlFor="tabName"
-                  className="text-md font-semibold mt-4 col-span-2"
-                >
-                  {"Error Message Position"}
-                </label>
-              </div>
-              <RadioGroup defaultValue="below" onValueChange={(e)=>console.log(e)} className="col-span-2 grid grid-cols-2">
-                <Label htmlFor="option-one" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
-                  <RadioGroupItem value="below" id="option-one" />
-                  <Label className="cursor-pointer" htmlFor="option-one">Below Input Fields</Label>
-                </Label>
-                <Label htmlFor="option-two" className="cursor-pointer flex items-center space-x-2 border rounded px-3 py-4">
-                  <RadioGroupItem value="after" id="option-two" />
-                  <Label className="cursor-pointer" htmlFor="option-two">Stacked After Form</Label>
-                </Label>
-              </RadioGroup>
-            </div>
-          </TabsContent>
-          <TabsContent value={"layout"} className="my-0 py-0 w-full">
-            <div className="p-10">
-              <RadioGroup defaultValue="one" className="gap-28 gap-y-4 grid grid-cols-3">
-                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
-                  <RadioGroupItem value="one" id="option-one" />
-                  {/* <Label htmlFor="option-one">Below Input Fields</Label> */}
-                  <img src="/one-column.png" alt="Layout columns" className="w-[96%] py-8" />
-                </div>
-                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
-                  <RadioGroupItem value="two" id="option-two" />
-                  {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
-                  <img src="/two-column.png" alt="Layout columns" className="w-[96%] py-8" />
-                </div>
-                <div className="flex flex-col space-x-2 border rounded px-3 py-4">
-                  <RadioGroupItem value="multi" id="option-multi" />
-                  {/* <Label htmlFor="option-two">Stacked After Form</Label> */}
-                  <img src="/multi-column.png" alt="Layout columns" className="w-[96%] py-8" />
-                </div>
-              </RadioGroup>
-            </div>
-          </TabsContent>
-        </div>
+            </TabsContent>
+          </div>
+        ) : (
+          <div className="border-radius bg-[#ffffff] p-6 min-h-[500px]">
+            <BoxLoader />
+          </div>
+        )}
       </Tabs>
 
       <div className="flex flex-row-reverse gap-4 py-1 my-4">

@@ -19,7 +19,8 @@ axios.interceptors.request.use((reqConfig) => {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
       config.headers["Content-Type"] = "application/json";
       config.headers["Request-Id"] = uuidv4();
-
+      // Origin: http://localhost:3000
+      // config.headers["Origin"] = 'http://localhost:3000';
       // console.log("Adding token", accessToken)
     //   headers: {
     //     "Content-Type": "application/json",

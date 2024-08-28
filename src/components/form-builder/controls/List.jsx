@@ -299,7 +299,6 @@ export default function List({
       question: question,
       isRequired: isRequired,
       listFormat: formatData,
-      listFormat:formatData,
       multiSelection:selectionDataType,
       listItemViewOnly:selectionData,
       isThirdParty: radiosType == "manual" ? false : true,

@@ -84,11 +84,12 @@ export default function FormBuilder() {
       );
       const data = await response.data;
       // console.log(data.data);
-      if (data?.data?.length > 0) {
+      console.log(data?.data?.data)
+      if (data?.data?.data?.length > 0) {
         // console.log(data.data)
-        setForms(data?.data);
+        setForms(data?.data?.data);
         setLocalLoading(false);
-        setTotalPages(data?.pageInfo);
+        setTotalPages(data?.data?.pageInfo);
         setTimeout(() => {
           dispatch(setIsLoading(false));
           setLocalLoading(false);
@@ -372,22 +373,22 @@ export default function FormBuilder() {
                   {/* <TableCell>{form?.languages?.join(', ') || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell>
                 <TableCell>{form?.countries?.join(', ') || (<span className="text-xs text-gray-500">N/A</span>)}</TableCell> */}
                   <TableCell>
-                    {form.createdBy || (
+                    {form.createdBy ? new Date(form.createdBy).toLocaleDateString('en-GB') : new Date(form?.createdAt).toLocaleDateString('en-GB') || (
                       <span className="text-xs text-gray-500">N/A</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    {form.createdDate || (
+                    {new Date(form.createdAt).toLocaleDateString('en-GB') || (
                       <span className="text-xs text-gray-500">N/A</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    {form.lastModifiedBy || (
+                    {form.lastModifiedBy ? new Date(form.createdBy).toLocaleDateString('en-GB') : new Date(form?.createdAt).toLocaleDateString('en-GB') || (
                       <span className="text-xs text-gray-500">N/A</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    {form.lastModifiedDate || (
+                    {form.lastModifiedDate ? new Date(form.createdBy).toLocaleDateString('en-GB') : new Date(form?.createdAt).toLocaleDateString('en-GB') || (
                       <span className="text-xs text-gray-500">N/A</span>
                     )}
                   </TableCell>

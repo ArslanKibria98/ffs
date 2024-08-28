@@ -29,6 +29,7 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
   const [fieldType, setFieldType] = useState(!isUpdate ? fieldTypes[0] : updateFieldData.inputType);
   const [fieldLabel, setFieldLabel] = useState(!isUpdate ? "" : updateFieldData.name);
   const [id, setId] = useState("");
+  const [defaultValue, setDefaultValue] = useState(!isUpdate ? "Abc" : updateFieldData.defaultValue);
   const [fieldName, setFieldName] = useState(!isUpdate ? "" : updateFieldData.name);
   const [fieldPlaceholder, setFieldPlaceholder] = useState(!isUpdate ? "" : updateFieldData.placePlaceholder);
   const [minLength, setMinLength] = useState(!isUpdate ? "" : updateFieldData.minLength);
@@ -48,7 +49,10 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
     if (!minLength) errors.minLength = "Minimum length is required";
     if (!maxLength) errors.maxLength = "Maximum length is required";
     if (!errorMessage) errors.errorMessage = "Error Message is required";
-    if (minLength !== "" && maxLength !== "" && minLength > maxLength) errors.length = "Minimum length cannot be greater than maximum length";
+    if (minLength !== "" && maxLength !== "" && parseInt(minLength) > parseInt(maxLength)) {
+      console.log(minLength, maxLength)
+      errors.length = "Minimum length cannot be greater than maximum length";
+    }
 
     setErrors(errors);
 
@@ -63,8 +67,9 @@ export default function AddTextField({ getter, setter, formDataApi, resetForm, i
       containerId: id ? id : default_id,
       regionId: '3FA85F64-5717-4562-B3FC-2C963F66AFA6',
       name: fieldName,
-      default_Value: 'abc',
+      // default_Value: 'abc',
       inputType: fieldType,
+      defaultValue,
       fieldLabel,
       fieldName,
       placeholder: fieldPlaceholder,
