@@ -35,6 +35,8 @@ import {
   FolderClosed,
   Pencil,
   Trash2,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { QrCode } from "lucide-react";
 
@@ -47,22 +49,11 @@ import {
   SET_FORM_INFO,
   SET_DEFAULT_CONTAINER_ID,
 } from "../../redux/store/form";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import axios from "@/lib/axios";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function FormBuilder() {
-  // const params=useParams()
-  // console.log(params,"==--==")
   const navigate = useNavigate();
-  const location = window.location.origin;
   const dispatch = useDispatch();
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
@@ -70,20 +61,41 @@ export default function FormBuilder() {
   const tenantId = useSelector((state) => state?.authStore?.tenant_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [localLoading, setLocalLoading] = useState(true);
+  const [repository, setRepository] = useState([]);
+  const [repositories, setRepositories] = useState([]);
   const [forms, setForms] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const handlePageChange = async (size, newPage) => {
+
+  const getRepository = async () => {
+    setLocalLoading(true);
+    try {
+      await axios.get(`/Repository/GetRepositoriesByUserId?userId=${userId}`).then((res) => {
+        console.log(res);
+        if (res.data.success) {
+          console.log(res.data)
+          setRepository(res?.data?.data[0].id)
+          setRepositories(res?.data?.data)
+          handlePageChange(res?.data?.data[0].id, rowsPerPage, page);
+        } else {
+          throw new Error("Unable to get repositories!")
+        }
+      })
+    } catch(e) {
+      console.error(e);
+      toast.error(e.message);
+    }
+  }
+  const handlePageChange = async (repo, size, newPage) => {
     setPage(newPage);
     setLocalLoading(true);
-
     try {
       const response = await axios.get(
-        `http://135.181.57.251:3048/api/Form/GetAllFormsByUserId?UserId=${userId}&PageNumber=${newPage}&PageSize=${size}`
+        `http://135.181.57.251:3048/api/Form/GetAllFormsByRepositoryId?RepositoryId=${repo}&PageNumber=${newPage}&PageSize=${size}`
       );
       const data = await response.data;
-      // console.log(data.data);
+      console.log(data.data);
       console.log(data?.data?.data)
       if (data?.data?.data?.length > 0) {
         // console.log(data.data)
@@ -129,7 +141,7 @@ export default function FormBuilder() {
       const data = await response.json();
       console.log(data);
       if (data?.notificationMessage) {
-        handlePageChange(rowsPerPage, page);
+        handlePageChange(repository, rowsPerPage, page);
         setLocalLoading(false);
         toast.success(data?.notificationMessage);
       } else {
@@ -145,7 +157,7 @@ export default function FormBuilder() {
   };
   useEffect(() => {
     return async () => {
-      handlePageChange(rowsPerPage, page);
+      getRepository()
     };
   }, []);
 
@@ -221,7 +233,7 @@ export default function FormBuilder() {
       );
       if (response.ok) {
         let responseData = await response.json();
-        handlePageChange(rowsPerPage, 1);
+        handlePageChange(repository, rowsPerPage, 1);
         toast.success(responseData?.notificationMessage);
         setLocalLoading(true);
       }
@@ -236,44 +248,37 @@ export default function FormBuilder() {
     locData = localisationData.home.ar;
   }
   console.log(rowsPerPage, "rows");
+
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
-        <Select className="" defaultValue="folder">
-          <SelectTrigger className="max-w-[160px] h-[46px] space-x-1 font-semibold text-md w-fit bg-transparent border-0">
-            <img src="/folder.svg" alt="Folder icon" width={24} height={24} />
-            <SelectValue
-              placeholder={locData?.folder || "Folder"}
-              className="px-0 mx-0"
-            />
-          </SelectTrigger>
-          <SelectContent className="p-0">
-            <SelectItem
-              value="folder"
-              className="border-b border-[#f8c8ca] hover:bg-[#ececec]"
-            >
-              Folder
-            </SelectItem>
-            <SelectItem
-              value="onboarding"
-              className="border-b border-[#f8c8ca] hover:bg-[#ececec]"
-            >
-              Onboarding Folder
-            </SelectItem>
-            <SelectItem
-              value="kyc"
-              className="border-b border-[#f8c8ca] hover:bg-[#ececec]"
-            >
-              KYC Folder
-            </SelectItem>
-            <SelectItem
-              value="kyb"
-              className="border-b border-[#f8c8ca] hover:bg-[#ececec]"
-            >
-              KYB Folder
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        {repositories && repositories.length > 0 ? (
+          <Select value={repository} defaultValue={repository} onValueChange={(e) => {
+            setRepository(e);
+            handlePageChange(e, rowsPerPage, page);
+          }}>
+            <SelectTrigger className="max-w-[200px] h-[46px] space-x-1 font-semibold flex text-md w-full bg-transparent border-0">
+              <img src="/folder.svg" alt="Folder icon" width={24} height={24} />
+              <SelectValue
+                placeholder={locData?.folder || "Folder"}
+                className="px-0 text-left"
+              />
+            </SelectTrigger>
+            <SelectContent className="p-0">
+              {repositories?.map((repo) => (
+                <SelectItem
+                  key={repo.id}
+                  value={repo.id}
+                  className="border-b border-[#f8c8ca] hover:bg-[#ececec] m-0"
+                >
+                  {repo.repositoryName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Skeleton className="max-w-[160px] w-full h-[46px] space-x-1" />
+        )}
         <div className="flex justify-evenly gap-2 items-center">
           <Command className="w-[400px] xl:w-[500px]">
             <CommandInput placeholder={locData?.search || "Search"} />
@@ -502,9 +507,9 @@ export default function FormBuilder() {
           Rows per page
           </span> */}
           <Select
-            className="w-full"
+            className="w-full mr-1"
             onValueChange={(e) => {
-              handlePageChange(e, page);
+              handlePageChange(repository, e, page);
               setRowsPerPage(e);
             }}
             value={rowsPerPage}
@@ -523,19 +528,19 @@ export default function FormBuilder() {
             </SelectContent>
           </Select>
 
-          <button
-            onClick={() => handlePageChange(rowsPerPage, 1)}
+          {/* <button
+            onClick={() => handlePageChange(repository, rowsPerPage, 1)}
             disabled={page <= 1}
             className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
           >
             {`<<`}
-          </button>
+          </button> */}
           <button
-            onClick={() => handlePageChange(rowsPerPage, page - 1)}
+            onClick={() => handlePageChange(repository, rowsPerPage, page - 1)}
             disabled={page <= 1}
-            className="px-4 py-2 mx-1 pagination-btn rounded"
+            className="p-1 mx-1 pagination-btn rounded"
           >
-            {`<`}
+            <ChevronLeft />
           </button>
 
           {Array.from({ length: 3 }, (_, index) => {
@@ -544,8 +549,8 @@ export default function FormBuilder() {
               return (
                 <button
                   key={pageNumber}
-                  onClick={() => handlePageChange(rowsPerPage, pageNumber)}
-                  className={`px-4 py-2 mx-1 ${
+                  onClick={() => handlePageChange(repository, rowsPerPage, pageNumber)}
+                  className={`px-3 py-1 mx-1 ${
                     pageNumber === page
                       ? "bg-red-500 text-white"
                       : "pagination-btn text-gray-800"
@@ -560,19 +565,19 @@ export default function FormBuilder() {
           })}
 
           <button
-            onClick={() => handlePageChange(rowsPerPage, page + 1)}
+            onClick={() => handlePageChange(repository, rowsPerPage, page + 1)}
             disabled={forms.length < rowsPerPage}
-            className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
+            className="p-1 mx-1 pagination-btn text-gray-800 rounded"
           >
-            {`>`}
+            <ChevronRight />
           </button>
-          <button
-            onClick={() => handlePageChange(rowsPerPage, totalPages)}
+          {/* <button
+            onClick={() => handlePageChange(repository, rowsPerPage, totalPages)}
             disabled={forms.length < rowsPerPage}
             className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
           >
             {`>>`}
-          </button>
+          </button> */}
         </div>
       </div>
       {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}

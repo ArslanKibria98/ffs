@@ -292,11 +292,11 @@
 .pagination-btn{
   font-weight: 600;
   color: #FAFAFA;
-  background: linear-gradient(#6C6C6C 100%, #3F3F3F 100%)  ;
+  background: linear-gradient(135deg, #6a6a6a, #414141);
 }
 .list-instatant{
   color: white;
   padding: 2px;
   cursor: pointer;
-  background-color: red;
+  background-color: #cb0000;
 }
