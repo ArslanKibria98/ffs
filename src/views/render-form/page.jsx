@@ -266,7 +266,7 @@ export default function FormRender() {
       try {
         setLoader(true);
         const data = {
-          formVersionId: version_id,
+          formVersionId: params.id,
           textBoxInput,
           phoneNumberInput,
           otpInput,

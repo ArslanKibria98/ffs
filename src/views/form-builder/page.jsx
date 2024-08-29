@@ -39,7 +39,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { QrCode } from "lucide-react";
-
+import { v4 as uuidv4 } from 'uuid'
 import toast from "react-hot-toast";
 
 import localisationData from "../../localisation.json";
@@ -131,6 +131,7 @@ export default function FormBuilder() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Request-Id":uuidv4(),
           },
           body: JSON.stringify({
             versionId: version,
@@ -225,6 +226,8 @@ export default function FormBuilder() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            "Request-Id":uuidv4(),
+            'api-version': '1.0'
           },
           body: JSON.stringify({
             formVersionId: id,

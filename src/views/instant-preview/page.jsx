@@ -374,10 +374,10 @@ export default function InstantPreview() {
                 </label>
         </div>
       <form onSubmit={formik.handleSubmit} className={"pt-3"}>
-        {formDataApi.length > 0 && (
-          <Tabs defaultValue={formDataApi[0].containerName}  onValueChange={handleTabChange}>
+        {formDataApi&& (
+          <Tabs defaultValue={formDataApi[0]?.containerName}  onValueChange={handleTabChange}>
             <TabsList className="w-100 formBuilderTablist flex gap-[2px]">
-              {formDataApi.map((tab, index) => (
+              {formDataApi?.map((tab, index) => (
                 <>
                   {/* {tab.containerName!=null&& */}
                   <TabsTrigger
@@ -386,6 +386,7 @@ export default function InstantPreview() {
                     className="p-0 px-3 h-8 w-fit"
                   >
                     <h5 className="text-[14px]">
+                      {console.log(tab,"hello")}
                       {tab?.containerName || "Tab Name"}
                     </h5>
                   </TabsTrigger>
@@ -427,7 +428,7 @@ export default function InstantPreview() {
         {/* {
           formDataApi.length==formDataApi.length&&
         } */}
-        {formDataApi.length >1 ?(
+        {formDataApi?.length >1 ?(
           <>
         {isLastTabActive &&
           <div className="flex flex-row-reverse gap-4 py-4 my-4">

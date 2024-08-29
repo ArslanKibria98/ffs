@@ -22,7 +22,6 @@
 }
 
 .guZdik {
-
   height: 72px !important;
   padding: 18px 121px 18px 121px !important;
   gap: 0px !important;
@@ -268,7 +267,12 @@
   border-radius: 10px 10px 0 0 !important;
 }
 
-
+.formBuilderTablist .mb-4.w-full:first-child .relative.w-full.overflow-auto {
+  border-radius: 10px 0px 0px;
+}
+.formBuilderTablist .mb-4.w-full:last-child .relative.w-full.overflow-auto {
+  border-radius: 0 10px 0px;
+}
 .style-module_emptyIcons__Bg-FZ {
   display: flex!important;
 }

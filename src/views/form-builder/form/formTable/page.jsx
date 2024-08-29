@@ -54,7 +54,7 @@ export default function FormTable() {
   const [forms, setForms] = useState([]);
   const [tableData, setTableData] = useState({});
   const id = useParams();
-
+console.log(id,"id")
   const language = useSelector((state) => state.language.language);
     
   let locData = localisationData.formReport.en;
@@ -73,6 +73,11 @@ export default function FormTable() {
       if (response) {
         const data = response.data.data;
         setTableData(data);
+        console.log(response.data.notificationMessage)
+        if(response.data.notificationMessage=="Form instance not found"){
+          toast.error(response.data.notificationMessage)
+        }
+       
       }
       dispatch(setIsLoading(false));
     } catch (error) {
@@ -90,26 +95,22 @@ export default function FormTable() {
   // Convert table data to CSV
   const exportToCSV = () => {
     const csvRows = [];
-
     // Iterate through each form instance and prepare headers and data rows
     tableData.formInstanceLists.forEach((instance) => {
       if (instance.containerName !== null) {
         // Main Header (Container Name)
         csvRows.push([instance.containerName]);
-
         // Subheaders (keys of controlsAndInstances)
-        const subHeaders = Object.keys(instance.controlsAndInstances);
+        const subHeaders = Object.keys(instance.controlsAndInstances!=null &&instance?.controlsAndInstances);
         csvRows.push(subHeaders.join(","));
-
         // Data Rows
-        const numRows = instance.controlsAndInstances[subHeaders[0]].length;
+        const numRows = instance.controlsAndInstances!=null &&instance?.controlsAndInstances[subHeaders[0]].length;
         for (let i = 0; i < numRows; i++) {
           const row = subHeaders.map(
             (key) => instance.controlsAndInstances[key][i] || "N/A"
           );
           csvRows.push(row.join(","));
         }
-
         // Add an empty line between different instances for clarity
         csvRows.push("");
       }
@@ -154,23 +155,22 @@ export default function FormTable() {
         </div>
       </div>
 
-      <div className="mw-100 min-h-[83vh] mx-auto p-2">
-        <div className="flex border rounded-lg bg-[#ffffff]">
+      <div className="mw-100 min-h-[83vh] mx-auto p-2 formBuilderTablist">
+        <div className="flex  rounded-lg bg-[#ffffff] formBuilderTablist">
           {tableData &&
             tableData?.formInstanceLists?.map((instance) => (
               <div key={instance.containerId} className="mb-4 w-full">
-                <Table className="rounded-lg border bg-white overflow-x-scroll overflow-scroll">
+                <Table className="rounded-lg border bg-white overflow-x-scroll overflow-scroll formBuilderTablist">
                   <TableHeader>
                     <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
-                      {instance.containerName != null && (
+                      {instance?.containerName != null &&  (
                         <TableHead
                           colSpan={
-                            Object.keys(instance?.controlsAndInstances).length +
-                            2
+                            Object.keys(instance?.controlsAndInstances!=null&&instance?.controlsAndInstances).length+2
                           }
                           className="text-white text-center"
                         >
-                          {instance.containerName === null
+                          {instance.containerName === null 
                             ? "-"
                             : instance.containerName}
                         </TableHead>
@@ -179,7 +179,7 @@ export default function FormTable() {
                     <TableRow className="bg-[#e2252e] hover:bg-[#e2252e]">
                       {instance.containerName != null && (
                         <>
-                          {Object.keys(instance?.controlsAndInstances).map(
+                          {Object.keys(instance?.controlsAndInstances !=null &&instance?.controlsAndInstances).map(
                             (key) => (
                               <TableHead
                                 key={key}
@@ -196,16 +196,38 @@ export default function FormTable() {
                   <TableBody>
                     {instance.containerName != null && (
                       <>
-                        {instance.controlsAndInstances[
-                          Object.keys(instance.controlsAndInstances)[0]
+                        {instance?.controlsAndInstances&&instance?.controlsAndInstances[
+                          Object.keys(instance?.controlsAndInstances !=null&&instance.controlsAndInstances)[0]
                         ].map((_, rowIndex) => (
                           <TableRow key={rowIndex}>
-                            {Object.keys(instance.controlsAndInstances).map(
+                            {Object.keys(instance?.controlsAndInstances !=null&&instance?.controlsAndInstances).map(
                               (key) => (
-                                <TableCell key={key}>
-                                  {instance.controlsAndInstances[key][
-                                    rowIndex
-                                  ] || "N/A"}
+                                <TableCell key={key} style={{whiteSpace:"nowrap"}}>
+                                  {console.log(key)}
+                                  {key=="formInstanceId"&&""}
+                                  {key!="formInstanceId"&&instance.controlsAndInstances[key][rowIndex] || <>
+                                  <div >
+                                    {/* {instance.controlsAndInstances[key][rowIndex]} */}
+                                    <DropdownMenu>
+                      <DropdownMenuTrigger className="bg-[#4e4e4e] mx-auto flex justify-between gap-2 rounded font-thin text-white p-[2px] pl-2">
+                        {locData?.columns?.action || "Action"}
+                        <ChevronDown className="h-5 " />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="p-0">
+                        
+                        {/* <DropdownMenuSeparator className="bg-gray-300 p-0 m-0"/> */}
+                        
+                       
+                        <DropdownMenuItem
+                          className="focus:bg-[#fff0f0] cursor-pointer"
+                          onClick={()=>{navigate(`/form-instant-preview/${id?.id}/${instance.controlsAndInstances[key][rowIndex]}`)}}
+                        >
+                        View Filled Form
+                         
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                                    </div></>}
                                 </TableCell>
                               )
                             )}
