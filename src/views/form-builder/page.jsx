@@ -135,7 +135,7 @@ export default function FormBuilder() {
           },
           body: JSON.stringify({
             versionId: version,
-            status: status == 2 ? 1 : 2,
+            status: status == 0 ? 1 : (1 ? 2 : 1),
           }),
         }
       );
@@ -432,9 +432,11 @@ export default function FormBuilder() {
                           }}
                         >
                           <EyeOff className="h-4" />
+                          {form.status}
                           &nbsp;&nbsp;
                           {form.status == 0
-                            ? locData?.dropdown?.draft || "Draft"
+                            // ? locData?.dropdown?.draft || "Draft"
+                            ? locData?.dropdown?.publish || "Publish"
                             : form.status == 1
                               ? locData?.dropdown?.publish || "Publish"
                               : locData?.dropdown?.unPublish || "UnPublish"}
