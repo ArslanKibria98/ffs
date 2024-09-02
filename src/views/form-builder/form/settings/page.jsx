@@ -22,8 +22,6 @@ import axios from "@/lib/axios";
 import BoxLoader from "@/components/BoxLoader";
 
 export default function FormSettingsPage() {
-  // const router = useRouter()
-
   const version_id = useSelector((state) => state?.formStore.version_id);
 
   const availableLanguages = [
@@ -46,6 +44,10 @@ export default function FormSettingsPage() {
     "Bangladash",
   ];
   const [formAttr, setFormAttr] = useState(null);
+  const [oDetails, setOdetails] = useState(null);
+  const [oLanguage, setOlanguage] = useState(null);
+  const [oCountry, setOcountry] = useState(null);
+
   const language = useSelector((state) => state.language.language);
   const navigate = useNavigate();
   const [fieldLabel, setFieldLabel] = useState("");
@@ -59,6 +61,7 @@ export default function FormSettingsPage() {
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const handleLanguageChange = (language) => {
     setSelectedLanguages((prev) =>
       prev.includes(language)
@@ -116,6 +119,21 @@ export default function FormSettingsPage() {
       if (res?.data?.success) {
         console.log(res);
         setFormAttr(res.data.data)
+        setOdetails({
+          formRequiredFieldIndicator: res?.data?.data?.formRequiredFieldIndicator,
+          isCustomIndicator: res?.data?.data?.isCustomIndicator,
+          targetUrl: res?.data?.data?.targetUrl,
+          successMessage: res?.data?.data?.successMessage,
+          failMessage: res?.data?.data?.failMessage,
+        });
+        setOlanguage({
+          defaultLanguage: res?.data?.data?.defaultLanguage,
+          languages: res?.data?.data?.languages,
+        });
+        setOcountry({
+          defaultCountry: res?.data?.data?.defaultCountry,
+          countries: res?.data?.data?.countries,
+        });
       } else {toast.error(res?.data?.notificationMessage || "Unable to get form settings!")}
     })
     setLoading(false);
@@ -141,9 +159,6 @@ export default function FormSettingsPage() {
   useEffect(()=>{
     return ()=> getFormAttributes();
   }, [])
-  // useEffect(()=>{
-  //   return ()=> updateFormAttributes();
-  // }, [formAttr])
   
   let locData = localisationData.formSetting.en;
   if (language == "en") {
