@@ -95,16 +95,17 @@ console.log(id,"id")
   // Convert table data to CSV
   const exportToCSV = () => {
     const csvRows = [];
-    // Iterate through each form instance and prepare headers and data rows
+    const paddingLength = 20; // Adjust this to control padding lengths
     tableData.formInstanceLists.forEach((instance) => {
       if (instance.containerName !== null) {
         // Main Header (Container Name)
-        csvRows.push([instance.containerName]);
+        const paddedContainerName = instance.containerName.padEnd(paddingLength, " ");
+        csvRows.push([paddedContainerName]);
         // Subheaders (keys of controlsAndInstances)
-        const subHeaders = Object.keys(instance.controlsAndInstances!=null &&instance?.controlsAndInstances);
+        const subHeaders = Object.keys(instance.controlsAndInstances != null && instance?.controlsAndInstances);
         csvRows.push(subHeaders.join(","));
         // Data Rows
-        const numRows = instance.controlsAndInstances!=null &&instance?.controlsAndInstances[subHeaders[0]].length;
+        const numRows = instance.controlsAndInstances != null && instance?.controlsAndInstances[subHeaders[0]].length;
         for (let i = 0; i < numRows; i++) {
           const row = subHeaders.map(
             (key) => instance.controlsAndInstances[key][i] || "N/A"
@@ -115,10 +116,10 @@ console.log(id,"id")
         csvRows.push("");
       }
     });
-
+  
     // Convert rows to CSV string
     const csvString = csvRows.join("\n");
-
+  
     // Create a blob and trigger download
     const blob = new Blob([csvString], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
@@ -127,7 +128,6 @@ console.log(id,"id")
     a.setAttribute("download", `form_data_${id.id}.csv`);
     a.click();
   };
-
   return (
     <>
       <div className="w-100 flex justify-between items-center my-3 px-2 pt-6">
