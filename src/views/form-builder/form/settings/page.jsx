@@ -60,6 +60,13 @@ export default function FormSettingsPage() {
   const [defaultCountry, setDefaultCountry] = useState("");
   const [selectedLanguages, setSelectedLanguages] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
+
+  const [formRequiredFieldIndicator, setformRequiredFieldIndicator] = useState("");
+  const [isCustomIndicator, setisCustomIndicator] = useState(false);
+  const [targetUrl, settargetUrl] = useState("");
+  const [successMessage, setsuccessMessage] = useState("");
+  const [failMessage, setfailMessage] = useState("");
+
   const [loading, setLoading] = useState(true);
 
   const handleLanguageChange = (language) => {
@@ -126,14 +133,25 @@ export default function FormSettingsPage() {
           successMessage: res?.data?.data?.successMessage,
           failMessage: res?.data?.data?.failMessage,
         });
+        setformRequiredFieldIndicator(res?.data?.data?.formRequiredFieldIndicator)
+        setisCustomIndicator(res?.data?.data?.isCustomIndicator)
+        settargetUrl(res?.data?.data?.targetUrl)
+        setsuccessMessage(res?.data?.data?.successMessage)
+        setfailMessage(res?.data?.data?.failMessage)
+
         setOlanguage({
           defaultLanguage: res?.data?.data?.defaultLanguage,
           languages: res?.data?.data?.languages,
         });
+        setDefaultLanguage(res?.data?.data?.defaultLanguage);
+        setSelectedLanguages(res?.data?.data?.languages);
+
         setOcountry({
           defaultCountry: res?.data?.data?.defaultCountry,
           countries: res?.data?.data?.countries,
         });
+        setDefaultCountry(res?.data?.data?.defaultCountry);
+        setSelectedCountries(res?.data?.data?.countries);
       } else {toast.error(res?.data?.notificationMessage || "Unable to get form settings!")}
     })
     setLoading(false);
@@ -150,7 +168,25 @@ export default function FormSettingsPage() {
         setFormAttr({
           ...formAttr,
           [key]: val
-        })
+        });
+      } else {toast.error(res?.data?.notificationMessage || "Unable to update form settings!")}
+    })
+    setLoading(false);
+  }
+
+  async function updateMultiFormAttributes(data) {
+    setLoading(true);
+
+    await axios.post(`/Form/UpdateFormAttributes`, {
+      ...formAttr,
+      ...data
+    }).then((res) => {
+      if (res?.data?.success) {
+        console.log(res);
+        setFormAttr({
+          ...formAttr,
+          ...data
+        });
       } else {toast.error(res?.data?.notificationMessage || "Unable to update form settings!")}
     })
     setLoading(false);
@@ -213,8 +249,11 @@ export default function FormSettingsPage() {
                     {locData?.field1 || "Required Field Indicator"}
                   </label>
                   {/* formRequiredFieldIndicator */}
-                  <Select value={formAttr?.formRequiredFieldIndicator} defaultValue={formAttr?.formRequiredFieldIndicator || 0} onValueChange={(e)=>{
-                    updateFormAttributes("formRequiredFieldIndicator", e)
+                  <Select value={formRequiredFieldIndicator} defaultValue={formAttr?.formRequiredFieldIndicator || 0} onValueChange={(e)=>{
+                    setformRequiredFieldIndicator(e)
+                    if (e == "(Custom)") {
+                      setisCustomIndicator(true);
+                    }
                   }} className="col-span-2">
                     <SelectTrigger className="w-full h-[48px]">
                       <SelectValue />
@@ -234,8 +273,8 @@ export default function FormSettingsPage() {
                     name="targetUrl"
                     placeholder="Enter Target Url"
                     className="p-4 h-[48px]"
-                    value={fieldName}
-                    onChange={(e) => setFieldName(e.target.value)}
+                    value={targetUrl}
+                    onChange={(e) => settargetUrl(e.target.value)}
                     // value={formAttr?.formRequiredFieldIndicator} defaultValue={formAttr?.formRequiredFieldIndicator || 0} onValueChange={(e)=>{
                     //   updateFormAttributes("formRequiredFieldIndicator", e)
                     // }}
@@ -252,8 +291,8 @@ export default function FormSettingsPage() {
                     name="successMessage"
                     placeholder="Enter Success Message"
                     className="p-4 h-[48px]"
-                    value={fieldPlaceholder}
-                    onChange={(e) => setFieldPlaceholder(e.target.value)}
+                    value={successMessage}
+                    onChange={(e) => setsuccessMessage(e.target.value)}
                   />
                 </div>
                 <div>
@@ -267,18 +306,51 @@ export default function FormSettingsPage() {
                     name="failMessage"
                     placeholder="Enter Fail Message"
                     className="p-4 h-[48px]"
-                    value={fieldPlaceholderFail}
-                    onChange={(e) => setFieldPlaceholderFail(e.target.value)}
+                    value={failMessage}
+                    onChange={(e) => setfailMessage(e.target.value)}
                   />
                 </div>
               </div>
+              {JSON.stringify(oDetails) != JSON.stringify({
+                formRequiredFieldIndicator,
+                isCustomIndicator,
+                targetUrl,
+                successMessage,
+                failMessage
+              }) && (
+                <div className="flex flex-row-reverse gap-4 py-1 my-4">
+                  <Button
+                    className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+                    onClick={()=>{
+                      updateMultiFormAttributes({
+                        formRequiredFieldIndicator,
+                        isCustomIndicator,
+                        targetUrl,
+                        successMessage,
+                        failMessage
+                      });
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
+                  onClick={()=>{
+                    setformRequiredFieldIndicator(oDetails.formRequiredFieldIndicator); 
+                    setisCustomIndicator(oDetails.isCustomIndicator); 
+                    settargetUrl(oDetails.targetUrl); 
+                    setsuccessMessage(oDetails.successMessage); 
+                    setfailMessage(oDetails.failMessage);
+                  }}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </TabsContent>
             <TabsContent value={"language"} className="my-0 py-0 w-full">
               <div className="grid grid-cols-2 gap-8 gap-y-4">
-                <h5 className="text-xl font-semibold mt-4 col-span-2">
-                  {" "}
+                <span className="text-xl font-semibold col-span-2">
                   {locData?.lSetting || "Language Settings"}
-                </h5>
+                </span>
 
                 <div className="col-span-1">
                   <label htmlFor="defaultLanguage" className="text-xs font-semibold">
@@ -293,7 +365,9 @@ export default function FormSettingsPage() {
                   />
                 </div>
                 <div className="mb-4 col-span-2 flex items-center space-x-2">
-                  <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
+                  <Checkbox2 checked={selectedLanguages.length == availableLanguages.length} onCheckedChange={(e)=>{
+                    e ? setSelectedLanguages(availableLanguages) : setSelectedLanguages([])
+                  }} />
                   <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {locData?.allLanguage || "Select all languages?"}
                   </label>
@@ -318,6 +392,25 @@ export default function FormSettingsPage() {
                   ))}
                 </div>
               </div>
+              {JSON.stringify(oLanguage ) != JSON.stringify({
+                defaultLanguage, 
+                languages:selectedLanguages
+              }) && (
+                <div className="flex flex-row-reverse gap-4 py-1 my-4">
+                  <Button
+                    className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+                    onClick={()=>{
+                      updateMultiFormAttributes({defaultLanguage, languages: selectedLanguages});
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
+                  onClick={()=>{setDefaultLanguage(oLanguage.defaultLanguage); setSelectedLanguages(oLanguage.languages)}}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </TabsContent>
             <TabsContent value={"country"} className="my-0 py-0 w-full">
               <div className="grid grid-cols-2 gap-8 gap-y-4">
@@ -342,7 +435,9 @@ export default function FormSettingsPage() {
                   />
                 </div>
                 <div className="mb-4 col-span-2 flex items-center space-x-2">
-                  <Checkbox2 checked={isMandatory} onCheckedChange={setIsMandatory} />
+                  <Checkbox2 checked={selectedCountries.length == availableCountries.length} onCheckedChange={(e)=>{
+                    e ? setSelectedCountries(availableCountries) : setSelectedCountries([])
+                  }} />
                   <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                     {locData?.allCountry || "Select all Countries?"}
                   </label>
@@ -367,6 +462,25 @@ export default function FormSettingsPage() {
                   ))}
                 </div>
               </div>
+              {JSON.stringify(oCountry ) != JSON.stringify({
+                defaultCountry, 
+                countries:selectedCountries
+              }) && (
+                <div className="flex flex-row-reverse gap-4 py-1 my-4">
+                  <Button
+                    className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+                    onClick={()=>{
+                      updateMultiFormAttributes({defaultCountry, countries: selectedCountries});
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
+                  onClick={()=>{setDefaultCountry(oCountry.defaultCountry); setSelectedCountries(oCountry.countries)}}>
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </TabsContent>
             <TabsContent value={"error"} className="my-0 py-0 w-full">
               <div className="grid grid-cols-2 gap-8 gap-y-4">
