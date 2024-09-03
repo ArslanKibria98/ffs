@@ -113,15 +113,17 @@ export default function FormBuilder() {
     }
   };
   const handlePageChange = async (repo, size, newPage) => {
+    setForms([]);
     setPage(newPage);
     setLocalLoading(true);
+    console.log(repo)
     if (repo == "all") {
       repo = userId;
     }
     try {
       const response = await axios.get(
-        `http://135.181.57.251:3048/api/Form/GetAllForms?` +
-          (repo ? `UserId=${repo}&` : ``) +
+        `http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}&` +
+          (repo == "all" ? `` : `RepositoryId=${repo}&`) +
           `PageNumber=${newPage}&PageSize=${size}`
       );
       const data = await response.data;

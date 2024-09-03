@@ -19,7 +19,7 @@ import { ArrowLeft } from "lucide-react";
 function DeleteRepository() {
   const params = useParams();
   const userId = useSelector((state) => state?.authStore?.id);
-  const [repository, setRepository] = useState(null);
+  const [repository, setRepository] = useState("");
   const [repositories, setRepositories] = useState([]);
   const [forms, setForms] = useState([]);
   const [formsToMove, setFormsToMove] = useState([]);
@@ -74,25 +74,27 @@ function DeleteRepository() {
     };
   }, []);
 
-  function addToMoveArr(type, id) {
-    // console.log(type, id);
-    if (type) {
-        let arr = formsToMove;
-        arr.push(id);
-        setFormsToMove(arr);
-        // console.log(arr);
-    } else {
-        let arr = []
-        formsToMove?.map((form)=>{form != id && arr.push(form)})
-        setFormsToMove(arr);
-        // console.log(arr);
-    }
-    // console.log(formsToMove)
-    }
-
-    // useEffect(()=>{
-    //     console.log(forms.length, formsToMove.length);
-    // }, [forms, formsToMove])
+  async function moveForms() {
+    await axios.post("/Repository/UpdateRepository", {
+        id: params.id,
+        repositoryName: "name",
+        newRepoId: repository,
+        forms: formsToMove,
+        onlyRelocate: true
+    }).then((res)=>{
+        if (res.data.success) {
+            console.log(res)
+            toast.success(res.data.notificationMessage)
+            if (forms.length == formsToMove.length) {
+                window.location.href = "/form-builder";
+            } else {
+                handlePageChange(params.id)
+            }
+        }
+    }).catch((err)=>{
+        console.log(err)
+    })
+  }
 
   return (
     <div className="p-8 py-14">
@@ -107,7 +109,11 @@ function DeleteRepository() {
       <br />
 
       <h4 className="font-semibold">Move to</h4>
-      <Select className="">
+      <Select
+        value={repository}
+        onValueChange={(e) => {
+            setRepository(e);
+      }}>
         <SelectTrigger className="h-[46px] max-w-[700px] placeholder:text-[#838383] border border-[#e6e3ea] bg-[#ffffff]">
           <SelectValue placeholder={"Select Folder"} />
         </SelectTrigger>
@@ -179,7 +185,7 @@ function DeleteRepository() {
           : "No forms present"}
       </div>
       <div className="flex flex-row-reverse">
-        <Button className="bg-[#ff0200] hover:bg-[#ff0000b9]">Move Forms</Button>
+        <Button onClick={()=>moveForms()} className="bg-[#ff0200] hover:bg-[#ff0000b9]">Move Forms</Button>
       </div>
     </div>
   );
