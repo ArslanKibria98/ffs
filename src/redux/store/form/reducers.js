@@ -1,6 +1,7 @@
 const initialState = {
   form_id: '',
   version_id: '',
+  default_id:'',
   form_controls: []
 }
 
@@ -30,6 +31,11 @@ export const formReducer = (state = initialState, action) => {
         ...state,
         form_controls: action.payload.form_controls,
       }
+      case 'SET_DEFAULT_CONTAINER_ID':
+        return {
+          ...state,
+          default_id: action.payload.default_id,
+        }
     default:
       return state
   }
