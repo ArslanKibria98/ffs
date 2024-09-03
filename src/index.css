@@ -22,7 +22,6 @@
 }
 
 .guZdik {
-
   height: 72px !important;
   padding: 18px 121px 18px 121px !important;
   gap: 0px !important;
@@ -250,4 +249,58 @@
   100% {
     transform: translate(100%, 100%);
   }
+}
+
+/* .formBuilderTablist:first-child {
+  border-radius: 10px;
+}
+.formBuilderTablist:last-child {
+  border-radius: 10px;
+} */
+.formBuilderTablist > :first-child {
+  border-radius: 10px 0 0 0;
+}
+.formBuilderTablist > :last-child {
+  border-radius: 0 10px 0 0;
+}
+.formBuilderTabDef {
+  border-radius: 10px 10px 0 0 !important;
+}
+
+.formBuilderTablist .mb-4.w-full:first-child .relative.w-full.overflow-auto {
+  border-radius: 10px 0px 0px;
+}
+.formBuilderTablist .mb-4.w-full:last-child .relative.w-full.overflow-auto {
+  border-radius: 0 10px 0px;
+}
+.style-module_emptyIcons__Bg-FZ {
+  display: flex!important;
+}
+.react-datetime-picker{
+  display: contents!important;
+}
+.react-datetime-picker__wrapper{
+  border: 1px solid rgb(156 163 175)!important;
+  border-radius: 6px;
+  padding: 6px;
+}
+.error-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900'%3E%3Cpolygon fill='%23fc5146' points='957 450 539 900 1396 900'/%3E%3Cpolygon fill='%23fe7f66' points='957 450 872.9 900 1396 900'/%3E%3Cpolygon fill='%23fc5146' points='-60 900 398 662 816 900'/%3E%3Cpolygon fill='%23fe7f66' points='337 900 398 662 816 900'/%3E%3Cpolygon fill='%23fc5146' points='1203 546 1552 900 876 900'/%3E%3Cpolygon fill='%23fe7f66' points='1203 546 1552 900 1162 900'/%3E%3Cpolygon fill='%23fc5146' points='641 695 886 900 367 900'/%3E%3Cpolygon fill='%23fe7f66' points='587 900 641 695 886 900'/%3E%3Cpolygon fill='%23fc5146' points='1710 900 1401 632 1096 900'/%3E%3Cpolygon fill='%23fe7f66' points='1710 900 1401 632 1365 900'/%3E%3Cpolygon fill='%23fc5146' points='1210 900 971 687 725 900'/%3E%3Cpolygon fill='%23fe7f66' points='943 900 1210 900 971 687'/%3E%3C/svg%3E");
+}
+.tracking-tighter-less {
+  letter-spacing: -0.75rem;
+}
+.text-shadow {
+  text-shadow: -8px 0 0 #f9d2d2;
+}
+.pagination-btn{
+  font-weight: 600;
+  color: #FAFAFA;
+  background: linear-gradient(135deg, #6a6a6a, #414141);
+}
+.list-instatant{
+  color: white;
+  padding: 2px;
+  cursor: pointer;
+  background-color: #cb0000;
 }

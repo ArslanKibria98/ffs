@@ -11,7 +11,7 @@ export default function RootLayout() {
     <Providers>
       <Toaster />
       <Header />
-      <div className="bg-[#f5f5f5] mt-[80px]">
+      <div className="bg-[#fafafa] mt-[80px] min-h-[81vh]">
         <Outlet />
       </div>
       <Footer />

@@ -1,19 +1,15 @@
 import React, { useState } from 'react'
 import { Modal, Input, Button } from 'antd'
+import axios from '@/lib/axios'
 
 const TagsManager = ({ tags, tagUpdate }) => {
   const [showPopup, setShowPopup] = useState(false)
   const [tagValue, setTagValue] = useState('')
   const fetchData = async () => {
     try {
-      const response = await fetch('/api/tags', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-      if (response.ok) {
-        const data = await response.json()
+      const response = await axios.get('/api/tags')
+      if (response) {
+        const data =response.data
         setTags(data.data)
       } else {
         const { error } = await response.json()
@@ -28,19 +24,13 @@ const TagsManager = ({ tags, tagUpdate }) => {
   }
   const addTag = async (selectedTag) => {
     try {
-      const response = await fetch('/api/tags', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: 1,
-          newTags: [selectedTag]
-        })
-      })
+      const response = await axios.post('/api/tags',JSON.stringify({
+        userId: 1,
+        newTags: [selectedTag]
+      }))
 
-      if (response.ok) {
-        const data = await response.json()
+      if (response) {
+        const data = await response.data
         return data.data
       } else {
         const { error } = await response.json()
@@ -53,19 +43,13 @@ const TagsManager = ({ tags, tagUpdate }) => {
   }
   const delTag = async (selectedTag) => {
     try {
-      const response = await fetch('/api/tags', {
-        method: 'Delete',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userId: 1,
-          newTags: [selectedTag]
-        })
-      })
+      const response = await axios.delete('/api/tags',JSON.stringify({
+        userId: 1,
+        newTags: [selectedTag]
+      }))
 
-      if (response.ok) {
-        const data = await response.json()
+      if (response) {
+        const data = await response.data
         return data.data
       } else {
         const { error } = await response.json()

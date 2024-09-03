@@ -7,7 +7,7 @@ function BuilderLayout() {
   return (
     <div className=''>
         <ProgressBar>
-          <div className="bg-[#f5f5f5]">
+          <div className="bg-[#fafafa]">
             <Outlet />
           </div>
         </ProgressBar>
