@@ -20,7 +20,19 @@
         "status": "Status",
         "action": "Action"
       },
-      "formStatus": ["Publish", "Unpublish"]
+      "formStatus": ["Publish", "Unpublish"],
+      "dropdown": {
+        "live": "Live",
+        "draft": "Draft",
+        "publish": "Publish",
+        "unPublish": "UnPublish",
+        "versions": "Versions",
+        "folder": "Folder",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "pagination": "Rows per page",
+      "noForms": "No Forms Found for this user!"
     },
     "ar": {
       "folder": "مجلد",
@@ -42,7 +54,18 @@
         "status": "حالة",
         "action": "تصرف"
       },
-      "formStatus": ["ينشر", "إلغاء النشر"]
+      "formStatus": ["ينشر", "إلغاء النشر"],
+      "dropdown": { 
+        "live": "مباشر",
+        "publish": "نشر",
+        "unPublish": "إلغاء النشر",
+        "versions": "الإصدارات",
+        "folder": "مجلد",
+        "edit": "تعديل",
+        "delete": "حذف"
+      },
+      "pagination": "عدد الصفوف في الصفحة",
+      "noForms": "لم يتم العثور على نماذج لهذا المستخدم!"
     }
   },
   "progressBar": {
@@ -69,7 +92,7 @@
       "field3": "Success Message",
       "field4": "Fail Message",
       "lSetting": "Language Settings",
-      "dLanguage": "Default LanguageL",
+      "dLanguage": "Default Language",
       "allLanguage": "Select all languages?",
       "sLanguage": "Select Languages",
       "sCountry": "Country Settings",
@@ -98,8 +121,13 @@
       "itemsBar": "Items Bar",
       "layoutBar": "Layout Bar",
       "viewForm": "View Form",
+      "emptyForm": "No Fields in this Form!",
       "tab": "Tab",
+      "tabName": "Tab Name",
+      "emptyTab": "No fields in this Tab!",
       "field": "Fields",
+      "noFields": "Form Empty!",
+
       "build": {
         "name": "Build",
         "controls": {
@@ -138,13 +166,22 @@
             "style": "Font Style"
           }
         }
-      }
+      },
+      "mandatory": "Mandatory",
+      "edit": "Edit",
+      "delete": "Delete",
+      "next": "Next",
+      "prev": "Previous"
     },
     "ar": {
       "itemsBar": "شريط العناصر",
       "layoutBar": "شريط التخطيط",
       "viewForm": "عرض النموذج",
       "tab": "علامة تبويب",
+      "emptyForm": "لا توجد حقول في هذا النموذج!",
+      "tabName": "اسم التبويب",
+      "emptyTab": "لا توجد حقول في هذا التبويب!",
+      "noFields": "النموذج فارغ!",
       "field": "الحقول",
 
       "build": {
@@ -185,7 +222,80 @@
             "style": "نمط الخط"
           }
         }
-      }
+      },
+      "mandatory": "إلزامي",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "next": "التالي",
+      "prev": "السابق"
     }
+  },
+
+
+  "saveForm": {
+    "en": {
+      "fName": "Form Name",
+      "enterName": "Enter Name",
+      "next": "Next",
+      "prev": "Previous"
+    },
+    "ar": {
+      "fName": "اسم النموذج",
+      "enterName": "أدخل الاسم",
+      "next": "التالي",
+      "prev": "السابق"
+    }    
+  },
+  "renderForm": {
+    "en": {
+      "thank": "Thank You!",
+      "date": "Date",
+      "bClick": "Your draft Form has been created.",
+      "click": "Click Here",
+      "aClick": "to publish your unpublished forms.",
+      "back": "Back to Home",
+      "prev": "View HTML Tag"
+    },
+    "ar": {
+      "thank": "شكرا لك!",
+      "date": "التاريخ",
+      "bClick": "تم إنشاء نموذج المسودة الخاص بك.",
+      "click": "اضغط هنا",
+      "aClick": "لنشر النماذج غير المنشورة الخاصة بك.",
+      "back": "العودة إلى الصفحة الرئيسية",
+      "view": "عرض علامة HTML"
+    }    
+  },
+  "formVersions": {
+    "en": {
+      "fVersions": "Form Versions",
+      "formId": "Form ID",
+      "formName": "Form Name",
+      "version": "Form Version",
+      "report": "Form Report",
+      "preview": "Form Preview",
+      "update": "Update"
+    },
+    "ar": {
+      "fVersions": "إصدارات النموذج",
+      "formId": "معرف النموذج",
+      "formName": "اسم النموذج",
+      "version": "إصدار النموذج",
+      "report": "تقرير النموذج",
+      "preview": "معاينة النموذج",
+      "update": "تحديث"
+    }    
+  },
+  "formReport": {
+    "en": {
+      "back": "Back",
+      "report": "Report",
+      "export": "Export As CSV"
+    },
+    "ar": {
+      "back": "العودة",
+      "report": "تقرير",
+      "export": "تصدير كملف CSV"
+    }    
   }
 }

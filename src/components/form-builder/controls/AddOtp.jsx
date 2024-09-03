@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -9,14 +8,11 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Checkbox2 } from "@/components/ui/checkbox";
 import { DialogTitle, DialogClose } from "@/components/ui/dialog";
-
 import toast from "react-hot-toast";
-
-import { useSelector, useDispatch } from "react-redux";
-import { setIsLoading } from "../../../redux/store/loading";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function AddOtp({
   getter,
@@ -32,52 +28,57 @@ export default function AddOtp({
     "5-digits": 1,
     "6-digits": 2,
   };
+  const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
+  const token = useSelector((state) => state?.authStore?.token);
+
   const [question, setQuestion] = useState(
-    !isUpdate ? "" : updateFieldData?.question
+    !isUpdate ? "" : updateFieldData?.question || ""
   );
   const [isRequired, setIsRequired] = useState(
-    !isUpdate ? false : updateFieldData?.is_Required
+    !isUpdate ? false : updateFieldData?.isRequired || false
   );
   const [otpFormat, setOtpFormat] = useState(
-    !isUpdate ? "4-digits" : (updateFieldData?.otp_Format == 0 ? "4-digits" : (
-      updateFieldData?.otp_Format == 1 ? "5-digits" : (
-        updateFieldData?.otp_Format == 2 ? "6-digits" : (
-          "4-digits"
-      ))) || updateFieldData?.fileFormat == 0 ? "4-digits" : (
-        updateFieldData?.fileFormat == 1 ? "5-digits" : (
-          updateFieldData?.fileFormat == 2 ? "6-digits" : (
-            "4-digits"
-        ))))
+    !isUpdate
+      ? "4-digits"
+      : Object.keys(otpFormatMapping).find(
+          (key) => otpFormatMapping[key] === updateFieldData?.otp_Format
+        ) || "4-digits"
   );
   const [id, setId] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const formErrors = {};
+
+    if (!question.trim()) formErrors.question = "Caption is required.";
+    if (!otpFormat) formErrors.otpFormat = "OTP Format is required.";
+    return formErrors;
+  };
 
   const handleSubmit = async () => {
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const postData = {
       formVersionId: version_id,
       containerId: id,
       regionId: "3FA85F64-5717-4562-B3FC-2C963F66AFA6",
       controlType: 0,
-
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       otp_Format: otpFormatMapping[otpFormat],
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateOtp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
+      const response = await axios.post(
+        "/Controls/CreateOtp",JSON.stringify(postData));
 
-      if (response.ok) {
-        let responseData = await response.json();
+      if (response) {
+        const responseData =response.data;
         setter(!getter);
         toast.success(responseData?.notificationMessage);
         resetForm();
@@ -92,28 +93,25 @@ export default function AddOtp({
   };
 
   const handleUpdate = async () => {
-    // alert(otpFormatMapping[otpFormat]);
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
     const formUpdateData = {
       controlId: updateFieldData.controlId,
       question: question,
-      is_Required: isRequired,
+      isRequired: isRequired,
       otpformat: otpFormatMapping[otpFormat],
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/UpdateOtp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formUpdateData),
-        }
-      );
+      const response = await axios.post(
+        "/Controls/UpdateOtp",JSON.stringify(formUpdateData) );
 
-      if (response.ok) {
-        let responseData = await response.json();
+      if (response) {
+        const responseData =response.data;
         if (!responseData.success) {
           toast.error(responseData?.notificationMessage);
           return;
@@ -136,14 +134,14 @@ export default function AddOtp({
       <DialogTitle>{!isUpdate ? "Add" : "Edit"} OTP</DialogTitle>
       <br />
       <div className="grid grid-cols-2 gap-8 gap-y-3">
-        {isUpdate ? "" : (
+        {!isUpdate && (
           <div className="col-span-2">
             <Select
               className="w-full"
               onValueChange={(e) => {
                 setId(e);
               }}
-              // defaultValue={formDataApi[0]?.containerName}
+              defaultValue={id}
             >
               <label htmlFor="minLen" className="text-xs font-semibold">
                 Tab Name
@@ -159,12 +157,13 @@ export default function AddOtp({
                 ))}
               </SelectContent>
             </Select>
+     
           </div>
         )}
 
         <div className="col-span-2">
           <label htmlFor="tabName" className="text-[16px] font-semibold">
-            Question
+            Caption
           </label>
           <Input
             name="tabName"
@@ -173,6 +172,7 @@ export default function AddOtp({
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
           />
+          {errors.question && <p className="text-red-500 text-xs">{errors.question}</p>}
         </div>
         <div className="my-4 col-span-2 flex items-center space-x-2">
           <Checkbox2
@@ -191,13 +191,13 @@ export default function AddOtp({
           OTP Format
         </label>
 
-        <div>
+        <div className="col-span-2">
           <label htmlFor="fontColour" className="text-xs font-semibold">
             Choose Format
           </label>
           <Select
             className="w-full"
-            defaultValue={otpFormat}
+            value={otpFormat}
             onValueChange={(e) => setOtpFormat(e)}
           >
             <SelectTrigger className="w-full">
@@ -211,6 +211,7 @@ export default function AddOtp({
               ))}
             </SelectContent>
           </Select>
+          {errors.otpFormat && <p className="text-red-500 text-xs">{errors.otpFormat}</p>}
         </div>
       </div>
 
@@ -218,6 +219,7 @@ export default function AddOtp({
         <Button
           className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
           onClick={!isUpdate ? handleSubmit : handleUpdate}
+          disabled={loading}
         >
           {!isUpdate ? "Save" : "Update"}
         </Button>

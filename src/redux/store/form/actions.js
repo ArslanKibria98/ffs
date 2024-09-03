@@ -9,7 +9,17 @@ export const SET_FORM_INFO = (form_id, version_id) => {
     })
   }
 }
-
+export const SET_DEFAULT_CONTAINER_ID = (id) => {
+  return (dispatch) => {
+    dispatch({
+      type: 'SET_DEFAULT_CONTAINER_ID',
+      payload: {
+        default_id:id,
+    
+      }
+    })
+  }
+}
 export const SET_FORM_ID = (form_id) => {
   return (dispatch) => {
     dispatch({
@@ -47,7 +57,8 @@ const formAction = {
   SET_FORM_INFO,
   SET_FORM_ID,
   SET_VERSION_ID,
-  SET_FORM_CONTROLS
+  SET_FORM_CONTROLS,
+  SET_DEFAULT_CONTAINER_ID
 }
 
 export default formAction
