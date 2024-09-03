@@ -66,7 +66,53 @@ export default function DropDown({
 
   async function inflateOptions() {
     try {
-      const response = await fetch(endpoint);
+      console.log(radioHeaders);
+      let localradioBody = radioBody.filter(param => param.parmKey !== "" && param.parmValue !== "");
+      let localradioHeader = radioHeaders.filter(param => param.parmKey !== "" && param.parmValue !== "");
+
+      let headers = null;
+      if (localradioHeader.length > 0) {
+        headers = localradioHeader.reduce((acc, header) => {
+          acc[header.parmKey] = header.parmValue;
+          return acc;
+        }, {});
+      }
+
+      let body = null;
+      if (localradioBody.length > 0) {
+        body = JSON.stringify(localradioBody.reduce((acc, param) => {
+          acc[param.parmKey] = param.parmValue;
+          return acc;
+        }, {}));
+      }
+      
+      let response = null;
+      console.log(localradioHeader, localradioBody)
+      if (headers && body) {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...headers },
+          body: body
+        });
+      }
+      if (!headers && body) {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: body
+        });
+      }
+      if (headers && !body) {
+        response = await fetch(endpoint, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', ...headers }
+        });
+      }
+      if (!headers && !body) {
+        response = await fetch(endpoint);
+      }
+
+      console.log(response);
 
       if (response.ok) {
         // console.log(await response.json())

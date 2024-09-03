@@ -52,7 +52,7 @@ export default function RadioButton({
       ? ["", ""]
       : updateFieldData?.choices?.map((choice) => choice?.choiceName)
   );
-  console.log(updateFieldData?.choices);
+  // console.log(updateFieldData?.choices);
   const [radioCols, setRadioCols] = useState(false);
 
   const [id, setId] = useState("");
@@ -62,7 +62,52 @@ export default function RadioButton({
 
   async function inflateOptions() {
     try {
-      const response = await fetch(endpoint);
+      let localradioBody = radioBody.filter(param => param.parmKey !== "" && param.parmValue !== "");
+      let localradioHeader = radioHeaders.filter(param => param.parmKey !== "" && param.parmValue !== "");
+
+      let headers = null;
+      if (localradioHeader.length > 0) {
+        headers = localradioHeader.reduce((acc, header) => {
+          acc[header.parmKey] = header.parmValue;
+          return acc;
+        }, {});
+      }
+
+      let body = null;
+      if (localradioBody.length > 0) {
+        body = JSON.stringify(localradioBody.reduce((acc, param) => {
+          acc[param.parmKey] = param.parmValue;
+          return acc;
+        }, {}));
+      }
+
+      let response = null;
+      console.log(localradioHeader, localradioBody)
+      if (headers && body) {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', ...headers },
+          body: body
+        });
+      }
+      if (!headers && body) {
+        response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: body
+        });
+      }
+      if (headers && !body) {
+        response = await fetch(endpoint, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json', ...headers }
+        });
+      }
+      if (!headers && !body) {
+        response = await fetch(endpoint);
+      }
+
+      console.log(response);
 
       if (response.ok) {
         // console.log(await response.json())
@@ -302,7 +347,7 @@ export default function RadioButton({
   };
 
   function updateBodyIndex(key, newVal, index) {
-    console.log(key, newVal, index);
+    // console.log(key, newVal, index);
     setRadioBody(
       radioBody.map((item, i) =>
         i === index ? { ...item, [key]: newVal } : item
@@ -342,7 +387,7 @@ export default function RadioButton({
 
   return (
     <div>
-      <DialogTitle>Add Radio Button - {getter ? "true" : "false"}</DialogTitle>
+      <DialogTitle>Add Radio Button</DialogTitle>
       <br />
       <RadioGroup
         className="flex gap-4"
