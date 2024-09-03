@@ -118,12 +118,12 @@ export default function FormBuilder() {
     setLocalLoading(true);
     console.log(repo)
     if (repo == "all") {
-      repo = userId;
+      // repo = userId;
     }
     try {
       const response = await axios.get(
         `http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}&` +
-          (repo == "all" ? `` : `RepositoryId=${repo}&`) +
+          (repo == "all" ? `` : `isFilterApplied=true&Filter.filterType=1&sortType=0&Filter.RepositoryId=${repo}&`) +
           `PageNumber=${newPage}&PageSize=${size}`
       );
       const data = await response.data;

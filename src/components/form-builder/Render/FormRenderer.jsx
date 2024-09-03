@@ -8,8 +8,9 @@ import BoxLoader from "@/components/BoxLoader";
 // import { useParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-function FormRenderer({ formDataApi, formik, loader, preview=false }) {
+function FormRenderer({ formData=null, formDataApi, formik, loader, preview=false }) {
 
+  let formSettings = formData?.formSettings || null;
   const [isLastTabActive, setIsLastTabActive] = useState(false);
   const handleTabChange = (newTabValue) => {
     if (formDataApi.length > 1) {
@@ -17,6 +18,8 @@ function FormRenderer({ formDataApi, formik, loader, preview=false }) {
       setIsLastTabActive(newTabValue === lastTabValue);
     }
   };
+  console.log(formData);
+  let iteration = 0;
   return (
     <form onSubmit={formik.handleSubmit}>
       {formDataApi.length > 0 && (
@@ -43,10 +46,14 @@ function FormRenderer({ formDataApi, formik, loader, preview=false }) {
               value={tab?.containerName}
               className="border bg-white p-4 rounded-xl w-full"
             >
-              <div className=" grid grid-cols-2 gap-2 gap-y-4">
-                {tab?.controls?.map((field, index) => (
-                  <FieldRenderer key={index} control={field} formik={formik} />
-                ))}
+              <div className={(formSettings.formTemplate == 1 ? "grid grid-cols-4" : (formSettings.formTemplate == 2 ? "grid grid-cols-4" : "grid grid-cols-4")) + " gap-2 gap-y-4"}>
+                {tab?.controls?.map((field, index) => {
+
+                  return (
+                  <div className={(((index+1)%3)==0 ? " col-span-4" : " col-span-2 ")}>
+                    <FieldRenderer key={index} control={field} formik={formik} />
+                  </div>
+                )})}
               </div>
             </TabsContent>
           ))}

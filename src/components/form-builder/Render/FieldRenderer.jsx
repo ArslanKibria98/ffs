@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-// import { FieldRenderer as GetRelevantField } from "@/components/form-builder/Render/FieldRenderer";
-// import { useFormik } from "formik";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -10,15 +8,8 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-// import { Checkbox2 } from "@/components/ui/checkbox";
 import toast from "react-hot-toast";
-// import { useSelector } from "react-redux";
-// import BoxLoader from "@/components/BoxLoader";
-// import { useParams } from "react-router-dom";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StarRating from "@/components/ui/StarRating";
-// import { Rating } from "react-simple-star-rating";
-// import axios from "@/lib/axios";
 import { Label } from "@/components/ui/label";
 import DateTimePicker from "react-datetime-picker";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -33,14 +24,15 @@ import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import ReCAPTCHA from "react-google-recaptcha";
+
 function FieldRenderer({ control, formik }) {
   const [selectedChoices, setSelectedChoices] = useState([]);
 
   let field = control;
+  //  TextBox
   if (field?.controlType === 0) {
-    //  TextBox
     return (
-      <div className="h-fit col-span-1 row-span-1">
+      <div className="h-fit col-span-2 row-span-1">
         <p className="text-[12px]">
           {field?.name}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -59,10 +51,10 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  //  Button
   if (field?.controlType === 1) {
-    //  Button
     return (
-      <div className="h-fit">
+      <div className="h-fit col-span-2">
         <p className="text-[12px]">
           {field.name}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -82,7 +74,7 @@ function FieldRenderer({ control, formik }) {
       formik.setFieldValue(field.controlId, value[0]);
     };
     return (
-      <div className="col-span-1 flex flex-col gap-y-2 h-fit">
+      <div className="col-span-2 flex flex-col gap-y-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -105,7 +97,7 @@ function FieldRenderer({ control, formik }) {
   if (field?.controlType === 3) {
     //  File
     return (
-      <div className=" h-fit">
+      <div className="col-span-2 h-fit">
         <p className="text-[12px]">
           {field?.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -127,7 +119,7 @@ function FieldRenderer({ control, formik }) {
   if (field?.controlType === 4) {
     //  Otp
     return (
-      <div className=" h-fit">
+      <div className="col-span-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -152,7 +144,7 @@ function FieldRenderer({ control, formik }) {
   if (field?.controlType === 5) {
     //  PhoneNumber
     return (
-      <div className=" h-fit col-span-1 row-span-1">
+      <div className=" h-fit col-span-2 row-span-1">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -199,7 +191,7 @@ function FieldRenderer({ control, formik }) {
     };
 
     return (
-      <div className=" h-fit">
+      <div className="col-span-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -276,7 +268,7 @@ function FieldRenderer({ control, formik }) {
     }, [field]);
 
     return (
-      <div className="h-fit">
+      <div className="col-span-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -320,7 +312,7 @@ function FieldRenderer({ control, formik }) {
     const totalStars = 5;
     //  rating
     return (
-      <div className=" h-fit">
+      <div className="col-span-2 h-fit">
         <p className="text-[12px]">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -371,7 +363,7 @@ function FieldRenderer({ control, formik }) {
     }, []);
     return (
       <div>
-        <p className="text-[12px] pb-1">
+        <p className="text-[12px] pb-1 col-span-2">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
@@ -427,7 +419,7 @@ function FieldRenderer({ control, formik }) {
     };
 
     return (
-      <div>
+      <div className="col-span-2">
         <p className="text-[12px] pb-1">
           {control.question}
           {control.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -445,7 +437,7 @@ function FieldRenderer({ control, formik }) {
   if (field?.controlType == 11) {
     //  calendar
     return (
-      <div>
+      <div className="col-span-2">
         <p className="text-[12px] pb-1">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -466,7 +458,7 @@ function FieldRenderer({ control, formik }) {
   if (field?.controlType == 12) {
     //  captcha
     return (
-      <div>
+      <div className="col-span-2">
         <p className="text-[12px] pb-1">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -528,7 +520,7 @@ function FieldRenderer({ control, formik }) {
       });
     };
     return (
-      <div style={dropdownOptions.length>=10 ||field.choices != null &&field.choices.length>=10?{maxHeight:"210px",overflow:"auto"}:{}}>
+      <div className="col-span-2" style={dropdownOptions.length>=10 ||field.choices != null &&field.choices.length>=10?{maxHeight:"210px",overflow:"auto"}:{}}>
         <p className="text-[12px] pb-1">
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
@@ -543,7 +535,7 @@ function FieldRenderer({ control, formik }) {
                       
                        onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
                      >
-                       {`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}-${choice.value}`}
+                       {`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}- ${choice.value}`}
                      </li>
                    </div>
                  ))}
@@ -561,7 +553,7 @@ function FieldRenderer({ control, formik }) {
                       key={index}       
                       onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
 
-                    >{`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}-${choice[field.displayValue]}`}</li>
+                    >{`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}- ${choice[field.displayValue]}`}</li>
                   </div>
                 ))}
             </ul>

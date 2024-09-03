@@ -46,6 +46,7 @@ export default function FormRender() {
   const params = useParams();
 
   console.log(params.id);
+  const [formData, setFormData] = useState(null)
   const [formDataApi, setFormDataApi] = useState([
     //   {
     //     containerName: "Tab Name",
@@ -77,6 +78,7 @@ export default function FormRender() {
       console.log(data, "data");
       if(data.data.formVersionStatus==2){
         setFormDataApi(data?.data?.containers);
+        setFormData(data?.data);
         setDefaultTabVal(formDataApi[0]?.containerName?.toString() + "");
         setLoader(false);
       }
@@ -319,7 +321,7 @@ export default function FormRender() {
   // console.log(isLastTabActive,"isLastTabActive")
   return (
     <div className="max-w-[1000px] h-fit mx-auto p-14">
-      <FormRenderer formDataApi={formDataApi} formik={formik} loader={loader}/>
+      <FormRenderer formData={formData} formDataApi={formDataApi} formik={formik} loader={loader}/>
       {/* <form onSubmit={formik.handleSubmit}>
         {formDataApi.length > 0 && (
           <Tabs defaultValue={formDataApi[0].containerName}  onValueChange={handleTabChange}>
