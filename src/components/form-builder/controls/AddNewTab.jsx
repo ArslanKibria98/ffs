@@ -15,7 +15,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setIsLoading } from '@/redux/store/loading';
 import axios from '@/lib/axios';
 
-export default function AddNewTab({ getter, setter, resetForm, isUpdate = false, updateFieldData = null }) {
+export default function AddNewTab({ getter, setter, resetForm, setTabLoading, isUpdate = false, updateFieldData = null }) {
   const dispatch = useDispatch();
   const loading = useSelector((state) => state?.loadingStore?.value);
   const version_id = useSelector((state) => state?.formStore.version_id);
@@ -51,7 +51,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
 
   const handleSubmit = async () => {
     if (!validateFields()) return;
-
+    setTabLoading(null);
     dispatch(setIsLoading(true));
     const data = {
       containerType: 0,
@@ -85,7 +85,7 @@ export default function AddNewTab({ getter, setter, resetForm, isUpdate = false,
 
   const handleUpdate = async () => {
     if (!validateFields()) return;
-
+    setTabLoading(null);
     const data = {
       containerId: updateFieldData.id,
       containerType: 0,

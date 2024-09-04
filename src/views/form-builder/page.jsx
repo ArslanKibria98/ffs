@@ -185,11 +185,12 @@ value : 1
       }, 2000);
     }
   };
-//   useEffect(()=>{
-//     return () => {
-//       handlePageChange("all","",rowsPerPage, page)
-//     };
-// }, [])
+  // useEffect(()=>{
+    // return () => {
+      
+    // };
+// }, [sortType])
+
   const handlePublish = async (version, status) => {
     setLocalLoading(true);
     try {
@@ -420,7 +421,7 @@ value : 1
             value={repository}
             defaultValue={repository}
             onValueChange={(e) => {
-          setRepository(e)
+              setRepository(e)
               handlePageChange(e,"", rowsPerPage, page);
             }}
             onClick={()=>{
@@ -500,47 +501,14 @@ value : 1
                       <EllipsisVertical className="h-4 w-4" />
                     </PopoverTrigger>
                     <PopoverContent className="p-0 min-w-[120px] w-fit">
-                      <Dialog open={folderEditModal} onOpenChange={setFolderEditModal}>
-                        <DialogTrigger
-                          onClick={() => setFolderEditModal(true)}
-                          className="border-0 flex items-center gap-2 border-b border-[#f8c8ca] hover:bg-[#ececec] text-left text-sm w-full m-0 py-2 pl-2 bg-transparent"
+                      <Link to={`/repository/edit/${repo?.id}`}>
+                        <Button
+                          className="text-black text-left rounded-none justify-start border-0 flex items-center gap-2 border-b border-[#f8c8ca] hover:bg-[#ececec] font-normal text-sm w-full m-0 py-2 pl-2 bg-transparent"
                         >
                           <PencilLine className="w-4 h-4" />
                           Edit
-                        </DialogTrigger>
-                        {folderEditModal && (
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle hidden>Edit</DialogTitle>
-                              <DialogDescription className="text-black">
-                                <h2 className="text-xl font-semibold mt-4 col-span-2">
-                                  Edit Folder
-                                </h2>
-                                <br />
-                                This action cannot be undone. This will
-                                permanently delete your account and remove your
-                                data from our servers.
-                              </DialogDescription>
-                              <br />
-                              <br />
-                              <div className="flex flex-row-reverse gap-4 py-1 my-4">
-                                <Button
-                                  className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-                                  onClick={handleCreateRepository}
-                                >
-                                  Save
-                                </Button>
-                                <Button
-                                  onClick={() => setFolderEditModal(false)}
-                                  className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]"
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            </DialogHeader>
-                          </DialogContent>
-                        )}
-                      </Dialog>
+                        </Button>
+                      </Link>
                       <Dialog open={folderDeleteModal} onOpenChange={setFolderDeleteModal}>
                         <button
                           onClick={() => deleteRepository(repo.id)}
@@ -606,6 +574,19 @@ value : 1
           <Skeleton className="max-w-[160px] w-full h-[46px] space-x-1" />
         )}
         <div className="flex justify-evenly gap-2 items-center">
+          <Select className="" onValueChange={(e) => {setSortType(e); handlePageChange("all", searchValue,rowsPerPage, page)}}
+            value={sortType}>
+            <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
+              <SelectValue placeholder={locData?.sort || "Sort By"} />
+            </SelectTrigger>
+            <SelectContent >
+              {SortTypes.map((sortType) => (
+                <SelectItem  key={sortType.value} value={sortType.value}>
+                  {sortType.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select className="" onValueChange={(e) => setFilterType(e)}
             value={filterType}>
             <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
@@ -613,19 +594,6 @@ value : 1
             </SelectTrigger>
             <SelectContent >
               {filterTypes.map((sortType) => (
-                <SelectItem  key={sortType.value} value={sortType.value}>
-                  {sortType.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select className="" onValueChange={(e) => setSortType(e)}
-            value={sortType}>
-            <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
-              <SelectValue placeholder={locData?.sort || "Sort By"} />
-            </SelectTrigger>
-            <SelectContent >
-              {SortTypes.map((sortType) => (
                 <SelectItem  key={sortType.value} value={sortType.value}>
                   {sortType.label}
                 </SelectItem>

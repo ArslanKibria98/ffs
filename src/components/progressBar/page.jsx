@@ -12,8 +12,10 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import localisationData from "../../localisation.json"
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 const ProgressBar = ({ children }) => {
+  const {pathname} = useLocation();
   const [stepIndex, setStepIndex] = useState(0);
   const version_id = useSelector((state) => state?.formStore.version_id);
   const language = useSelector((state) => state.language.language);
@@ -26,11 +28,11 @@ const ProgressBar = ({ children }) => {
   ]
 
   useEffect(() => {
-    // console.log(window.location.pathname);
-    if (stepPage.includes(window.location.pathname)) {
-      setStepIndex(stepPage.indexOf(window.location.pathname));
+    console.log("location", pathname);
+    if (stepPage.includes(pathname)) {
+      setStepIndex(stepPage.indexOf(pathname));
     }
-  }, [window.location.pathname])
+  }, [pathname])
   let locData = localisationData.progressBar.en;
   // console.log(locData);
 

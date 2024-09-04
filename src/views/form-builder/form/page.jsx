@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setIsLoading } from "../../../redux/store/loading";
 import { useFormik } from "formik";
-import FormRenderer from '@/components/form-builder/Render/FormRenderer';
+import FormRenderer from "@/components/form-builder/Render/FormRenderer";
 
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import FieldInfo from "@/components/form-builder/FieldInfo";
 
 import TabSection from "@/components/form-builder/TabSection";
@@ -86,6 +86,7 @@ export default function BuilderPage() {
   const [usEmailAddress, setEmailAddress] = useState(false);
   const [usList, setList] = useState(false);
   const [usSlider, setSlider] = useState(false);
+  const [tabLoading, setTabLoading] = useState(null);
 
   const [fontSizeH, setFontSizeH] = useState(16);
   const [formDataApi, setFormDataApi] = useState([]);
@@ -139,18 +140,22 @@ export default function BuilderPage() {
     controlModalSetterManager[index](!controlModalManager[index]);
   }
   const fetchForms = async () => {
+    setTabLoading(null)
     dispatch(setIsLoading(true));
     try {
-      const response = await axios.get(`/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`);
+      const response = await axios.get(
+        `/Form/GetFormDetailsByVersionId?FormVersionId=${version_id}`
+      );
       // console.log(response)
       if (response) {
         const data = await response.data;
         setFormDataApi(data?.data?.containers);
+        setTabLoading(data?.data?.containers[0].containerName)
       }
-      dispatch(setIsLoading(false));
     } catch (error) {
       console.error("Error fetching forms:", error);
       toast.error("Unable to get Form");
+    } finally {
       dispatch(setIsLoading(false));
     }
   };
@@ -164,6 +169,7 @@ export default function BuilderPage() {
           getter={usAddNewTab}
           setter={setAddNewTab}
           resetForm={fetchForms}
+          setTabLoading={setTabLoading}
         />
       ),
     },
@@ -193,7 +199,7 @@ export default function BuilderPage() {
         />
       ),
     },
-  
+
     {
       icon: "/control-icons/addDropDown.svg",
       title: "Drop Down",
@@ -736,8 +742,8 @@ export default function BuilderPage() {
 
   useEffect(() => {
     // return () => {
-      dispatch(setIsLoading(true));
-      fetchForms();
+    dispatch(setIsLoading(true));
+    fetchForms();
     // };
   }, []);
 
@@ -809,56 +815,67 @@ export default function BuilderPage() {
       </div>
 
       <div className="col-span-3 mx-4 pt-4 relative">
-        
-        {formDataApi.length > 0 ? 
-          <Tabs defaultValue={formDataApi && formDataApi[0]?.containerName}>
+        {tabLoading == null ? (
+          <BoxLoader />
+        ) : (formDataApi.length > 0 && !loading && tabLoading != null) ? (
+          <Tabs defaultValue={tabLoading}>
+            {console.log(tabLoading)}
             <div className="flex justify-between items-end">
-            <TabsList className="formBuilderTablist">
-              {loading ? (
-                <TabsTrigger
-                  value={formDataApi && formDataApi[0]?.containerName}
-                  className="px-5 h-10 mb-0 mr-1 opacity-40 formBuilderTabDef"
-                  disabled={true}
-                >
-                  Loading...
-                </TabsTrigger>
-              ) : formDataApi?.map((tab, index) => {
-                if (tab?.containerName != "Default") {
-                  return (
-                    <TabsTrigger
-                      value={tab?.containerName}
-                      key={index}
-                      className={"px-5 h-10 mb-0 mr-[2px] " + (formDataApi.length == 1 && " formBuilderTabDef")}
-                    >
-                      {tab?.containerName}
-                    </TabsTrigger>
-                  )
-                }
-              })}
-            </TabsList>
-            <Dialog>
-              <DialogTrigger className="mb-3 rounded-lg py-2 px-4 bg-[#ffeff0] flex gap-2">
-                <EyeIcon className="w-5" />
-                {locData?.viewForm || "View Form"}
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogDescription>
-                    <FormRenderer formDataApi={formDataApi} formik={formik} loader={loading} preview={true} />
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+              <TabsList className="formBuilderTablist">
+                {loading ? (
+                  <TabsTrigger
+                    value={formDataApi && formDataApi[0]?.containerName}
+                    className="px-5 h-10 mb-0 mr-1 opacity-40 formBuilderTabDef"
+                    disabled={true}
+                  >
+                    Loading...
+                  </TabsTrigger>
+                ) : (
+                  formDataApi?.map((tab, index) => {
+                    if (tab?.containerName != "Default") {
+                      return (
+                        <TabsTrigger
+                          value={tab?.containerName}
+                          key={index}
+                          className={
+                            "px-5 h-10 mb-0 mr-[2px] " +
+                            (formDataApi.length == 1 && " formBuilderTabDef")
+                          }
+                        >
+                          {tab?.containerName}
+                        </TabsTrigger>
+                      );
+                    }
+                  })
+                )}
+              </TabsList>
+              <Dialog>
+                <DialogTrigger className="mb-3 rounded-lg py-2 px-4 bg-[#ffeff0] flex gap-2">
+                  <EyeIcon className="w-5" />
+                  {locData?.viewForm || "View Form"}
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogDescription>
+                      <FormRenderer
+                        formDataApi={formDataApi}
+                        formik={formik}
+                        loader={loading}
+                        preview={true}
+                      />
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </div>
             {formDataApi?.map((tab, index2) => (
               <TabsContent
                 value={tab?.containerName}
                 key={index2}
-                
                 className="my-0 py-0 w-full"
               >
                 <div className="bg-[#fff] relative pb-4">
-                  <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center"> 
+                  <div className="p-7 pt-4 flex flex-col min-h-[300px] justify-center">
                     <TabSection
                       tab={tab}
                       index={index2}
@@ -900,14 +917,17 @@ export default function BuilderPage() {
               </TabsContent>
             ))}
           </Tabs>
-         : !loading && formDataApi.length < 1 ? (
+        ) : !loading && formDataApi.length < 1 ? (
           <div className="bg-white text-center px-10 py-20 text-gray-700 text-sm">
             {locData?.emptyForm || "No Fields in this Form!"}
           </div>
-        ) : loading && formDataApi.length < 1 && (
-          <div className="absolute top-0 left-0 w-full bg-transparent text-center px-10 py-20 text-gray-700 text-sm">
-            <BoxLoader />
-          </div>
+        ) : (
+          loading &&
+          formDataApi.length < 1 && (
+            <div className="absolute top-0 left-0 w-full bg-transparent text-center px-10 py-20 text-gray-700 text-sm">
+              <BoxLoader />
+            </div>
+          )
         )}
 
         <div className="flex flex-row-reverse gap-4 py-1 my-4">
