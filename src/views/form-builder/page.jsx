@@ -84,7 +84,7 @@ export default function FormBuilder() {
   const [searchValue, setSearchValue] = useState("");
   const [folderModal, setFolderModal] = useState(false);
   const [sortType, setSortType] = useState(2);
-  const [filterType, setFilterType] = useState();
+  const [filterType, setFilterType] = useState(null);
   const [folderEditModal, setFolderEditModal] = useState(false);
   const [folderDeleteModal, setFolderDeleteModal] = useState(false);
   const [folderDeleteLoading, setFolderDeleteLoading] = useState(false);
@@ -171,7 +171,7 @@ value : 1
           setLocalLoading(false);
         }, 2000);
       } else {
-        toast.error("No forms found for this user!");
+        toast.error(data?.notificationMessage || "No forms found for this user!");
         setTimeout(() => {
           dispatch(setIsLoading(false));
           setLocalLoading(false);
@@ -384,7 +384,7 @@ value : 1
   console.log(rowsPerPage, "rows");
   const handleInputChange = (event) => {
     console.log(event.target.value)
-    if (!filterType) {
+    if (filterType == null) {
       toast.error("Please Select the filter By first")
       return;
     }
@@ -399,7 +399,7 @@ value : 1
     // Set a new timeout
     timerRef.current = setTimeout(() => {
       console.log('Timeout reached, calling handlePageChange');
-      if (!filterType) {
+      if (filterType == null) {
         // toast.error("Please Select the filter By first");
         return;
       }
@@ -410,9 +410,10 @@ value : 1
        else{
         handlePageChange("all",event.target.value, rowsPerPage, page);
        }
-      }, 3000); // 5000 milliseconds = 5 seconds
+      }, 1000); // 5000 milliseconds = 5 seconds
     
   };
+  console.log(filterType)
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
@@ -593,6 +594,9 @@ value : 1
               <SelectValue placeholder={locData?.filter || "Filter By"} />
             </SelectTrigger>
             <SelectContent >
+                <SelectItem value={null}>
+                  Filter By
+                </SelectItem>
               {filterTypes.map((sortType) => (
                 <SelectItem  key={sortType.value} value={sortType.value}>
                   {sortType.label}
