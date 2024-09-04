@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -73,13 +73,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function FormBuilder() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const timerRef = useRef(null);
   const language = useSelector((state) => state?.language?.language);
   const userId = useSelector((state) => state?.authStore?.id);
   const token = useSelector((state) => state?.authStore?.token);
   const tenantId = useSelector((state) => state?.authStore?.tenant_id);
   const loading = useSelector((state) => state?.loadingStore?.value);
   const [folderName, setFolderName] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [folderModal, setFolderModal] = useState(false);
+  const [sortType, setSortType] = useState(2);
+  const [filterType, setFilterType] = useState();
   const [folderEditModal, setFolderEditModal] = useState(false);
   const [folderDeleteModal, setFolderDeleteModal] = useState(false);
   const [folderDeleteLoading, setFolderDeleteLoading] = useState(false);
@@ -90,7 +94,34 @@ export default function FormBuilder() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const  SortTypes=[{
+    label : 'Latest_Modified ',
+    value : 0
+},
+{
+  label : 'Oldest_Modified',
+  value : 1
+},
+{
+  label : 'Latest_Created',
+  value : 2
+},
+{
+  label : 'Oldest_Created ',
+  value : 3
+}
+]
+const  filterTypes=[{
+  label : 'FormId ',
+  value : 0
+},
 
+{
+label : 'FormName ',
+value : 1
+}
+]
+  
   const getRepository = async () => {
     setLocalLoading(true);
     try {
@@ -100,9 +131,8 @@ export default function FormBuilder() {
           console.log(res);
           if (res.data.success) {
             console.log(res.data);
-            setRepository("all");
             setRepositories(res?.data?.data);
-            handlePageChange("all", rowsPerPage, page);
+            // handlePageChange("all", rowsPerPage, page);
           } else {
             throw new Error("Unable to get repositories!");
           }
@@ -112,19 +142,20 @@ export default function FormBuilder() {
       toast.error(e.message);
     }
   };
-  const handlePageChange = async (repo, size, newPage) => {
+ 
+  const handlePageChange = async (repo,search, size, newPage) => {
     setForms([]);
     setPage(newPage);
     setLocalLoading(true);
     console.log(repo)
-    if (repo == "all") {
-      // repo = userId;
-    }
+    // if (repo == "all") {
+    //   repo = userId;
+    // }
     try {
       const response = await axios.get(
         `http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}&` +
-          (repo == "all" ? `` : `isFilterApplied=true&Filter.filterType=1&sortType=0&Filter.RepositoryId=${repo}&`) +
-          `PageNumber=${newPage}&PageSize=${size}`
+          (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1&`) +
+          `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
       );
       const data = await response.data;
       console.log(data.data);
@@ -153,6 +184,11 @@ export default function FormBuilder() {
       }, 2000);
     }
   };
+  useEffect(()=>{
+    return () => {
+      handlePageChange("all","",rowsPerPage, page)
+    };
+}, [])
   const handlePublish = async (version, status) => {
     setLocalLoading(true);
     try {
@@ -174,7 +210,7 @@ export default function FormBuilder() {
       const data = await response.json();
       console.log(data);
       if (data?.notificationMessage) {
-        handlePageChange(repository, rowsPerPage, page);
+        handlePageChange(repository,"", rowsPerPage, page);
         setLocalLoading(false);
         toast.success(data?.notificationMessage);
       } else {
@@ -293,7 +329,7 @@ export default function FormBuilder() {
       );
       if (response.ok) {
         let responseData = await response.json();
-        handlePageChange(repository, rowsPerPage, 1);
+        handlePageChange(repository,"", rowsPerPage, 1);
         toast.success(responseData?.notificationMessage);
         setLocalLoading(true);
       }
@@ -311,7 +347,7 @@ export default function FormBuilder() {
       );
       if (response?.data?.success) {
         let responseData = await response.json();
-        handlePageChange(repository, rowsPerPage, 1);
+        handlePageChange(repository,"", rowsPerPage, 1);
         toast.success(responseData?.notificationMessage);
         setFolderDeleteModal(false);
         setLocalLoading(true);
@@ -343,7 +379,32 @@ export default function FormBuilder() {
     locData = localisationData.home.ar;
   }
   console.log(rowsPerPage, "rows");
+  const handleInputChange = (event) => {
+    console.log(event.target.value)
+    if (filterType) {
+      const value = event.target.value;
+      
+      // Clear the previous timeout
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
 
+      // Set a new timeout
+      timerRef.current = setTimeout(() => {
+        console.log('Timeout reached, calling handlePageChange');
+       
+       if(event.target.value==""){
+        handlePageChange("all","",rowsPerPage, page);
+       }
+       else{
+        handlePageChange("all",event.target.value, rowsPerPage, page);
+       }
+      }, 3000); // 5000 milliseconds = 5 seconds
+    } else {
+      toast.error("Please Select the filter By first");
+    }
+    
+  };
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
@@ -352,11 +413,10 @@ export default function FormBuilder() {
             value={repository}
             defaultValue={repository}
             onValueChange={(e) => {
-              setRepository(e);
-              handlePageChange(e, rowsPerPage, page);
+          setRepository(e)
+              handlePageChange(e,"", rowsPerPage, page);
             }}
             onClick={()=>{
-              setFolderDeleteModal(false);
               setFolderDeleteModal(false);
             }}
           >
@@ -539,27 +599,35 @@ export default function FormBuilder() {
           <Skeleton className="max-w-[160px] w-full h-[46px] space-x-1" />
         )}
         <div className="flex justify-evenly gap-2 items-center">
-          <Command className="w-[400px] xl:w-[500px]">
-            <CommandInput placeholder={locData?.search || "Search"} />
-          </Command>
-          <Select className="">
+          <div className="w-[400px] xl:w-[500px]">
+            <input placeholder={locData?.search || "Search"}
+            value={searchValue}
+        onChange={(e)=>{handleInputChange(e);setSearchValue(e.target.value)}} />
+          </div>
+          <Select className="" onValueChange={(e) => setFilterType(e)}
+            value={filterType}>
             <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
               <SelectValue placeholder={locData?.filter || "Filter By"} />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+            <SelectContent >
+              {filterTypes.map((sortType) => (
+                <SelectItem  key={sortType.value} value={sortType.value}>
+                  {sortType.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <Select className="">
+          <Select className="" onValueChange={(e) => setSortType(e)}
+            value={sortType}>
             <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
               <SelectValue placeholder={locData?.sort || "Sort By"} />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+            <SelectContent >
+              {SortTypes.map((sortType) => (
+                <SelectItem  key={sortType.value} value={sortType.value}>
+                  {sortType.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
@@ -766,7 +834,7 @@ export default function FormBuilder() {
           <Select
             className="w-full mr-1"
             onValueChange={(e) => {
-              handlePageChange(repository, e, page);
+              handlePageChange(repository,"", e, page);
               setRowsPerPage(e);
             }}
             value={rowsPerPage}
@@ -793,7 +861,7 @@ export default function FormBuilder() {
             {`<<`}
           </button> */}
           <button
-            onClick={() => handlePageChange(repository, rowsPerPage, page - 1)}
+            onClick={() => handlePageChange(repository,"", rowsPerPage, page - 1)}
             disabled={page <= 1}
             className="p-1 mx-1 pagination-btn rounded"
           >
@@ -807,7 +875,7 @@ export default function FormBuilder() {
                 <button
                   key={pageNumber}
                   onClick={() =>
-                    handlePageChange(repository, rowsPerPage, pageNumber)
+                    handlePageChange(repository,"", rowsPerPage, pageNumber)
                   }
                   className={`px-3 py-1 mx-1 ${
                     pageNumber === page
@@ -824,7 +892,7 @@ export default function FormBuilder() {
           })}
 
           <button
-            onClick={() => handlePageChange(repository, rowsPerPage, page + 1)}
+            onClick={() => handlePageChange(repository,"", rowsPerPage, page + 1)}
             disabled={forms.length < rowsPerPage}
             className="p-1 mx-1 pagination-btn text-gray-800 rounded"
           >
