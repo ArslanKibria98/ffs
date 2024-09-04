@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 // import Stepper from '@mui/material/Stepper'
 // import Step from '@mui/material/Step'
 // import StepLabel from '@mui/material/StepLabel'
+import { Link } from 'react-router-dom';
 import localisationData from "../../localisation.json"
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -41,51 +42,51 @@ const ProgressBar = ({ children }) => {
   return (
     <div className=''>
       <div className="fixed top-[79px] left-0 w-full bg-[#FFF0F0] border-t p-4 flex items-center justify-center pt-6 pb-16 z-30">
-        <a href={`/form-builder/form`} className={'p-1 rounded-full relative ' + (stepIndex >= 0 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
+        <Link to={`/form-builder/form`} className={'p-1 rounded-full relative ' + (stepIndex >= 0 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
           <img src="/fieldmappingicon.svg" alt="" width={20} height={20} />
           <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px]'>
             {locData?.addingFormFields||"Adding Form Fields"}
           </p>
-        </a>
+        </Link>
 
         <hr className={'w-[144px]  ' + (stepIndex >= 0 ? " border-[#e2252e]" : " border-[#838383]")} />
 
-        <a href={`/form-builder/form/settings`} className={'p-1 rounded-full relative ' + (stepIndex >= 1 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
+        <Link to={`/form-builder/form/settings`} className={'p-1 rounded-full relative ' + (stepIndex >= 1 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
           <img src="/fieldmappingicon.svg" alt="" width={20} height={20} />
           <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px]'>
            
             {locData?.formSetting||" Form Settings"}
           </p>
-        </a>
+        </Link>
 
         <hr className={'w-[144px]  ' + (stepIndex >= 1 ? "border-[#e2252e]" : "border-[#838383]")} />
 
-        <a href={`/form-builder/form/preview`} className={'p-1 rounded-full relative ' + (stepIndex >= 2 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
+        <Link to={`/form-builder/form/preview`} className={'p-1 rounded-full relative ' + (stepIndex >= 2 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
           <img src="/fieldmappingicon.svg" alt="" width={20} height={20} />
           <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px]'>
             
             {locData?.preview||"Preview"}
           </p>
-        </a>
+        </Link>
 
         <hr className={'w-[144px]  ' + (stepIndex >= 2 ? "border-[#e2252e]" : "border-[#838383]")} />
 
-        <a href={`/form-builder/form/save`} className={'p-1 rounded-full relative ' + (stepIndex >= 3 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
+        <Link to={`/form-builder/form/save`} className={'p-1 rounded-full relative ' + (stepIndex >= 3 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
           <img src="/fieldmappingicon.svg" alt="" width={20} height={20} />
           <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px]'>
             {locData?.save||"Save"}
           </p>
-        </a>
+        </Link>
 
         <hr className={'w-[144px]  ' + (stepIndex >= 3 ? "border-[#e2252e]" : "border-[#838383]")} />
 
-        <a href={`/form-builder/form/publish`} className={'p-1 rounded-full relative ' + (stepIndex >= 4 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
+        <Link to={`/form-builder/form/publish`} className={'p-1 rounded-full relative ' + (stepIndex >= 4 ? " bg-[#e2252e] text-black" : " bg-[#838383] text-[#838383]")}>
           <img src="/fieldmappingicon.svg" alt="" width={20} height={20} />
           <p className='absolute top-12 left-[-50px] mx-auto w-[130px] text-center text-[14px]'>
             
             {locData?.PublishInfo||"Publish Info"}
           </p>
-        </a>
+        </Link>
       </div>
 
       <div className='mt-[196px] min-h-[70vh]'>

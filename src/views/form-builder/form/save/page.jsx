@@ -138,11 +138,11 @@ export default function FormSavePage() {
           >
             {locData?.next || "Next"}
           </Button>
-          <a href={`/form-builder/form/preview`}>
+          <Link to={`/form-builder/form/preview`}>
             <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light">
             {locData?.prev || "Previous"}
             </Button>
-          </a>
+          </Link>
         </div>
       </div>
         {/* {localLoading && (

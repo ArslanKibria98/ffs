@@ -85,40 +85,40 @@ export default function FormSettingsPage() {
     );
   };
 
-  const handleSubmit = async () => {
-    const formData = {
-      formVersionId: version_id,
-      formRequiredFieldIndicator: fieldLabel,
-      targetUrl: fieldName,
-      successMessage: fieldPlaceholder,
-      failMessage: fieldPlaceholderFail,
-      // isMandatory,
-      DefualtLanguage: defaultLanguage,
-      defaultCountry: defaultCountry,
-      languages: selectedLanguages,
-      countries: selectedCountries,
-    };
+  // const handleSubmit = async () => {
+  //   const formData = {
+  //     formVersionId: version_id,
+  //     formRequiredFieldIndicator: fieldLabel,
+  //     targetUrl: fieldName,
+  //     successMessage: fieldPlaceholder,
+  //     failMessage: fieldPlaceholderFail,
+  //     // isMandatory,
+  //     DefualtLanguage: defaultLanguage,
+  //     defaultCountry: defaultCountry,
+  //     languages: selectedLanguages,
+  //     countries: selectedCountries,
+  //   };
 
-    try {
-      const response = await axios.post(
-        "/Form/SetFormAttributes",JSON.stringify(formData));
+  //   try {
+  //     const response = await axios.post(
+  //       "/Form/SetFormAttributes",JSON.stringify(formData));
 
-      if (response) {
-        let responseData = response.data;
-        console.log(responseData, "1---1");
-        toast.success(responseData?.notificationMessage);
-        // router.push(`/form-builder/form/preview`)
-        // navigate(`/form-builder/form/preview`)
-        window.location.href = `/form-builder/form/preview`;
-      } else {
-        let responseData = await response.json();
-        toast.success(responseData?.errors[0]);
-        toast.error("Failed to submit the form.");
-      }
-    } catch (error) {
-      toast.error("An error occurred. Please try again.");
-    }
-  };
+  //     if (response) {
+  //       let responseData = response.data;
+  //       console.log(responseData, "1---1");
+  //       toast.success(responseData?.notificationMessage);
+  //       // router.push(`/form-builder/form/preview`)
+  //       // navigate(`/form-builder/form/preview`)
+  //       window.location.href = `/form-builder/form/preview`;
+  //     } else {
+  //       let responseData = await response.json();
+  //       toast.success(responseData?.errors[0]);
+  //       toast.error("Failed to submit the form.");
+  //     }
+  //   } catch (error) {
+  //     toast.error("An error occurred. Please try again.");
+  //   }
+  // };
 
   async function getFormAttributes() {
     setLoading(true);
@@ -538,17 +538,19 @@ export default function FormSettingsPage() {
       </Tabs>
 
       <div className="flex flex-row-reverse gap-4 py-1 my-4">
-        <Button
-          className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
-          onClick={handleSubmit}
-        >
-          {locData?.next || "Next"}
-        </Button>
-        <a href={`/form-builder/form`}>
+        <Link to={"/form-builder/form/preview"}>
+          <Button
+            className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg h-[48px]"
+            // onClick={handleSubmit}
+          >
+            {locData?.next || "Next"}
+          </Button>
+        </Link>
+        <Link to={`/form-builder/form`}>
           <Button className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light h-[48px]">
           {locData?.prev || "Previous"}
           </Button>
-        </a>
+        </Link>
       </div>
     </div>
   );

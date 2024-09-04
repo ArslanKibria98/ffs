@@ -61,13 +61,13 @@ export default function FormPublishPage() {
             <div>{locData?.date || "Date"} : 25/03/2024</div>
             <div className="">
               Access URL : {" "}
-              <a
+              <Link
+                to={`${location}/render-form/${version_id}`}
                 className="underline text-blue-400"
-                href={`${location}/render-form/${version_id}`}
                 target="_blank"
               >
                 {`${location}/render-form/${version_id}`}
-              </a>
+              </Link>
             </div>
             <div className="text-xl mt-3 mx-auto max-w-[550px]">
               {locData?.bClick || "Your draft Form has been created."}
@@ -97,11 +97,11 @@ export default function FormPublishPage() {
                   <DialogDescription></DialogDescription>
                 </DialogContent>
               </Dialog>
-              <a href={`/form-builder`}>
+              <Link to={`/form-builder`}>
                 <Button className="bg-gray-900 hover:bg-gray-800 text-white rounded-lg font-light">
                   {locData?.back || "Back to Home"}
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

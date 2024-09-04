@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import toast from 'react-hot-toast'
 import localisationData from "../../../../localisation.json";
 import axios from '@/lib/axios';
+import { Link } from 'react-router-dom';
 
 export default function FormPreviewPage() {
   const token = useSelector((state) => state?.authStore?.token);
@@ -246,20 +247,20 @@ export default function FormPreviewPage() {
       <FormRenderer formDataApi={formDataApi} formik={formik} loader={loader} preview={true} />
 
       <div className="flex flex-row-reverse gap-4 py-4 my-4">
-        <a href={`/form-builder/form/save`}>
+        <Link to={`/form-builder/form/save`}>
           <Button
             className="bg-[#e2252e] hover:bg-[#e2252e] text-white rounded-lg"
           >
             {locData?.next || "Next"}
           </Button>
-        </a>
-        <a href={`/form-builder/form/settings`}>
+        </Link>
+        <Link to={`/form-builder/form/settings`}>
         <Button
           className="bg-[#ababab] hover:bg-[#9c9c9c] text-white rounded-lg font-light"
         >
           {locData?.prev || "Previous"}
         </Button>
-        </a>
+        </Link>
       </div>
     </div>
   )
