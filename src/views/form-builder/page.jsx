@@ -1,6 +1,7 @@
 import { useEffect, useState,useRef } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
+import { cn } from "@/lib/utils";
+import { Search } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -88,26 +89,26 @@ export default function FormBuilder() {
   const [folderDeleteModal, setFolderDeleteModal] = useState(false);
   const [folderDeleteLoading, setFolderDeleteLoading] = useState(false);
   const [localLoading, setLocalLoading] = useState(true);
-  const [repository, setRepository] = useState([]);
+  const [repository, setRepository] = useState("all");
   const [repositories, setRepositories] = useState([]);
   const [forms, setForms] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const  SortTypes=[{
-    label : 'Latest_Modified ',
+    label : 'Latest Modified ',
     value : 0
 },
 {
-  label : 'Oldest_Modified',
+  label : 'Oldest Modified',
   value : 1
 },
 {
-  label : 'Latest_Created',
+  label : 'Latest Created',
   value : 2
 },
 {
-  label : 'Oldest_Created ',
+  label : 'Oldest Created ',
   value : 3
 }
 ]
@@ -382,18 +383,26 @@ value : 1
   console.log(rowsPerPage, "rows");
   const handleInputChange = (event) => {
     console.log(event.target.value)
-    if (filterType) {
-      const value = event.target.value;
-      
-      // Clear the previous timeout
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
+    if (!filterType) {
+      toast.error("Please Select the filter By first")
+      return;
+    }
+    const value = event.target.value;
+    setSearchValue(event.target.value)
+    
+    // Clear the previous timeout
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    
+    // Set a new timeout
+    timerRef.current = setTimeout(() => {
+      console.log('Timeout reached, calling handlePageChange');
+      if (!filterType) {
+        // toast.error("Please Select the filter By first");
+        return;
       }
-
-      // Set a new timeout
-      timerRef.current = setTimeout(() => {
-        console.log('Timeout reached, calling handlePageChange');
-       
+      
        if(event.target.value==""){
         handlePageChange("all","",rowsPerPage, page);
        }
@@ -401,9 +410,6 @@ value : 1
         handlePageChange("all",event.target.value, rowsPerPage, page);
        }
       }, 3000); // 5000 milliseconds = 5 seconds
-    } else {
-      toast.error("Please Select the filter By first");
-    }
     
   };
   return (
@@ -600,11 +606,6 @@ value : 1
           <Skeleton className="max-w-[160px] w-full h-[46px] space-x-1" />
         )}
         <div className="flex justify-evenly gap-2 items-center">
-          <div className="w-[400px] xl:w-[500px]">
-            <input placeholder={locData?.search || "Search"}
-            value={searchValue}
-        onChange={(e)=>{handleInputChange(e);setSearchValue(e.target.value)}} />
-          </div>
           <Select className="" onValueChange={(e) => setFilterType(e)}
             value={filterType}>
             <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
@@ -631,6 +632,13 @@ value : 1
               ))}
             </SelectContent>
           </Select>
+          <div className="w-[400px] xl:w-[500px]">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-[15px] h-4 w-4 text-muted-foreground" />
+              <Input type="search" placeholder="Search..." className="pl-9 w-full h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]" 
+              value={searchValue} onChange={(e)=>{handleInputChange(e)}} />
+            </div>
+          </div>
 
           <Button
             onClick={handleCreateForm}
