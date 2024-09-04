@@ -239,7 +239,8 @@ export default function FormPreviewPage() {
   });
   
   useEffect(() => {
-    return () => fetchForms();
+    // return () => 
+    fetchForms();
   }, [])
 
   return (

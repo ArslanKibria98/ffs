@@ -88,9 +88,9 @@ export default function FormSavePage() {
     }
   }
   useEffect(() => {
-    return async () => {
+    // return async () => {
       getRepository()
-    };
+    // };
   }, []);
   return (
     <div className='relative overflow-visible pt-4'>

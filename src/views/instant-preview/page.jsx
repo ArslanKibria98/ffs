@@ -610,11 +610,11 @@ function GetRelevantField({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     const handleRadioChange = (value) => {
       formik.setFieldValue(field.controlId, value);
@@ -786,11 +786,11 @@ function GetRelevantField({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     return (
       <div>
@@ -922,11 +922,11 @@ function GetRelevantField({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     return (
       <div style={dropdownOptions.length>=10 ||field.choices != null &&field.choices.length>=10?{maxHeight:"210px",overflow:"auto"}:{}}>

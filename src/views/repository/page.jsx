@@ -68,10 +68,10 @@ function DeleteRepository() {
   };
   useEffect(() => {
     // console.log(params.id);
-    return () => {
+    // return () => {
       getRepository();
       handlePageChange(params.id);
-    };
+    // };
   }, []);
 
   async function moveForms() {

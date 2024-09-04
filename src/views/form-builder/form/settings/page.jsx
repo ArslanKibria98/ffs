@@ -193,7 +193,8 @@ export default function FormSettingsPage() {
   }
 
   useEffect(()=>{
-    return ()=> getFormAttributes();
+    // return ()=> 
+      getFormAttributes();
   }, [])
   
   let locData = localisationData.formSetting.en;

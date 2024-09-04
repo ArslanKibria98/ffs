@@ -180,11 +180,11 @@ function FieldRenderer({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     const handleRadioChange = (value) => {
       formik.setFieldValue(field.controlId, value);
@@ -355,11 +355,11 @@ function FieldRenderer({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     return (
       <div>
@@ -500,11 +500,11 @@ function FieldRenderer({ control, formik }) {
       }
     }
     useEffect(() => {
-      return () => {
-        {
+      // return () => {
+      //   {
           field?.choices === null && inflateOptions();
-        }
-      };
+      //   }
+      // };
     }, []);
     const [selectedIndex, setSelectedIndex] = useState();
     const [multipleIndex, setMultipleIndex] = useState();

@@ -31,10 +31,10 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    return () => {
+    // return () => {
       const dynamicRegionId = uuidv4();
       console.log(dynamicRegionId, "==--==");
-    };
+    // };
   }, []);
 
   const validateForm = () => {

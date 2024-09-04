@@ -735,10 +735,10 @@ export default function BuilderPage() {
   });
 
   useEffect(() => {
-    return () => {
+    // return () => {
       dispatch(setIsLoading(true));
       fetchForms();
-    };
+    // };
   }, []);
 
   function getControlbyType(field) {

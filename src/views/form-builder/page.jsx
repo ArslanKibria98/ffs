@@ -132,7 +132,7 @@ value : 1
           if (res.data.success) {
             console.log(res.data);
             setRepositories(res?.data?.data);
-            // handlePageChange("all", rowsPerPage, page);
+            handlePageChange("all", "", rowsPerPage, page);
           } else {
             throw new Error("Unable to get repositories!");
           }
@@ -184,11 +184,11 @@ value : 1
       }, 2000);
     }
   };
-  useEffect(()=>{
-    return () => {
-      handlePageChange("all","",rowsPerPage, page)
-    };
-}, [])
+//   useEffect(()=>{
+//     return () => {
+//       handlePageChange("all","",rowsPerPage, page)
+//     };
+// }, [])
   const handlePublish = async (version, status) => {
     setLocalLoading(true);
     try {
@@ -225,9 +225,9 @@ value : 1
     }
   };
   useEffect(() => {
-    return async () => {
+    // return async () => {
       getRepository();
-    };
+    // };
   }, []);
 
   const generatePageNumbers = () => {
@@ -346,8 +346,9 @@ value : 1
         `/Repository/DeleteRepository?repositoryId=${id}`
       );
       if (response?.data?.success) {
-        let responseData = await response.json();
-        handlePageChange(repository,"", rowsPerPage, 1);
+        let responseData = await response?.data;
+        // handlePageChange("all", rowsPerPage, 1);
+        getRepository();
         toast.success(responseData?.notificationMessage);
         setFolderDeleteModal(false);
         setLocalLoading(true);

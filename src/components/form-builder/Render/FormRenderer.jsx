@@ -46,11 +46,11 @@ function FormRenderer({ formData=null, formDataApi, formik, loader, preview=fals
               value={tab?.containerName}
               className="border bg-white p-4 rounded-xl w-full"
             >
-              <div className={(formSettings.formTemplate == 1 ? "grid grid-cols-4" : (formSettings.formTemplate == 2 ? "grid grid-cols-4" : "grid grid-cols-4")) + " gap-2 gap-y-4"}>
+              <div className={(formSettings?.formTemplate ? (formSettings?.formTemplate == 1 ? "grid grid-cols-4" : (formSettings?.formTemplate == 2 ? "grid grid-cols-4" : "grid grid-cols-4")) : "grid grid-cols-4") + " gap-2 gap-y-4"}>
                 {tab?.controls?.map((field, index) => {
 
                   return (
-                  <div className={(((index+1)%3)==0 ? " col-span-4" : " col-span-2 ")}>
+                  <div className={(formSettings?.formTemplate == 3 ? (((index+1)%3)==0 ? " col-span-4" : " col-span-2 ") : "col-span-2")}>
                     <FieldRenderer key={index} control={field} formik={formik} />
                   </div>
                 )})}
