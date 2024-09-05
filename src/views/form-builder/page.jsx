@@ -85,7 +85,7 @@ export default function FormBuilder() {
   const [folderName, setFolderName] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [folderModal, setFolderModal] = useState(false);
-  const [sortType, setSortType] = useState(2);
+  const [sortType, setSortType] = useState(0);
   const [filterType, setFilterType] = useState(null);
   const [folderEditModal, setFolderEditModal] = useState(false);
   const [folderDeleteModal, setFolderDeleteModal] = useState(false);
@@ -158,7 +158,7 @@ value : 1
       const response = await axios.get(
         `/Form/GetAllForms?UserId=${userId}&` +
           (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1`) +
-          `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType?sortType:2}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
+          `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType?sortType:0}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
       );
       const data =  response.data;
       console.log(data.data);
