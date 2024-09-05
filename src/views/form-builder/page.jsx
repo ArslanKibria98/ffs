@@ -157,7 +157,7 @@ value : 1
     try {
       const response = await axios.get(
         `/Form/GetAllForms?UserId=${userId}&` +
-          (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1`) +
+          (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1&`) +
           `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType?sortType:0}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
       );
       const data =  response.data;
