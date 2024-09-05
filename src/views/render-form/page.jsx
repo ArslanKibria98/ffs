@@ -54,18 +54,11 @@ export default function FormRender() {
   const fetchForms = async () => {
     setLoader(true);
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `/Form/GetFormDetailsByVersionId?FormVersionId=${params?.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Request-Id": uuidv4(),
-            Authorization: `Bearer ${token}`,
-          },
-        }
+       
       );
-      const data = await response.json();
+      const data =  response.data;
       console.log(data, "data");
       if(data.data.formVersionStatus==2){
         setFormDataApi(data?.data?.containers);

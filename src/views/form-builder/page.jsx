@@ -51,6 +51,8 @@ import {
   Pencil,
   Trash2,
   ChevronRight,
+  ChevronsRight,
+  ChevronsLeft,
   ChevronLeft,
   PlusIcon,
   EllipsisVertical,
@@ -144,20 +146,21 @@ value : 1
     }
   };
  
-  const handlePageChange = async (repo,search, size, newPage) => {
+  const handlePageChange = async (repo,search, size, newPage,sortType) => {
     setForms([]);
     setPage(newPage);
     setLocalLoading(true);
+    console.log(sortType,"sortType")
     // if (repo == "all") {
     //   repo = userId;
     // }
     try {
       const response = await axios.get(
-        `http://135.181.57.251:3048/api/Form/GetAllForms?UserId=${userId}&` +
-          (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1&`) +
-          `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
+        `/Form/GetAllForms?UserId=${userId}&` +
+          (repo == "all" ? `` : `Filter.RepositoryId=${repo}&isFilterApplied=true&Filter.filterType=1`) +
+          `PageNumber=${newPage}&PageSize=${size}`+`&sortType=${sortType?sortType:2}`+`${search?`&isFilterApplied=true&Filter.filterType=0&Filter.searchType=${filterType}&Filter.searchQuery=${search}`:``}`
       );
-      const data = await response.data;
+      const data =  response.data;
       console.log(data.data);
       console.log(data?.data?.data);
       if (data?.data?.data?.length > 0) {
@@ -211,7 +214,7 @@ value : 1
       const data = await response.json();
       console.log(data);
       if (data?.notificationMessage) {
-        handlePageChange(repository,"", rowsPerPage, page);
+        handlePageChange(repository,"", rowsPerPage, page,sortType);
         setLocalLoading(false);
         toast.success(data?.notificationMessage);
       } else {
@@ -330,7 +333,7 @@ value : 1
       );
       if (response.ok) {
         let responseData = await response.json();
-        handlePageChange(repository,"", rowsPerPage, 1);
+        handlePageChange(repository,"", rowsPerPage, 1,sortType);
         toast.success(responseData?.notificationMessage);
         setLocalLoading(true);
       }
@@ -404,15 +407,15 @@ value : 1
       }
       
        if(event.target.value==""){
-        handlePageChange("all","",rowsPerPage, page);
+        handlePageChange("all","",rowsPerPage, page,sortType);
        }
        else{
-        handlePageChange("all",event.target.value, rowsPerPage, page);
+        handlePageChange("all",event.target.value, rowsPerPage, page,sortType);
        }
       }, 1000); // 5000 milliseconds = 5 seconds
     
   };
-  console.log(filterType)
+  console.log(sortType)
   return (
     <div className="min-h-[82.8vh] p-6 flex flex-col items-center pt-16">
       <div className="w-full flex justify-between items-center my-3">
@@ -422,7 +425,7 @@ value : 1
             defaultValue={repository}
             onValueChange={(e) => {
               setRepository(e)
-              handlePageChange(e,"", rowsPerPage, page);
+              handlePageChange(e,"", rowsPerPage, page,sortType);
             }}
             onClick={()=>{
               setFolderDeleteModal(false);
@@ -574,7 +577,7 @@ value : 1
           <Skeleton className="max-w-[160px] w-full h-[46px] space-x-1" />
         )}
         <div className="flex justify-evenly gap-2 items-center">
-          <Select className="" onValueChange={(e) => {setSortType(e); handlePageChange("all", searchValue,rowsPerPage, page)}}
+          <Select className="" onValueChange={(e) => {setSortType(e); handlePageChange(repository?repository:"all", searchValue,rowsPerPage, page,e)}}
             value={sortType}>
             <SelectTrigger className="max-w-[160px] h-[46px] text-[#838383] border border-[#e6e3ea] bg-[#ececec]">
               <SelectValue placeholder={locData?.sort || "Sort By"} />
@@ -814,7 +817,7 @@ value : 1
           <Select
             className="w-full mr-1"
             onValueChange={(e) => {
-              handlePageChange(repository,"", e, page);
+              handlePageChange(repository,"", e, page,sortType);
               setRowsPerPage(e);
             }}
             value={rowsPerPage}
@@ -833,15 +836,15 @@ value : 1
             </SelectContent>
           </Select>
 
-          {/* <button
-            onClick={() => handlePageChange(repository, rowsPerPage, 1)}
-            disabled={page <= 1}
-            className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
-          >
-            {`<<`}
-          </button> */}
           <button
-            onClick={() => handlePageChange(repository,"", rowsPerPage, page - 1)}
+            onClick={() => handlePageChange(repository,"", rowsPerPage, 1,sortType)}
+            disabled={page <= 1}
+            className="p-1 mx-1 pagination-btn rounded"
+          >
+              <ChevronsLeft />
+          </button>
+          <button
+            onClick={() => handlePageChange(repository,"", rowsPerPage, page - 1,sortType)}
             disabled={page <= 1}
             className="p-1 mx-1 pagination-btn rounded"
           >
@@ -849,13 +852,13 @@ value : 1
           </button>
 
           {Array.from({ length: 3 }, (_, index) => {
-            const pageNumber = page - 1 + index;
+            const pageNumber = page - 2 + index;
             if (pageNumber > 0 && pageNumber <= 4) {
               return (
                 <button
                   key={pageNumber}
                   onClick={() =>
-                    handlePageChange(repository,"", rowsPerPage, pageNumber)
+                    handlePageChange(repository,"", rowsPerPage, pageNumber,sortType)
                   }
                   className={`px-3 py-1 mx-1 ${
                     pageNumber === page
@@ -872,19 +875,19 @@ value : 1
           })}
 
           <button
-            onClick={() => handlePageChange(repository,"", rowsPerPage, page + 1)}
+            onClick={() => handlePageChange(repository,"", rowsPerPage, page + 1,sortType)}
             disabled={forms.length < rowsPerPage}
             className="p-1 mx-1 pagination-btn text-gray-800 rounded"
           >
             <ChevronRight />
           </button>
-          {/* <button
-            onClick={() => handlePageChange(repository, rowsPerPage, totalPages)}
+          <button
+            onClick={() => handlePageChange(repository,"", rowsPerPage, totalPages,sortType)}
             disabled={forms.length < rowsPerPage}
-            className="px-4 py-2 mx-1 pagination-btn text-gray-800 rounded"
+            className="p-1 mx-1 pagination-btn rounded"
           >
-            {`>>`}
-          </button> */}
+           <ChevronsRight />
+          </button>
         </div>
       </div>
       {/* <p className="text-center">{loading + "  " + localLoading + "  " + forms.length}</p> */}
