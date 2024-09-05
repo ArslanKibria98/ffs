@@ -20,16 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import StarRating from "@/components/ui/StarRating";
 // import { Rating } from "react-simple-star-rating";
 import axios from "@/lib/axios";
-// import { Label } from "@/components/ui/label";
-// import DateTimePicker from "react-datetime-picker";
-// import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
+import { v4 as uuidv4 } from "uuid";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -64,12 +55,12 @@ export default function FormRender() {
     setLoader(true);
     try {
       const response = await fetch(
-        `http://135.181.57.251:3048/api/Form/GetFormDetailsByVersionId?FormVersionId=${params?.id}`,
+        `/Form/GetFormDetailsByVersionId?FormVersionId=${params?.id}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Request-Id": "eef836f0-1a0d-43e5-8200-b02fe4730ce4",
+            "Request-Id": uuidv4(),
             Authorization: `Bearer ${token}`,
           },
         }
