@@ -66,20 +66,12 @@ export default function Rating({ getter, setter, formDataApi, resetForm, isUpdat
     };
 
     try {
-      const response = await fetch(
-        "http://135.181.57.251:3048/api/Controls/CreateRating",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload),
-        }
+      const response = await axios.post(
+        "/Controls/CreateRating",JSON.stringify(payload),
       );
 
-      if (response.ok) {
-        const responseData = await response.json();
+      if (response) {
+        const responseData =  response.data;
         setter(!getter);
         toast.success(responseData.notificationMessage);
         resetForm();
