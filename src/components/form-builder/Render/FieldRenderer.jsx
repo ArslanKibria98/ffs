@@ -20,6 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -60,7 +66,7 @@ function FieldRenderer({ control, formik }) {
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
         <div className="flex justify-between w-full gap-3">
-          <Button className="border-black mt-2 bg-[#e2252e] hover:bg-[#be1f27]">
+          <Button type="cancel" className="border-black mt-2 bg-[#e2252e] hover:bg-[#be1f27]">
             {field?.placeholder}
           </Button>
         </div>
@@ -79,17 +85,26 @@ function FieldRenderer({ control, formik }) {
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
-        <div className="flex justify-between w-full gap-3">
-          <div>{field.minValue}</div>
-          <Slider
-            max={field.maxValue || 100}
-            min={field.minValue || 0}
-            step={1}
-            value={[formik.values[field.controlId]]}
-            onValueChange={handleSliderChange}
-          />
-          <div>{field.maxValue}</div>
-        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex justify-between w-full gap-3">
+                <div>{field.minValue}</div>
+                <Slider
+                  max={field.maxValue || 100}
+                  min={field.minValue || 0}
+                  step={1}
+                  value={[formik.values[field.controlId]]}
+                  onValueChange={handleSliderChange}
+                />
+                <div>{field.maxValue}</div>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              {[formik.values[field.controlId]]}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     );
   }
@@ -275,7 +290,7 @@ function FieldRenderer({ control, formik }) {
           {field.question}
           {field.isRequired ? <span className="text-red-500"> *</span> : ""}
         </p>
-        <div className="my-3 items-center">
+        <div className="my-2 items-center">
           <Select
             className="w-full"
             value={formik.values[field.controlId]}
