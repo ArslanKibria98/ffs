@@ -53,6 +53,11 @@ function FieldRenderer({ control, formik }) {
             value={formik.values[field.controlId] || ""}
           />
         </div>
+        { formik.errors[field.controlId] ? (
+  <div className="text-red-500 text-sm">
+    {field.errorMsgTxt}
+  </div>
+) : null}
       </div>
     );
   }
