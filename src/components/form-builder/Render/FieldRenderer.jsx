@@ -68,8 +68,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  // Slider
   if (field?.controlType === 2) {
-    // Slider
     const handleSliderChange = (value) => {
       formik.setFieldValue(field.controlId, value[0]);
     };
@@ -94,8 +94,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  //  File
   if (field?.controlType === 3) {
-    //  File
     return (
       <div className="col-span-2 h-fit">
         <p className="text-[12px]">
@@ -116,8 +116,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  //  Otp
   if (field?.controlType === 4) {
-    //  Otp
     return (
       <div className="col-span-2 h-fit">
         <p className="text-[12px]">
@@ -141,8 +141,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  //  PhoneNumber
   if (field?.controlType === 5) {
-    //  PhoneNumber
     return (
       <div className=" h-fit col-span-2 row-span-1">
         <p className="text-[12px]">
@@ -162,8 +162,9 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
+
+  // RadioButton
   if (field?.controlType == 6) {
-    // RadioButton
     const [dropdownOptions, setDropdownOptions] = useState([]);
     async function inflateOptions() {
       try {
@@ -239,8 +240,9 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
+
+  // Dropdown
   if (field?.controlType === 7) {
-    // Dropdown
     const [dropdownOptions, setDropdownOptions] = useState([]);
 
     const handleDropdownChange = (value) => {
@@ -307,8 +309,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  // rating
   if (field?.controlType === 8) {
-    // rating
     const totalStars = 5;
     //  rating
     return (
@@ -329,8 +331,8 @@ function FieldRenderer({ control, formik }) {
     );
   }
 
+  //checkbox
   if (field?.controlType === 9) {
-    //checkbox
     const handleCheckboxChange = (choiceName) => {
       const currentChoices = formik.values[field.controlId] || [];
       const updatedChoices = currentChoices.includes(choiceName)
@@ -412,8 +414,9 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
+
+  // Time Picker
   if (control?.controlType == 10) {
-    // Time Picker
     const handleTimeChange = (value) => {
       formik.setFieldValue(control.controlId, value);
     };
@@ -433,9 +436,10 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
-  const [dateChange, onDateChange] = useState(new Date());
+
+  //  calendar
   if (field?.controlType == 11) {
-    //  calendar
+    const [dateChange, onDateChange] = useState(new Date());
     return (
       <div className="col-span-2">
         <p className="text-[12px] pb-1">
@@ -450,13 +454,13 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
-  const [captchaValue, setCaptchaValue] = useState(null);
-
-  const handleCaptchaChange = (value) => {
-    setCaptchaValue(value);
-  };
+  
+  //  captcha
   if (field?.controlType == 12) {
-    //  captcha
+    const [captchaValue, setCaptchaValue] = useState(null);
+    const handleCaptchaChange = (value) => {
+      setCaptchaValue(value);
+    };
     return (
       <div className="col-span-2">
         <p className="text-[12px] pb-1">
@@ -474,8 +478,9 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
+
+  //list
   if (field?.controlType === 13) {
-    //list
     const handleCheckboxChange = (choiceName) => {
       const currentChoices = formik.values[field.controlId] || [];
       const updatedChoices = currentChoices.includes(choiceName)
@@ -531,8 +536,6 @@ function FieldRenderer({ control, formik }) {
                  {field.choices.map((choice, index) => (
                    <div key={index} className={`w-100 flex gap-2 pb-3 ${field.multiSelection?multipleIndex?.includes(index)?'list-instatant' : '':selectedIndex === index ? 'list-instatant' : ''}`}  >
                      <li
-                       key={index}
-                      
                        onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
                      >
                        {`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}- ${choice.value}`}
@@ -549,8 +552,7 @@ function FieldRenderer({ control, formik }) {
                     cursor: 'pointer',
                     backgroundColor: field.multiSelection?multipleIndex?.includes(index)?'lightblue' : 'transparent':selectedIndex === index ? 'lightblue' : 'transparent',
                   }}>
-                    <li
-                      key={index}       
+                    <li      
                       onClick={() => {!field.listItemViewOnly?"":field.multiSelection?toggleSelection(index):setSelectedIndex(index)}}
 
                     >{`${field.listFormat==0?index+1:String.fromCharCode(97 + index)}- ${choice[field.displayValue]}`}</li>
@@ -562,6 +564,7 @@ function FieldRenderer({ control, formik }) {
       </div>
     );
   }
+
   return null;
 }
 

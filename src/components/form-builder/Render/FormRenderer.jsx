@@ -18,8 +18,8 @@ function FormRenderer({ formData=null, formDataApi, formik, loader, preview=fals
       setIsLastTabActive(newTabValue === lastTabValue);
     }
   };
-  console.log(formData);
-  let iteration = 0;
+  // console.log(formData);
+  // let iteration = 0;
   return (
     <form onSubmit={formik.handleSubmit}>
       {formDataApi.length > 0 && (
@@ -71,9 +71,6 @@ function FormRenderer({ formData=null, formDataApi, formik, loader, preview=fals
           <BoxLoader />
         </div>
       )}
-      {/* {
-          formDataApi.length==formDataApi.length&&
-        } */}
       {!preview && (formDataApi?.length > 1 ? (
           <>
             {isLastTabActive && (
