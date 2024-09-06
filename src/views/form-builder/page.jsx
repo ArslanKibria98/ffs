@@ -734,7 +734,7 @@ value : 1
                         <DropdownMenuItem
                           className="focus:bg-[#fff0f0] cursor-pointer"
                           onClick={() => {
-                            handlePublish(form.formVersionId, form.status);
+                            handlePublish(form.formVersionId, (form.status == 0 || form.status == 2) ? 1 : form.status == 1 ? 2 : 1);
                           }}
                         >
                           <EyeOff className="h-4" />
