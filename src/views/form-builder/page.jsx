@@ -207,7 +207,7 @@ value : 1
           },
           body: JSON.stringify({
             versionId: version,
-            status: status == 0 ? 1 : 1 ? 2 : 1,
+            status: (status == 0 || status == 2) ? 1 : 2,
           }),
         }
       );
@@ -734,7 +734,7 @@ value : 1
                         <DropdownMenuItem
                           className="focus:bg-[#fff0f0] cursor-pointer"
                           onClick={() => {
-                            handlePublish(form.formVersionId, (form.status == 0 || form.status == 2) ? 1 : form.status == 1 ? 2 : 1);
+                            handlePublish(form.formVersionId, form.status);
                           }}
                         >
                           <EyeOff className="h-4" />
