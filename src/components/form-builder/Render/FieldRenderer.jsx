@@ -480,6 +480,9 @@ function FieldRenderer({ control, formik }) {
     const [captchaValue, setCaptchaValue] = useState(null);
     const handleCaptchaChange = (value) => {
       setCaptchaValue(value);
+      console.log(captchaValue,value,'captcha')
+      const isCaptchaValid = captchaValue !== null;
+      formik.setFieldValue(field.controlId,isCaptchaValid );
     };
     return (
       <div className="col-span-2">
@@ -494,7 +497,9 @@ function FieldRenderer({ control, formik }) {
             sitekey="6LfwmioqAAAAALGowVAMJb_oGuIvMFQZ9V8pY6E4" // replace with your actual site key
             onChange={handleCaptchaChange}
           />
+         
         </div>
+        {formik.errors[field.controlId] && <div className="text-red-500 text-sm">{'Required'}</div>}
       </div>
     );
   }
