@@ -25,3 +25,4 @@ form-flow-manager/*
 *.sln
 *.sw?
 node_modules
+config.bat

@@ -59,6 +59,12 @@ export default function FormRender() {
               .max(50, 'Too Long!')
               .required('Required');
             break;
+            case 2: // Slider
+            schema[control.controlId] = Yup.number()
+              .min(0, 'Value must be at least 0')
+              .max(100, 'Value can be at most 100')
+              .required('Required');
+            break;  
           case 4: // OTP
             schema[control.controlId] = Yup.string()
               .length(6, 'OTP must be exactly 6 digits')
@@ -87,12 +93,11 @@ export default function FormRender() {
           case 10: // Time
             schema[control.controlId] = Yup.date().required('Required');
             break;
-          case 2: // Slider
-            schema[control.controlId] = Yup.number()
-              .min(0, 'Value must be at least 0')
-              .max(100, 'Value can be at most 100')
-              .required('Required');
-            break;
+            case 12: // CAPTCHA
+    schema[control.controlId] = Yup.string()
+      .required('Please complete the CAPTCHA');
+    break;
+          
           default:
             break;
         }
